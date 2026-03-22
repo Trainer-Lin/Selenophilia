@@ -1,0 +1,34 @@
+* {
+  box-sizing: border-box;
+}
+
+.search2 {
+  display: flex;
+  align-items: center;
+  column-gap: 12px;
+  border-radius: 8px;
+  background: var(--color-bg-secondary);
+  padding: 8px 16px 8px 12px;
+  width: 343px;
+  height: 40px;
+
+  .search {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    overflow: hidden;
+  }
+
+  .label {
+    display: -webkit-box;
+    flex-grow: 1;
+    overflow: hidden;
+    line-height: 24px;
+    letter-spacing: 0;
+    color: #828282;
+    font-family: Inter, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+    font-size: 16px;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+  }
+}

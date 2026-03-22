@@ -1,0 +1,281 @@
+package com.example.tmusic
+
+import android.Manifest
+import android.content.ComponentName
+import android.content.Intent
+import android.content.ServiceConnection
+import android.content.pm.PackageManager
+import android.os.Bundle
+import android.os.IBinder
+import android.os.Looper
+import android.view.Gravity
+import android.widget.TextView
+import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
+import androidx.annotation.OptIn
+import androidx.appcompat.app.AppCompatActivity
+import androidx.cardview.widget.CardView
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.fragment.app.Fragment
+import androidx.media3.common.util.UnstableApi
+import com.example.tmusic.databinding.ActivityMainBinding
+import com.example.tmusic.localMusicList.data.room.MusicEntity
+import com.example.tmusic.service.PlayMusicService
+
+@OptIn(UnstableApi::class)
+class MainActivity : AppCompatActivity() {
+
+    companion object {
+        const val TAG = "MainActivity"
+        const val UPDATE_MUSIC_REQUEST = 1001
+        const val READ_MUSIC_PERMISSION = 1002
+        const val POST_NOTIFICATION_PERMISSION = 1003
+    }
+
+    private lateinit var binding: ActivityMainBinding
+    private var musicService:PlayMusicService ?= null
+
+    var currentMusicList: List<MusicEntity> = emptyList()
+    var currentIndex: Int = 0
+
+    var albumCover: String?= null
+    var songTitle: String ?= null
+    var artistName: String ?= null
+
+
+    private val serviceConnection = object: ServiceConnection{
+        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            val binder = service as PlayMusicService.MusicBinder
+            musicService = binder.getService()
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+            musicService = null
+        }
+
+    }
+
+    private fun initService(){
+        val intent = Intent(this, PlayMusicService::class.java)
+        bindService(intent, serviceConnection, BIND_AUTO_CREATE)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            insets
+        }
+        
+        initService()
+        requestAudioPermission()
+        Looper.myQueue().addIdleHandler {
+            requestAudioPermission()
+            false
+        }
+        
+        if (savedInstanceState == null) {
+            switchFragment(com.example.tmusic.home.HomeFragment())
+        }
+
+        initBottomNavigation()
+    }
+
+    private fun initBottomNavigation() {
+        binding.navHome.setOnClickListener {
+            if (getCurrentFragment() !is com.example.tmusic.home.HomeFragment) {
+                switchFragment(com.example.tmusic.home.HomeFragment())
+            }
+        }
+        
+        binding.navStudy.setOnClickListener {
+            // TODO: Switch to StudyFragment when implemented
+            Toast.makeText(this, "学习模块 - 敬请期待", Toast.LENGTH_SHORT).show()
+        }
+
+        binding.navMoon.setOnClickListener {
+            // TODO: Switch to Sleep/MoonFragment when implemented
+            Toast.makeText(this, "睡眠模块 - 敬请期待", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    fun switchFragment(fragment: Fragment) {
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, fragment)
+            .addToBackStack(null)
+            .commit()
+            
+        updateBottomNavVisibility(fragment)
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        // Update visibility when popping back stack
+        val currentFragment = getCurrentFragment()
+        if (currentFragment != null) {
+            updateBottomNavVisibility(currentFragment)
+        }
+    }
+
+    private fun updateBottomNavVisibility(fragment: Fragment) {
+        if (fragment is com.example.tmusic.localMusicList.ui.LocalMusicListFragment) {
+            binding.bottomNavCard.visibility = android.view.View.GONE
+        } else {
+            binding.bottomNavCard.visibility = android.view.View.VISIBLE
+        }
+    }
+    
+    fun togglePlayFromHome() {
+        if (musicService == null) return
+        if (musicService!!.isPlaying) {
+            musicService!!.pauseMusic()
+        } else {
+            // If we just want to resume or play current list
+            // PlayMusicService logic: playOrPauseMusic checks if same track.
+            // If we just call resumeMusic() or playMusic(), it might work if prepared.
+            musicService!!.playMusic()
+        }
+    }
+
+    //获取当前Fragment
+    private fun getCurrentFragment(): Fragment? = supportFragmentManager.findFragmentById(R.id.fragment_container)
+
+    fun playOrPause(musicList: List<MusicEntity>, index: Int) {
+        if (musicList.isEmpty()) {
+            clearSongInfo()
+            return
+        }
+        val safeIndex = index.coerceIn(0, musicList.lastIndex)
+        musicService?.playOrPauseMusic(musicList, safeIndex)
+        if (musicService != null) {
+            syncSongInfoFromService()
+        } else {
+            saveSongInfo(musicList, safeIndex)
+        }
+    }
+
+    fun playNext() {
+        musicService?.playNext()
+        syncSongInfoFromService()
+    }
+
+    fun playPrevious() {     
+        musicService?.playPrevious()
+        syncSongInfoFromService()
+    }
+
+    fun updateSongInfo() {
+        syncSongInfoFromService()
+    }
+
+    fun isPlaying(): Boolean {
+        return musicService?.isPlaying == true
+    }
+
+    private fun syncSongInfoFromService() {
+        val service = musicService ?: return
+        val list = service.getCurrentMusicList()
+        if (list.isEmpty()) {
+            clearSongInfo()
+            return
+        }
+        saveSongInfo(list, service.getCurrentMusicIndex())
+    }
+
+    private fun saveSongInfo(musicList: List<MusicEntity>, index: Int){
+        if (musicList.isEmpty()) {
+            clearSongInfo()
+            return
+        }
+        currentMusicList = musicList
+        currentIndex = index.coerceIn(0, currentMusicList.lastIndex)
+        val music = currentMusicList[currentIndex]
+        albumCover = music.albumArt
+        songTitle = music.title
+        artistName = music.artist
+    }
+
+    private fun clearSongInfo() {
+        currentMusicList = emptyList()
+        currentIndex = 0
+        albumCover = null
+        songTitle = null
+        artistName = null
+    }
+
+    private fun showMessage(message: String) {
+        Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).apply {
+            val cardView = CardView(applicationContext).apply {
+                radius = 25f
+                cardElevation = 8f
+                setCardBackgroundColor(getColor(R.color.white))
+                useCompatPadding = true
+            }
+
+            val textView = TextView(applicationContext).apply {
+                text = message
+                textSize = 17f
+                setTextColor(getColor(R.color.black))
+                gravity = Gravity.CENTER
+                setPadding(80, 40, 80, 40)
+            }
+            cardView.addView(textView)
+            setGravity(Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL, 0, 140)
+            view = cardView
+            show()
+        }
+    }
+
+    private fun requestAudioPermission() {
+        // 根据安卓版本判断需要申请的权限
+        val permission = Manifest.permission.READ_MEDIA_AUDIO
+
+        // 检查权限是否已授予
+        if (ContextCompat.checkSelfPermission(this, permission)
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            // 未授予，申请权限
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(permission),
+                READ_MUSIC_PERMISSION
+            )
+        }
+    }
+
+    private fun requestNotificationPermission() {
+        // 根据安卓版本判断需要申请的权限
+        val permission = Manifest.permission.POST_NOTIFICATIONS
+
+        // 检查权限是否已授予
+        if (ContextCompat.checkSelfPermission(this, permission)
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            // 未授予，申请权限
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(permission),
+                POST_NOTIFICATION_PERMISSION
+            )
+        }
+    }
+    
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when(requestCode){
+            READ_MUSIC_PERMISSION ->
+                requestNotificationPermission()
+
+        }
+    }
+
+
+    
+}

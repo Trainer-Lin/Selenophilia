@@ -1,0 +1,75 @@
+* {
+  box-sizing: border-box;
+}
+
+.xRxrAppBar {
+  display: flex;
+  position: relative;
+  align-items: center;
+  column-gap: 6px;
+  border-radius: 36px;
+  background: var(--Schemes-Surface-Container, #f3edf7);
+  padding: 12px 66px;
+  width: 412px;
+  height: 72px;
+
+  .stateLayer {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    border-radius: 100px;
+    width: 40px;
+    height: 40px;
+
+    .icon {
+      flex-shrink: 0;
+      width: 24px;
+      height: 24px;
+      overflow: hidden;
+    }
+  }
+
+  .textContent {
+    display: flex;
+    flex-grow: 1;
+    align-items: center;
+    justify-content: center;
+    column-gap: 10px;
+
+    .headline {
+      flex-grow: 1;
+      text-align: center;
+      line-height: 28px;
+      letter-spacing: 0;
+      color: var(--M3-sys-light-on-surface, #1d1b20);
+      font-family: Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+      font-size: 22px;
+    }
+  }
+
+  .leadingIcon {
+    display: flex;
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+  }
+
+  .trailingIcon {
+    display: flex;
+    position: absolute;
+    top: 12px;
+    left: 352px;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+    width: 48px;
+    height: 48px;
+  }
+}

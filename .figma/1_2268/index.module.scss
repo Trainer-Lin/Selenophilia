@@ -1,0 +1,58 @@
+* {
+  box-sizing: border-box;
+}
+
+.pills {
+  display: inline-flex;
+  align-items: center;
+  column-gap: 8px;
+  width: 413px;
+  height: 32px;
+
+  .iconFavorite {
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    overflow: hidden;
+  }
+
+  .iconLabel {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    column-gap: 4px;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    padding: 4px 9px;
+
+    .label {
+      flex-shrink: 0;
+      line-height: 22px;
+      letter-spacing: 0;
+      color: var(--color-text);
+      font-family: Inter, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+    }
+  }
+
+  .iconLabel2 {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    column-gap: 4px;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    padding: 4px 9px;
+
+    .label2 {
+      flex-shrink: 0;
+      line-height: 22px;
+      letter-spacing: 0;
+      color: #1a1a1a;
+      font-family: Inter, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+    }
+  }
+}
