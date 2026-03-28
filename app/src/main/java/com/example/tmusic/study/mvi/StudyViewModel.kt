@@ -40,7 +40,8 @@ class StudyViewModel: BaseMviViewModel<StudyState, StudyIntent>() {
         val newPlan = Plan(content = content, isFinished = false, id = newId)
         updateState { oldState ->
             oldState.copy(
-                plans = oldState.plans + newPlan
+                plans = oldState.plans + newPlan,
+                plansCount = oldState.plansCount + 1
             )
         }
     }

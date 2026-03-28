@@ -68,7 +68,7 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:padding="14dp"
-                android:src="@drawable/icon_diary" />
+                android:src="@drawable/icon_daily_note" />
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 

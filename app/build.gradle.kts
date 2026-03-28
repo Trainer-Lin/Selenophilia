@@ -60,6 +60,9 @@ dependencies {
     implementation(libs.androidx.room.ktx) // Kotlin扩展
     ksp(libs.androidx.room.compiler) // 注解处理器
 
+    //mmkv
+    implementation("com.tencent:mmkv:1.3.2")
+
     //这些暂时用不上
     implementation (libs.androidx.media3.exoplayer.hls) //hls流媒体 , 直播用
     implementation (libs.androidx.media3.exoplayer.rtsp) //RTSP流媒体 , 监控用

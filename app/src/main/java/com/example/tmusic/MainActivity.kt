@@ -111,8 +111,7 @@ class MainActivity : FullScreenActivity<ActivityMainBinding>() {
         }
 
         binding.navDiary.setOnClickListener {
-            // TODO: Switch to Sleep/MoonFragment when implemented
-            Toast.makeText(this, "日记模块 - 敬请期待", Toast.LENGTH_SHORT).show()
+            showMessage("功能开发中...")
         }
     }
 
@@ -239,7 +238,7 @@ class MainActivity : FullScreenActivity<ActivityMainBinding>() {
         artistName = null
     }
 
-    private fun showMessage(message: String) {
+   fun showMessage(message: String) {
         Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).apply {
             val cardView = CardView(applicationContext).apply {
                 radius = 25f

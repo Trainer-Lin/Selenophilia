@@ -1,8 +1,15 @@
 package com.example.tmusic.study.ui
 
+import android.app.Dialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import android.view.Window
+import android.view.WindowManager
+import android.widget.EditText
+import android.widget.ImageButton
+import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.example.tmusic.MainActivity
@@ -17,17 +24,20 @@ import kotlinx.coroutines.launch
 
 class StudyFragment : BaseFragment<FragmentStudyBinding>(FragmentStudyBinding::inflate) {
     private val viewModel = StudyViewModel()
+    private var addPlanDialog: Dialog? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initView()
-        updateUi()
-        observeState()
     }
 
     override fun initView() {
+        updateUi()
+        observeState()
+        updatePlansCount()
+
         binding.btnAddTask.setOnClickListener {
-            sendIntent(StudyIntent.AddPlan("新任务"))
+            showAddPlanDialog()
         }
         binding.btnStartPause.setOnClickListener {
             sendIntent(StudyIntent.StartPause)
@@ -42,6 +52,46 @@ class StudyFragment : BaseFragment<FragmentStudyBinding>(FragmentStudyBinding::i
         }
     }
 
+    private fun showAddPlanDialog() {
+        if (addPlanDialog?.isShowing == true) return
+        
+        addPlanDialog = Dialog(requireContext()).apply {
+            requestWindowFeature(Window.FEATURE_NO_TITLE)
+            setContentView(R.layout.dialog_add_plan)
+            
+            window?.apply {
+                setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+                setBackgroundDrawableResource(android.R.color.transparent)
+                setGravity(android.view.Gravity.BOTTOM)
+            }
+            
+            val etPlanContent = findViewById<EditText>(R.id.etPlanContent)
+            val btnConfirm = findViewById<ImageButton>(R.id.btnConfirm)
+            val btnClose = findViewById<ImageButton>(R.id.btnClose)
+            
+            btnConfirm.setOnClickListener {
+                val content = etPlanContent.text.toString().trim()
+                if (content.isBlank()) {
+                    //Toast.makeText(requireContext(), "请输入计划内容", Toast.LENGTH_SHORT).show()
+                    (activity as MainActivity).showMessage("请输入计划内容")
+                    return@setOnClickListener
+                }
+                sendIntent(StudyIntent.AddPlan(content))
+                updatePlansCount()
+                dismiss()
+            }
+            
+            btnClose.setOnClickListener {
+                dismiss()
+            }
+            
+            show()
+        }
+    }
+
+    private fun updatePlansCount(){
+        binding.plansCount.text = "${viewModel.viewState.value.plans.size} TASKS"
+    }
     private fun updateUi(){
         val host = activity as MainActivity
         host.updateSongInfo()
@@ -122,4 +172,6 @@ class StudyFragment : BaseFragment<FragmentStudyBinding>(FragmentStudyBinding::i
             binding.tasksContainer.addView(itemBinding.root)
         }
     }
+
+
 }
