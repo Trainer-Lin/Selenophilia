@@ -21,22 +21,34 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.media3.common.util.UnstableApi
+import com.bumptech.glide.Glide
+import com.example.tmusic.base.FullScreenActivity
 import com.example.tmusic.databinding.ActivityMainBinding
+import com.example.tmusic.home.HomeFragment
 import com.example.tmusic.localMusicList.data.room.MusicEntity
+import com.example.tmusic.localMusicList.ui.LocalMusicListFragment
 import com.example.tmusic.service.PlayMusicService
+import com.example.tmusic.study.ui.StudyFragment
 
 @OptIn(UnstableApi::class)
-class MainActivity : AppCompatActivity() {
+class MainActivity : FullScreenActivity<ActivityMainBinding>() {
 
     companion object {
         const val TAG = "MainActivity"
+        const val TAG_HOME = "1"
+        const val TAG_STUDY = "2"
+        const val TAG_DIARY = "3"
+        const val TAG_LOCAL_MUSIC= "4"
         const val UPDATE_MUSIC_REQUEST = 1001
         const val READ_MUSIC_PERMISSION = 1002
         const val POST_NOTIFICATION_PERMISSION = 1003
     }
 
-    private lateinit var binding: ActivityMainBinding
     private var musicService:PlayMusicService ?= null
+
+    override fun createViewBinding(): ActivityMainBinding {
+        return ActivityMainBinding.inflate(layoutInflater)
+    }
 
     var currentMusicList: List<MusicEntity> = emptyList()
     var currentIndex: Int = 0
@@ -45,6 +57,14 @@ class MainActivity : AppCompatActivity() {
     var songTitle: String ?= null
     var artistName: String ?= null
 
+    private var currentFragmentTag: String? = TAG_HOME
+    private val fragments = mutableMapOf<String, Fragment>(
+        TAG_HOME to HomeFragment(),
+        TAG_STUDY to StudyFragment(),
+        //TAG_DIARY to DiaryFragment(),
+        TAG_LOCAL_MUSIC to LocalMusicListFragment()
+
+    )
 
     private val serviceConnection = object: ServiceConnection{
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
@@ -65,14 +85,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
         
         initService()
         requestAudioPermission()
@@ -80,39 +92,57 @@ class MainActivity : AppCompatActivity() {
             requestAudioPermission()
             false
         }
-        
-        if (savedInstanceState == null) {
-            switchFragment(com.example.tmusic.home.HomeFragment())
-        }
 
         initBottomNavigation()
+        switchFragment(TAG_HOME)
     }
 
     private fun initBottomNavigation() {
         binding.navHome.setOnClickListener {
-            if (getCurrentFragment() !is com.example.tmusic.home.HomeFragment) {
-                switchFragment(com.example.tmusic.home.HomeFragment())
+            if (currentFragmentTag != TAG_HOME) {
+                switchFragment(TAG_HOME)
             }
         }
         
         binding.navStudy.setOnClickListener {
-            // TODO: Switch to StudyFragment when implemented
-            Toast.makeText(this, "学习模块 - 敬请期待", Toast.LENGTH_SHORT).show()
+            if (currentFragmentTag != TAG_STUDY) {
+                switchFragment(TAG_STUDY)
+            }
         }
 
-        binding.navMoon.setOnClickListener {
+        binding.navDiary.setOnClickListener {
             // TODO: Switch to Sleep/MoonFragment when implemented
-            Toast.makeText(this, "睡眠模块 - 敬请期待", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "日记模块 - 敬请期待", Toast.LENGTH_SHORT).show()
         }
     }
 
-    fun switchFragment(fragment: Fragment) {
+   /*  fun switchFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, fragment)
             .addToBackStack(null)
             .commit()
             
         updateBottomNavVisibility(fragment)
+    }*/
+
+    fun switchFragment(tag: String) {
+        val transaction = supportFragmentManager.beginTransaction()
+        val newFragment = fragments[tag]!!
+
+        if (currentFragmentTag != tag) {
+            fragments[currentFragmentTag]?.let {
+                transaction.hide(it)
+            }
+        }
+
+        if (newFragment.isAdded) {
+            transaction.show(newFragment)
+        } else {
+            transaction.add(R.id.fragment_container, newFragment, tag)
+        }
+        currentFragmentTag = tag
+        transaction.commit()
+        updateBottomNavVisibility(newFragment)
     }
 
     override fun onBackPressed() {
@@ -188,7 +218,6 @@ class MainActivity : AppCompatActivity() {
         }
         saveSongInfo(list, service.getCurrentMusicIndex())
     }
-
     private fun saveSongInfo(musicList: List<MusicEntity>, index: Int){
         if (musicList.isEmpty()) {
             clearSongInfo()

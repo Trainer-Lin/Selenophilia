@@ -1,0 +1,299 @@
+* {
+  box-sizing: border-box;
+}
+
+.container5 {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 16px 16px 19px;
+  width: 390px;
+  height: 1023px;
+  row-gap: 32px;
+  background-image: linear-gradient(
+    135deg,
+    #f8d8e1 0%,
+    #d1a8e3 50%,
+    #a9b1f1 100%
+  );
+
+  .editorialHeader {
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    align-items: flex-start;
+    align-self: stretch;
+    padding-top: 32px;
+    padding-bottom: 16px;
+    row-gap: 8px;
+
+    .discoverYourSound {
+      flex-shrink: 0;
+      align-self: stretch;
+      line-height: 20px;
+      letter-spacing: -0.4px;
+      color: #1e1b1e;
+      font-family: "Plus Jakarta Sans", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+      font-size: 16px;
+      font-weight: 800;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      align-items: flex-start;
+      align-self: stretch;
+      opacity: 0.8;
+
+      .welcomeBackLuminaUse {
+        flex-shrink: 0;
+        align-self: stretch;
+        line-height: 24px;
+        letter-spacing: 0;
+        color: #4c444d;
+        font-family: Manrope, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+        font-size: 16px;
+      }
+    }
+  }
+
+  .sectionFeaturedMusic {
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    align-items: flex-start;
+    align-self: stretch;
+    border-radius: 48px;
+    box-shadow: 0px 20px 50px 0px #7451851a;
+    background: #ffffff;
+    padding: 24px;
+    overflow: hidden;
+    row-gap: 24px;
+
+    .container3 {
+      display: flex;
+      flex-shrink: 0;
+      align-items: center;
+      align-self: stretch;
+      border-radius: 32px;
+      overflow: hidden;
+
+      .gradient {
+        position: relative;
+        width: 310px;
+        height: 310px;
+        overflow: hidden;
+        background-image: linear-gradient(0deg, #00000066 0%, #00000000 100%),
+          url(../image/mn84n7zg-iosj33v.png);
+        background-position: 0px 0px;
+        background-size: 100% 100%;
+        background-repeat: no-repeat;
+
+        .button {
+          display: flex;
+          position: absolute;
+          right: 24px;
+          bottom: 24px;
+          align-items: center;
+          border-radius: 9999px;
+          width: 64px;
+          height: 64px;
+          background-image: linear-gradient(135deg, #705860 0%, #cdafb8 100%);
+
+          .buttonShadow {
+            display: flex;
+            flex-grow: 1;
+            align-items: center;
+            border-radius: 9999px;
+            box-shadow: 0px 20px 25px -5px #0000001a,
+              0px 8px 10px -6px #0000001a;
+            background: #ffffff01;
+            padding: 22px 24px;
+
+            .container2 {
+              width: 17px;
+              height: 21px;
+            }
+          }
+        }
+      }
+    }
+
+    .container4 {
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      align-items: flex-start;
+      align-self: stretch;
+
+      .featuredTrack {
+        flex-shrink: 0;
+        align-self: stretch;
+        padding: 0px 0px 4px;
+        line-height: 16px;
+        letter-spacing: 1.2px;
+        color: #745185;
+        font-family: Manrope, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: UPPERCASE;
+      }
+
+      .celestialEchoes {
+        flex-shrink: 0;
+        align-self: stretch;
+        line-height: 36px;
+        letter-spacing: 0;
+        color: #1e1b1e;
+        font-family: "Plus Jakarta Sans", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+        font-size: 30px;
+        font-weight: 800;
+      }
+
+      .lumina {
+        flex-shrink: 0;
+        align-self: stretch;
+        line-height: 24px;
+        letter-spacing: 0;
+        color: #4c444d;
+        font-family: "Plus Jakarta Sans", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+        font-size: 16px;
+      }
+    }
+  }
+
+  .sectionReorganizedBe {
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    align-items: center;
+    align-self: stretch;
+    padding-bottom: 17px;
+
+    .autoWrapper {
+      display: flex;
+      align-items: center;
+      align-self: stretch;
+      justify-content: space-between;
+      padding-right: 0;
+      padding-left: 0;
+
+      .text {
+        display: flex;
+        flex-shrink: 0;
+        align-items: center;
+        width: 66px;
+        height: 24px;
+        line-height: 24px;
+        letter-spacing: 0.4px;
+        color: #4c444d;
+        font-family: "WenQuanYi Zen Hei", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+        font-size: 16px;
+        font-weight: 500;
+      }
+
+      .localMusicSmallCard {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: space-between;
+        border-radius: 48px;
+        background: #f9f1f7;
+        padding: 20px;
+        width: 171px;
+        min-width: 171px;
+        min-height: 140px;
+
+        .overlay {
+          flex-shrink: 0;
+          border-radius: 9999px;
+          width: 46px;
+          height: 40px;
+        }
+      }
+
+      .personalMusicSmallCa {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: space-between;
+        border-radius: 48px;
+        background: #f9f1f7;
+        padding: 20px;
+        width: 171px;
+        min-width: 171px;
+        min-height: 140px;
+
+        .overlay2 {
+          flex-shrink: 0;
+          border-radius: 9999px;
+          width: 40px;
+          height: 40px;
+        }
+      }
+    }
+
+    .myPlaylistsProminent {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      align-self: stretch;
+      justify-content: space-between;
+      margin-top: 16px;
+      border: 1px solid #ffffff33;
+      border-radius: 48px;
+      box-shadow: 0px 1px 2px 0px #0000000d;
+      background: #f9f1f7;
+      padding: 31px;
+      min-width: 358px;
+      min-height: 180px;
+
+      .overlay3 {
+        flex-shrink: 0;
+        border-radius: 9999px;
+        width: 56px;
+        height: 51px;
+      }
+
+      .paragraph {
+        display: inline-flex;
+        flex-direction: column;
+        flex-shrink: 0;
+        align-items: flex-start;
+        align-self: stretch;
+        margin-right: 88px;
+        padding-top: 16px;
+        row-gap: 5px;
+
+        .text2 {
+          display: flex;
+          flex-shrink: 0;
+          align-items: center;
+          width: 98px;
+          height: 32px;
+          line-height: 32px;
+          letter-spacing: 0.6px;
+          color: #4c444d;
+          font-family: "WenQuanYi Zen Hei", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+          font-size: 24px;
+          font-weight: 500;
+        }
+
+        .text3 {
+          display: flex;
+          flex-shrink: 0;
+          align-items: center;
+          opacity: 0.6;
+          width: 206px;
+          height: 20px;
+          line-height: 20px;
+          letter-spacing: 0;
+          color: #4c444d;
+          font-family: Manrope, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+          font-size: 14px;
+        }
+      }
+    }
+  }
+}

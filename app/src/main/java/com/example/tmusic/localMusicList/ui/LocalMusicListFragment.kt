@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.tmusic.MainActivity
 import com.example.tmusic.R
 import com.example.tmusic.base.BaseMviFragment
@@ -42,7 +43,7 @@ class LocalMusicListFragment : BaseMviFragment<LocalMusicState, LocalMusicIntent
         
         // Setup Toolbar
         binding.btnBack.setOnClickListener {
-            requireActivity().onBackPressed()
+            (activity as MainActivity).switchFragment(MainActivity.TAG_HOME)
         }
 
         binding.btnAdd.setOnClickListener {
@@ -68,7 +69,6 @@ class LocalMusicListFragment : BaseMviFragment<LocalMusicState, LocalMusicIntent
         Log.d("readMusic", "createViewBinding")
         return FragmentLocalMusicListBinding.inflate(inflater, container, false)
     }
-
 
    override fun handleUiState(state: LocalMusicState){
         if(state.isLoading) showDialog()
@@ -107,7 +107,7 @@ class LocalMusicListFragment : BaseMviFragment<LocalMusicState, LocalMusicIntent
     private fun initView(){
         val recyclerView = binding.musicList
         // 设置LayoutManager（关键步骤）
-        recyclerView.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(requireContext())
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
         adapter = LocalMusicListAdapter(ArrayList<MusicEntity>()) { list, index ->
             currentMusicList = list
             currentMusicIndex = index
