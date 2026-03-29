@@ -1,40 +1,46 @@
 package com.example.tmusic.study.ui
 
+import android.annotation.SuppressLint
 import android.app.Dialog
+import android.graphics.Color
+import android.icu.util.Calendar
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
-import android.view.WindowManager
 import android.widget.EditText
 import android.widget.ImageButton
-import android.widget.Toast
+import android.widget.TextView
+import androidx.core.graphics.toColor
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.example.tmusic.MainActivity
 import com.example.tmusic.R
+import com.example.tmusic.TAppliaction
 import com.example.tmusic.base.BaseFragment
 import com.example.tmusic.databinding.FragmentStudyBinding
 import com.example.tmusic.databinding.ItemStudyTaskBinding
-import com.example.tmusic.study.mvi.Plan
+import com.example.tmusic.study.data.PlanEntity
 import com.example.tmusic.study.mvi.StudyIntent
 import com.example.tmusic.study.mvi.StudyViewModel
 import kotlinx.coroutines.launch
 
 class StudyFragment : BaseFragment<FragmentStudyBinding>(FragmentStudyBinding::inflate) {
-    private val viewModel = StudyViewModel()
-    private var addPlanDialog: Dialog? = null
 
+    private var addPlanDialog: Dialog? = null
+    private lateinit var viewModel: StudyViewModel
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel = StudyViewModel(requireActivity().application)
         initView()
     }
 
     override fun initView() {
         updateUi()
+        viewModel.loadPlans()
         observeState()
-        updatePlansCount()
 
         binding.btnAddTask.setOnClickListener {
             showAddPlanDialog()
@@ -72,12 +78,16 @@ class StudyFragment : BaseFragment<FragmentStudyBinding>(FragmentStudyBinding::i
             btnConfirm.setOnClickListener {
                 val content = etPlanContent.text.toString().trim()
                 if (content.isBlank()) {
-                    //Toast.makeText(requireContext(), "请输入计划内容", Toast.LENGTH_SHORT).show()
                     (activity as MainActivity).showMessage("请输入计划内容")
                     return@setOnClickListener
                 }
-                sendIntent(StudyIntent.AddPlan(content))
-                updatePlansCount()
+
+                val plan = PlanEntity(
+                    content = content,
+                    isFinished = false,
+                    date = getDate()
+                )
+                sendIntent(StudyIntent.AddPlan(plan))
                 dismiss()
             }
             
@@ -87,6 +97,15 @@ class StudyFragment : BaseFragment<FragmentStudyBinding>(FragmentStudyBinding::i
             
             show()
         }
+    }
+
+    private fun getDate(): String{
+        val date = Calendar.getInstance()
+        val year = date.get(Calendar.YEAR)
+        val month = date.get(Calendar.MONTH) + 1
+        val day = date.get(Calendar.DAY_OF_MONTH)
+        val dateString = String.format("%04d-%02d-%02d", year,month,day)
+        return dateString
     }
 
     private fun updatePlansCount(){
@@ -113,6 +132,45 @@ class StudyFragment : BaseFragment<FragmentStudyBinding>(FragmentStudyBinding::i
         } else {
             binding.btnPlayMusic.setImageResource(R.drawable.icon_play_new)
         }
+        updateDateSelector()
+    }
+
+    private fun updateDateSelector() {
+        val calendar = Calendar.getInstance()
+        val today = calendar.get(Calendar.DAY_OF_MONTH)
+        val todayDayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
+        val mondayOffset = if (todayDayOfWeek == Calendar.SUNDAY) 6 else todayDayOfWeek - Calendar.MONDAY
+
+        calendar.firstDayOfWeek = Calendar.MONDAY
+        calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY)
+
+        val dateViews = listOf(
+            binding.dateMon,
+            binding.dateTue,
+            binding.dateWed,
+            binding.dateThu,
+            binding.dateFri,
+            binding.dateSat,
+            binding.dateSun
+        )
+
+        dateViews.forEachIndexed { index, dateView ->
+            val dayText = dateView.getChildAt(1) as? TextView //日期
+            val dayOfWeekText = dateView.getChildAt(0) as? TextView //星期几
+            val day = calendar.get(Calendar.DAY_OF_MONTH)
+            dayText?.text = day.toString()
+
+            if (index == mondayOffset) {
+                dateView.setBackgroundResource(R.drawable.bg_date_selector_selected)
+                dayOfWeekText?.setTextColor(0xFFFFFFFF.toInt())
+                dayText?.setTextColor(0xFFFFFFFF.toInt())
+            } else {
+                dateView.setBackgroundResource(R.drawable.bg_study_task_item)
+                dayOfWeekText?.setTextColor(0xFF888888.toInt())
+                dayText?.setTextColor(0xFF888888.toInt())
+            }
+            calendar.add(Calendar.DAY_OF_MONTH, 1)
+        }
     }
 
     override fun onHiddenChanged(hidden: Boolean) {
@@ -131,6 +189,7 @@ class StudyFragment : BaseFragment<FragmentStudyBinding>(FragmentStudyBinding::i
             viewModel.viewState.collect { state ->
                 renderTimer(state.remainSeconds, state.isWorking)
                 createPlans(state.plans)
+                binding.plansCount.text = "${state.plans.size} TASKS"
             }
         }
     }
@@ -146,7 +205,7 @@ class StudyFragment : BaseFragment<FragmentStudyBinding>(FragmentStudyBinding::i
 
     private fun formatTime(seconds: Int): String = String.format("%02d:%02d", seconds / 60, seconds % 60)
 
-    private fun createPlans(plans: List<Plan>) {
+    private fun createPlans(plans: List<PlanEntity>) {
         binding.tasksContainer.removeAllViews()
         plans.forEach { plan ->
             val itemBinding = ItemStudyTaskBinding.inflate(
@@ -158,6 +217,8 @@ class StudyFragment : BaseFragment<FragmentStudyBinding>(FragmentStudyBinding::i
             itemBinding.tvTaskName.text = plan.content
             if (plan.isFinished) {
                 itemBinding.ivTaskStatus.setImageResource(R.drawable.ic_study_check)
+                itemBinding.tvTaskName.setTextColor(0xFF999999.toInt())
+
             } else {
                 itemBinding.ivTaskStatus.setImageResource(R.drawable.ic_study_circle_outline)
             }

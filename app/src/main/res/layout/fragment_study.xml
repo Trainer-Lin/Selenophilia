@@ -292,12 +292,13 @@
                         android:layout_marginHorizontal="2dp"
                         android:gravity="center"
                         android:orientation="vertical"
-                        android:background="@drawable/bg_study_task_item">
+                        android:background="@drawable/bg_study_task_item"
+                        android:id="@+id/dateMon">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="M"
+                            android:text="一"
                             android:textColor="#888888"
                             android:textSize="9sp"
                             android:textStyle="bold" />
@@ -320,12 +321,14 @@
                         android:layout_marginHorizontal="2dp"
                         android:gravity="center"
                         android:orientation="vertical"
-                        android:background="@drawable/bg_date_selector_selected">
+                        android:background="@drawable/bg_date_selector_selected"
+                        android:id="@+id/dateTue">
 
                         <TextView
+
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="T"
+                            android:text="二"
                             android:textColor="#FFFFFF"
                             android:textSize="9sp"
                             android:textStyle="bold" />
@@ -348,12 +351,13 @@
                         android:layout_marginHorizontal="2dp"
                         android:gravity="center"
                         android:orientation="vertical"
-                        android:background="@drawable/bg_study_task_item">
+                        android:background="@drawable/bg_study_task_item"
+                        android:id="@+id/dateWed">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="W"
+                            android:text="三"
                             android:textColor="#888888"
                             android:textSize="9sp"
                             android:textStyle="bold" />
@@ -376,12 +380,13 @@
                         android:layout_marginHorizontal="2dp"
                         android:gravity="center"
                         android:orientation="vertical"
-                        android:background="@drawable/bg_study_task_item">
+                        android:background="@drawable/bg_study_task_item"
+                        android:id="@+id/dateThu">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="T"
+                            android:text="四"
                             android:textColor="#888888"
                             android:textSize="9sp"
                             android:textStyle="bold" />
@@ -404,12 +409,13 @@
                         android:layout_marginHorizontal="2dp"
                         android:gravity="center"
                         android:orientation="vertical"
-                        android:background="@drawable/bg_study_task_item">
+                        android:background="@drawable/bg_study_task_item"
+                        android:id="@+id/dateFri">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="F"
+                            android:text="五"
                             android:textColor="#888888"
                             android:textSize="9sp"
                             android:textStyle="bold" />
@@ -432,12 +438,13 @@
                         android:layout_marginHorizontal="2dp"
                         android:gravity="center"
                         android:orientation="vertical"
-                        android:background="@drawable/bg_study_task_item">
+                        android:background="@drawable/bg_study_task_item"
+                        android:id="@+id/dateSat">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="S"
+                            android:text="六"
                             android:textColor="#888888"
                             android:textSize="9sp"
                             android:textStyle="bold" />
@@ -460,12 +467,13 @@
                         android:layout_marginHorizontal="2dp"
                         android:gravity="center"
                         android:orientation="vertical"
-                        android:background="@drawable/bg_study_task_item">
+                        android:background="@drawable/bg_study_task_item"
+                        android:id="@+id/dateSun">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="S"
+                            android:text="日"
                             android:textColor="#888888"
                             android:textSize="9sp"
                             android:textStyle="bold" />

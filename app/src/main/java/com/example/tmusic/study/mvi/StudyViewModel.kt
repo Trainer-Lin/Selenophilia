@@ -1,19 +1,25 @@
 package com.example.tmusic.study.mvi
 
+import android.app.Application
+import android.icu.util.Calendar
 import androidx.lifecycle.viewModelScope
+import com.example.tmusic.TAppliaction
 import com.example.tmusic.base.BaseMviViewModel
+import com.example.tmusic.localMusicList.data.room.MusicDatabase
+import com.example.tmusic.study.data.PlanEntity
+import com.example.tmusic.study.data.room.PlanDatabase
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class StudyViewModel: BaseMviViewModel<StudyState, StudyIntent>() {
-
+class StudyViewModel(application: Application): BaseMviViewModel<StudyState, StudyIntent>() {
     private var timerJob: Job? = null //计时器任务
+    private val db = PlanDatabase.getInstance(application)
+    private val dao = db.planDao()
 
     override fun initState(): StudyState {
         return StudyState()
     }
-
     override fun handleIntent(intent: StudyIntent) {
         when(intent){
             is StudyIntent.StartPause -> {
@@ -24,7 +30,7 @@ class StudyViewModel: BaseMviViewModel<StudyState, StudyIntent>() {
                 resetTimer()
             }
             is StudyIntent.AddPlan -> {
-                addPlan(intent.content)
+                addPlan(intent.plan)
             }
             is StudyIntent.DeletePlan -> {
                 deletePlan(intent.planId)
@@ -35,34 +41,47 @@ class StudyViewModel: BaseMviViewModel<StudyState, StudyIntent>() {
         }
     }
 
-    private fun addPlan(content: String) {
-        val newId = viewState.value.plans.maxOfOrNull { it.id }?.plus(1) ?: 0
-        val newPlan = Plan(content = content, isFinished = false, id = newId)
-        updateState { oldState ->
-            oldState.copy(
-                plans = oldState.plans + newPlan,
-                plansCount = oldState.plansCount + 1
-            )
+    fun loadPlans(){
+        viewModelScope.launch{
+            val date = getDate()
+            val plans = dao.queryPlanByDate(date)
+            updateState{ oldState ->
+                oldState.copy(plans = plans)
+            }
+        }
+    }
+    private fun addPlan(plan: PlanEntity){
+        viewModelScope.launch {
+            dao.insertPlan(plan)
+            val date = plan.date
+            val plans = dao.queryPlanByDate(date)
+            updateState{ oldState ->
+                oldState.copy(plans = plans)
+            }
         }
     }
 
     private fun deletePlan(planId: Int) {
-        updateState { oldState ->
-            oldState.copy(
-                plans = oldState.plans.filter { it.id != planId }
-            )
+        viewModelScope.launch{
+            val plan = dao.queryPlanById(planId)
+            val date = plan.date  // 先获取 date
+            dao.deletePlan(planId)  // 再删除
+            val plans = dao.queryPlanByDate(date)  // 查询同一天的计划
+            updateState { oldState ->
+                oldState.copy(plans = plans)
+            }
         }
     }
 
     private fun togglePlanComplete(planId: Int) {
-        updateState { oldState ->
-            oldState.copy(
-                plans = oldState.plans.map { 
-                    if (it.id == planId) it.copy(isFinished = !it.isFinished)
-                    else it
-                }
-            )
-        }
+      viewModelScope.launch {
+          val plan = dao.queryPlanById(planId)
+          dao.updatePlan(planId, !plan.isFinished)
+          val plans = dao.queryPlanByDate(plan.date)
+          updateState{oldState ->
+              oldState.copy(plans = plans)
+          }
+      }
     }
 
     //启动计时器
@@ -116,6 +135,15 @@ class StudyViewModel: BaseMviViewModel<StudyState, StudyIntent>() {
                 )
             }
         }
+    }
+
+    private fun getDate(): String{
+        val date = Calendar.getInstance()
+        val year = date.get(Calendar.YEAR)
+        val month = date.get(Calendar.MONTH) + 1
+        val day = date.get(Calendar.DAY_OF_MONTH)
+        val dateString = String.format("%04d-%02d-%02d", year,month,day)
+        return dateString
     }
 
 
