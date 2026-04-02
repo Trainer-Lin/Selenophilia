@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import android.view.Window
 import android.widget.EditText
 import android.widget.ImageButton
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.graphics.toColor
 import androidx.lifecycle.lifecycleScope
@@ -38,8 +39,8 @@ class StudyFragment : BaseFragment<FragmentStudyBinding>(FragmentStudyBinding::i
     }
 
     override fun initView() {
-        updateUi()
         viewModel.loadPlans()
+        updateUi()
         observeState()
 
         binding.btnAddTask.setOnClickListener {
@@ -137,7 +138,6 @@ class StudyFragment : BaseFragment<FragmentStudyBinding>(FragmentStudyBinding::i
 
     private fun updateDateSelector() {
         val calendar = Calendar.getInstance()
-        val today = calendar.get(Calendar.DAY_OF_MONTH)
         val todayDayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
         val mondayOffset = if (todayDayOfWeek == Calendar.SUNDAY) 6 else todayDayOfWeek - Calendar.MONDAY
 
@@ -155,9 +155,13 @@ class StudyFragment : BaseFragment<FragmentStudyBinding>(FragmentStudyBinding::i
         )
 
         dateViews.forEachIndexed { index, dateView ->
-            val dayText = dateView.getChildAt(1) as? TextView //日期
-            val dayOfWeekText = dateView.getChildAt(0) as? TextView //星期几
+            val year = calendar.get(Calendar.YEAR)
+            val month = calendar.get(Calendar.MONTH) + 1
             val day = calendar.get(Calendar.DAY_OF_MONTH)
+            val dateString = String.format("%04d-%02d-%02d", year, month, day)
+
+            val dayText = dateView.getChildAt(1) as? TextView
+            val dayOfWeekText = dateView.getChildAt(0) as? TextView
             dayText?.text = day.toString()
 
             if (index == mondayOffset) {
@@ -169,7 +173,29 @@ class StudyFragment : BaseFragment<FragmentStudyBinding>(FragmentStudyBinding::i
                 dayOfWeekText?.setTextColor(0xFF888888.toInt())
                 dayText?.setTextColor(0xFF888888.toInt())
             }
+
+            dateView.setOnClickListener {
+                viewModel.loadPlansByDate(dateString)
+                updateDateSelectorStyle(index, dateViews)
+            }
+
             calendar.add(Calendar.DAY_OF_MONTH, 1)
+        }
+    }
+
+    private fun updateDateSelectorStyle(selectedIndex: Int, dateViews: List<LinearLayout>) {
+        dateViews.forEachIndexed { index, dateView ->
+            val dayText = dateView.getChildAt(1) as? TextView
+            val dayOfWeekText = dateView.getChildAt(0) as? TextView
+            if (index == selectedIndex) {
+                dateView.setBackgroundResource(R.drawable.bg_date_selector_selected)
+                dayOfWeekText?.setTextColor(0xFFFFFFFF.toInt())
+                dayText?.setTextColor(0xFFFFFFFF.toInt())
+            } else {
+                dateView.setBackgroundResource(R.drawable.bg_study_task_item)
+                dayOfWeekText?.setTextColor(0xFF888888.toInt())
+                dayText?.setTextColor(0xFF888888.toInt())
+            }
         }
     }
 

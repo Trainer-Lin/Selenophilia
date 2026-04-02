@@ -18,58 +18,146 @@
             android:id="@+id/tvHeaderTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="8dp"
             android:text="Selenophilia"
             android:textColor="#1E1B1E"
             android:textSize="24sp"
-            android:fontFamily="sans-serif-black"
+            android:fontFamily="@font/font_siyuan_bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-<!--        <TextView-->
-<!--            android:id="@+id/tvHeaderSubtitle"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginTop="4dp"-->
-<!--            android:text="Welcome back, Lumina User."-->
-<!--            android:textColor="#4C444D"-->
-<!--            android:textSize="16sp"-->
-<!--            android:textStyle="bold"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintTop_toBottomOf="@id/tvHeaderTitle" />-->
+        <!--        <TextView-->
+        <!--            android:id="@+id/tvHeaderSubtitle"-->
+        <!--            android:layout_width="wrap_content"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:layout_marginTop="4dp"-->
+        <!--            android:text="Welcome back, Lumina User."-->
+        <!--            android:textColor="#4C444D"-->
+        <!--            android:textSize="16sp"-->
+        <!--            android:textStyle="bold"-->
+        <!--            app:layout_constraintStart_toStartOf="parent"-->
+        <!--            app:layout_constraintTop_toBottomOf="@id/tvHeaderTitle" />-->
 
-        <!-- Music Card (Re-styled) -->
+        <!-- Top Row: Local Music & Personal Music (Slimmer) -->
+        <LinearLayout
+            android:id="@+id/quickActions"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:orientation="horizontal"
+            android:baselineAligned="false"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/musicCard">
+
+            <!-- Local Music Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/localMusic"
+                android:layout_width="0dp"
+                android:layout_height="64dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"
+                app:cardBackgroundColor="#FFF0F5"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="12dp"
+                    android:gravity="center_vertical|start">
+
+                    <ImageView
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:background="@drawable/bg_home_icon_circle"
+                        android:padding="9dp"
+                        android:src="@drawable/ic_home_folder" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:text="本地音乐"
+                        android:textColor="#4C444D"
+                        android:textSize="16sp"
+                        android:fontFamily="@font/font_gengsha_semibold" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Personal Music Card (Uses myMusic ID) -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/myMusic"
+                android:layout_width="0dp"
+                android:layout_height="64dp"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                app:cardBackgroundColor="#F5F0FF"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="12dp"
+                    android:gravity="center_vertical|start">
+
+                    <ImageView
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:background="@drawable/bg_home_icon_circle"
+                        android:padding="9dp"
+                        android:src="@drawable/ic_home_person" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:fontFamily="@font/font_gengsha_semibold"
+                        android:text="个人音乐"
+                        android:textColor="#4C444D"
+                        android:textSize="16sp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+
+        <!-- Music Card (Re-styled) - Larger -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/musicCard"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginTop="90dp"
+            android:layout_marginBottom="60dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="12dp"
             app:cardBackgroundColor="#efdfed"
-            app:cardCornerRadius="56dp"
+            app:cardCornerRadius="28dp"
             app:cardElevation="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvHeaderTitle">
+            app:layout_constraintTop_toBottomOf="@id/tvHeaderTitle"
+            app:layout_constraintVertical_bias="0.5">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="horizontal"
                 android:padding="20dp">
 
-                <!-- Album Cover Area (Placeholder for image) -->
+                <!-- Left: Album Cover - Larger -->
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/albumCoverContainer"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    app:layout_constraintDimensionRatio="1:1"
-                    app:cardCornerRadius="40dp"
-                    app:cardElevation="0dp"
+                    android:layout_width="110dp"
+                    android:layout_height="110dp"
                     app:cardBackgroundColor="#000000"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent">
+                    app:cardCornerRadius="20dp"
+                    app:cardElevation="0dp">
 
                     <ImageView
                         android:id="@+id/albumCover"
@@ -78,89 +166,133 @@
                         android:scaleType="centerCrop"
                         android:src="@drawable/bg_moon_new" />
 
-                    <!-- Play/Pause Button overlayed on album cover -->
-                    <com.google.android.material.card.MaterialCardView
-                        android:layout_width="52dp"
-                        android:layout_height="52dp"
-                        android:layout_gravity="bottom|end"
-                        android:layout_margin="20dp"
-                        app:cardBackgroundColor="#CDAFB8"
-                        app:cardCornerRadius="26dp"
-                        app:cardElevation="4dp">
-
-                        <androidx.appcompat.widget.AppCompatImageButton
-                            android:id="@+id/playPauseBtn"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:background="@android:color/transparent"
-                            android:padding="14dp"
-                            android:scaleType="centerInside"
-                            android:src="@drawable/icon_play_new"
-                            android:contentDescription="@string/app_name"
-                            app:tint="#FFFFFF" />
-                    </com.google.android.material.card.MaterialCardView>
-
                 </com.google.android.material.card.MaterialCardView>
 
-                <!-- Track Info -->
-                <TextView
-                    android:id="@+id/tvFeaturedTrack"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
-                    android:text="FEATURED TRACK"
-                    android:textColor="#745185"
-                    android:textSize="12sp"
-                    android:textStyle="bold"
-                    android:letterSpacing="0.1"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/albumCoverContainer" />
-
-                <TextView
-                    android:id="@+id/songTitle"
+                <!-- Right: Info and Controls -->
+                <LinearLayout
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="暂无歌曲播放哦"
-                    android:textColor="#1E1B1E"
-                    android:textSize="28sp"
-                    android:fontFamily="@font/font_one"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/tvFeaturedTrack" />
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="16dp"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/artistName"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="未知艺术家"
-                    android:textColor="#4C444D"
-                    android:textSize="16sp"
+                    <!-- Top: Track Info / Lyrics -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:orientation="vertical">
 
-                    android:fontFamily="@font/font_one"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/songTitle" />
+                        <TextView
+                            android:id="@+id/tvFeaturedTrack"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:letterSpacing="0.1"
+                            android:text="FEATURED TRACK"
+                            android:textColor="#745185"
+                            android:textSize="11sp"
+                            android:textStyle="bold" />
 
-                <!-- Hidden controls to keep logic intact without changing IDs -->
-                <ImageButton
-                    android:id="@+id/prevBtn"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:visibility="gone"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                        <TextView
+                            android:id="@+id/songTitle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:ellipsize="end"
+                            android:fontFamily="@font/font_one"
+                            android:maxLines="1"
+                            android:text="暂无歌曲播放哦"
+                            android:textColor="#1E1B1E"
+                            android:textSize="22sp" />
 
-                <ImageButton
-                    android:id="@+id/nextBtn"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:visibility="gone"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                        <TextView
+                            android:id="@+id/artistName"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:ellipsize="end"
+                            android:fontFamily="@font/font_one"
+                            android:maxLines="1"
+                            android:text="未知艺术家"
+                            android:textColor="#4C444D"
+                            android:textSize="16sp" />
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                        <!-- Lyrics Preview -->
+                        <!-- <TextView
+                            android:id="@+id/tvLyricsPreview"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:alpha="0.8"
+                            android:ellipsize="end"
+                            android:maxLines="1"
+                            android:text="点击播放音乐..."
+                            android:textColor="#745185"
+                            android:textSize="13sp" /> -->
+
+                    </LinearLayout>
+
+                    <!-- Bottom: Playback Controls -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <!-- Previous Button -->
+                        <ImageButton
+                            android:id="@+id/prevBtn"
+                            android:layout_width="44dp"
+                            android:layout_height="44dp"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:contentDescription="上一曲"
+                            android:padding="10dp"
+                            android:scaleType="centerInside"
+                            android:src="@drawable/ic_skip_previous"
+                            app:tint="#745185" />
+
+                        <!-- Play/Pause Button -->
+                        <com.google.android.material.card.MaterialCardView
+                            android:layout_width="52dp"
+                            android:layout_height="52dp"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginEnd="10dp"
+                            app:cardBackgroundColor="#CDAFB8"
+                            app:cardCornerRadius="26dp"
+                            app:cardElevation="2dp">
+
+                            <androidx.appcompat.widget.AppCompatImageButton
+                                android:id="@+id/playPauseBtn"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:background="@android:color/transparent"
+                                android:contentDescription="@string/app_name"
+                                android:padding="14dp"
+                                android:scaleType="centerInside"
+                                android:src="@drawable/icon_play_new"
+                                app:tint="#FFFFFF" />
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <!-- Next Button -->
+                        <ImageButton
+                            android:id="@+id/nextBtn"
+                            android:layout_width="44dp"
+                            android:layout_height="44dp"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:contentDescription="下一曲"
+                            android:padding="10dp"
+                            android:scaleType="centerInside"
+                            android:src="@drawable/ic_skip_next"
+                            app:tint="#745185" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
         <!-- Bottom Actions Area -->
@@ -168,149 +300,86 @@
             android:id="@+id/mainActions"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
             android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/musicCard"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/quickActions"
             app:layout_constraintVertical_bias="0.0">
 
-            <!-- Top Row: Local Music & Personal Music -->
+            <!-- My Playlist Section -->
             <LinearLayout
+                android:id="@+id/myPlaylistCard"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:baselineAligned="false">
-
-                <!-- Local Music Card -->
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/localMusic"
-                    android:layout_width="0dp"
-                    android:layout_height="96dp"
-                    android:layout_weight="1"
-                    android:layout_marginEnd="8dp"
-                    app:cardBackgroundColor="#FFF0F5"
-                    app:cardCornerRadius="32dp"
-                    app:cardElevation="2dp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="horizontal"
-                        android:paddingStart="24dp"
-                        android:paddingEnd="16dp"
-                        android:gravity="center_vertical|start">
-
-                        <ImageView
-                            android:layout_width="48dp"
-                            android:layout_height="48dp"
-                            android:background="@drawable/bg_home_icon_circle"
-                            android:padding="12dp"
-                            android:src="@drawable/ic_home_folder" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="16dp"
-                            android:text="本地音乐"
-                            android:textColor="#4C444D"
-                            android:textSize="20sp"
-                            android:fontFamily="@font/font_one" />
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
-
-                <!-- Personal Music Card (Uses myMusic ID) -->
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/myMusic"
-                    android:layout_width="0dp"
-                    android:layout_height="96dp"
-                    android:layout_weight="1"
-                    android:layout_marginStart="8dp"
-                    app:cardBackgroundColor="#F5F0FF"
-                    app:cardCornerRadius="32dp"
-                    app:cardElevation="2dp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="horizontal"
-                        android:paddingStart="24dp"
-                        android:paddingEnd="16dp"
-                        android:gravity="center_vertical|start">
-
-                        <ImageView
-                            android:layout_width="48dp"
-                            android:layout_height="48dp"
-                            android:background="@drawable/bg_home_icon_circle"
-                            android:padding="12dp"
-                            android:src="@drawable/ic_home_person" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="16dp"
-                            android:text="个人音乐"
-                            android:textColor="#4C444D"
-                            android:textSize="20sp"
-                            android:fontFamily="@font/font_one" />
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
-            </LinearLayout>
-
-            <!-- Bottom Row: My Playlist -->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/myPlaylist"
-                android:layout_width="match_parent"
-                android:layout_height="120dp"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="16dp"
                 android:layout_marginBottom="40dp"
-                app:cardBackgroundColor="#F0F5FF"
-                app:cardCornerRadius="32dp"
-                app:cardElevation="2dp">
+                android:orientation="vertical"
+                android:elevation="8dp">
 
+                <!-- Header Row: Title + View All + Add Button -->
+
+                <!-- Playlist Items Container -->
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:padding="24dp"
-                    android:gravity="center_vertical|start">
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="24dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
 
-                    <ImageView
-                        android:layout_width="72dp"
-                        android:layout_height="72dp"
-                        android:background="@drawable/bg_home_icon_circle"
-                        android:padding="16dp"
-                        android:src="@drawable/ic_home_playlist" />
-
-                    <LinearLayout
+                    <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="24dp"
-                        android:orientation="vertical">
+                        android:fontFamily="@font/font_gengsha_bold"
+                        android:text="我的歌单"
+                        android:textColor="#1E1B1E"
+                        android:textSize="22sp" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+
+                    <!-- Add Playlist Button -->
+                    <LinearLayout
+                        android:id="@+id/btnAddPlaylist"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_capsule_pink"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="12dp"
+                        android:paddingVertical="6dp">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:contentDescription="添加歌单"
+                            android:scaleType="centerInside"
+                            android:src="@drawable/ic_add_playlist" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:fontFamily="@font/font_one"
-                            android:text="我的歌单"
-                            android:textColor="#4C444D"
-                            android:textSize="26sp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="6dp"
-                            android:text="Enjoy your music"
-                            android:textColor="#4C444D"
-                            android:alpha="0.6"
-                            android:textStyle="bold"
-                            android:textSize="15sp" />
+                            android:layout_marginStart="6dp"
+                            android:fontFamily="@font/font_gengsha_semibold"
+                            android:text="添加歌单"
+                            android:textColor="#7853A8"
+                            android:textSize="10sp"
+                            android:textStyle="bold" />
                     </LinearLayout>
                 </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
+
+                <LinearLayout
+                    android:id="@+id/playlistItemsContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <!-- Playlist items will be added dynamically here -->
+                </LinearLayout>
+            </LinearLayout>
 
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>

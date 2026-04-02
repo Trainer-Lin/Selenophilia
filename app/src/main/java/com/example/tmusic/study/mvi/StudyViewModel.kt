@@ -50,6 +50,15 @@ class StudyViewModel(application: Application): BaseMviViewModel<StudyState, Stu
             }
         }
     }
+
+    fun loadPlansByDate(date: String) {
+        viewModelScope.launch {
+            val plans = dao.queryPlanByDate(date)
+            updateState { oldState ->
+                oldState.copy(plans = plans)
+            }
+        }
+    }
     private fun addPlan(plan: PlanEntity){
         viewModelScope.launch {
             dao.insertPlan(plan)
