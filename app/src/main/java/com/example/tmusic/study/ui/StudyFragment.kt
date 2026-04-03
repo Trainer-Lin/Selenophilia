@@ -1,11 +1,8 @@
 package com.example.tmusic.study.ui
 
-import android.annotation.SuppressLint
 import android.app.Dialog
-import android.graphics.Color
 import android.icu.util.Calendar
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,12 +11,10 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.core.graphics.toColor
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.example.tmusic.MainActivity
 import com.example.tmusic.R
-import com.example.tmusic.TAppliaction
 import com.example.tmusic.base.BaseFragment
 import com.example.tmusic.databinding.FragmentStudyBinding
 import com.example.tmusic.databinding.ItemStudyTaskBinding
@@ -43,15 +38,9 @@ class StudyFragment : BaseFragment<FragmentStudyBinding>(FragmentStudyBinding::i
         updateUi()
         observeState()
 
-        binding.btnAddTask.setOnClickListener {
-            showAddPlanDialog()
-        }
-        binding.btnStartPause.setOnClickListener {
-            sendIntent(StudyIntent.StartPause)
-        }
-        binding.btnRestart.setOnClickListener {
-            sendIntent(StudyIntent.Restart)
-        }
+        binding.btnAddTask.setOnClickListener { showAddPlanDialog() }
+        binding.btnStartPause.setOnClickListener { sendIntent(StudyIntent.StartPause) }
+        binding.btnRestart.setOnClickListener { sendIntent(StudyIntent.Restart) }
         binding.btnPlayMusic.setOnClickListener {
             val host = activity as MainActivity
             host.playOrPause(host.currentMusicList, host.currentIndex)
@@ -61,66 +50,63 @@ class StudyFragment : BaseFragment<FragmentStudyBinding>(FragmentStudyBinding::i
 
     private fun showAddPlanDialog() {
         if (addPlanDialog?.isShowing == true) return
-        
-        addPlanDialog = Dialog(requireContext()).apply {
-            requestWindowFeature(Window.FEATURE_NO_TITLE)
-            setContentView(R.layout.dialog_add_plan)
-            
-            window?.apply {
-                setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-                setBackgroundDrawableResource(android.R.color.transparent)
-                setGravity(android.view.Gravity.BOTTOM)
-            }
-            
-            val etPlanContent = findViewById<EditText>(R.id.etPlanContent)
-            val btnConfirm = findViewById<ImageButton>(R.id.btnConfirm)
-            val btnClose = findViewById<ImageButton>(R.id.btnClose)
-            
-            btnConfirm.setOnClickListener {
-                val content = etPlanContent.text.toString().trim()
-                if (content.isBlank()) {
-                    (activity as MainActivity).showMessage("请输入计划内容")
-                    return@setOnClickListener
-                }
 
-                val plan = PlanEntity(
-                    content = content,
-                    isFinished = false,
-                    date = getDate()
-                )
-                sendIntent(StudyIntent.AddPlan(plan))
-                dismiss()
-            }
-            
-            btnClose.setOnClickListener {
-                dismiss()
-            }
-            
-            show()
-        }
+        addPlanDialog =
+                Dialog(requireContext()).apply {
+                    requestWindowFeature(Window.FEATURE_NO_TITLE)
+                    setContentView(R.layout.dialog_add_plan)
+
+                    window?.apply {
+                        setLayout(
+                                ViewGroup.LayoutParams.MATCH_PARENT,
+                                ViewGroup.LayoutParams.WRAP_CONTENT
+                        )
+                        setBackgroundDrawableResource(android.R.color.transparent)
+                        setGravity(android.view.Gravity.BOTTOM)
+                    }
+
+                    val etPlanContent = findViewById<EditText>(R.id.etPlanContent)
+                    val btnConfirm = findViewById<ImageButton>(R.id.btnConfirm)
+                    val btnClose = findViewById<ImageButton>(R.id.btnClose)
+
+                    btnConfirm.setOnClickListener {
+                        val content = etPlanContent.text.toString().trim()
+                        if (content.isBlank()) {
+                            (activity as MainActivity).showMessage("请输入计划内容")
+                            return@setOnClickListener
+                        }
+
+                        val plan =
+                                PlanEntity(content = content, isFinished = false, date = getDate())
+                        sendIntent(StudyIntent.AddPlan(plan))
+                        dismiss()
+                    }
+
+                    btnClose.setOnClickListener { dismiss() }
+
+                    show()
+                }
     }
 
-    private fun getDate(): String{
+    private fun getDate(): String {
         val date = Calendar.getInstance()
         val year = date.get(Calendar.YEAR)
         val month = date.get(Calendar.MONTH) + 1
         val day = date.get(Calendar.DAY_OF_MONTH)
-        val dateString = String.format("%04d-%02d-%02d", year,month,day)
+        val dateString = String.format("%04d-%02d-%02d", year, month, day)
         return dateString
     }
 
-    private fun updatePlansCount(){
+    private fun updatePlansCount() {
         binding.plansCount.text = "${viewModel.viewState.value.plans.size} TASKS"
     }
-    private fun updateUi(){
+    private fun updateUi() {
         val host = activity as MainActivity
         host.updateSongInfo()
 
         val cover = host.albumCover
         if (cover != null) {
-            Glide.with(this)
-                .load(cover)
-                .into(binding.ivAlbumCover)
+            Glide.with(this).load(cover).into(binding.ivAlbumCover)
         } else {
             binding.ivAlbumCover.setImageResource(R.drawable.ic_launcher_foreground)
         }
@@ -139,20 +125,22 @@ class StudyFragment : BaseFragment<FragmentStudyBinding>(FragmentStudyBinding::i
     private fun updateDateSelector() {
         val calendar = Calendar.getInstance()
         val todayDayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
-        val mondayOffset = if (todayDayOfWeek == Calendar.SUNDAY) 6 else todayDayOfWeek - Calendar.MONDAY
+        val mondayOffset =
+                if (todayDayOfWeek == Calendar.SUNDAY) 6 else todayDayOfWeek - Calendar.MONDAY
 
         calendar.firstDayOfWeek = Calendar.MONDAY
         calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY)
 
-        val dateViews = listOf(
-            binding.dateMon,
-            binding.dateTue,
-            binding.dateWed,
-            binding.dateThu,
-            binding.dateFri,
-            binding.dateSat,
-            binding.dateSun
-        )
+        val dateViews =
+                listOf(
+                        binding.dateMon,
+                        binding.dateTue,
+                        binding.dateWed,
+                        binding.dateThu,
+                        binding.dateFri,
+                        binding.dateSat,
+                        binding.dateSun
+                )
 
         dateViews.forEachIndexed { index, dateView ->
             val year = calendar.get(Calendar.YEAR)
@@ -209,7 +197,7 @@ class StudyFragment : BaseFragment<FragmentStudyBinding>(FragmentStudyBinding::i
     private fun sendIntent(intent: StudyIntent) {
         viewModel.handleIntent(intent)
     }
-    
+
     private fun observeState() {
         lifecycleScope.launch {
             viewModel.viewState.collect { state ->
@@ -233,32 +221,35 @@ class StudyFragment : BaseFragment<FragmentStudyBinding>(FragmentStudyBinding::i
 
     private fun createPlans(plans: List<PlanEntity>) {
         binding.tasksContainer.removeAllViews()
-        plans.forEach { plan ->
-            val itemBinding = ItemStudyTaskBinding.inflate(
-                LayoutInflater.from(requireContext()),
-                binding.tasksContainer,
-                false
-            )
-            
-            itemBinding.tvTaskName.text = plan.content
-            if (plan.isFinished) {
-                itemBinding.ivTaskStatus.setImageResource(R.drawable.ic_study_check)
-                itemBinding.tvTaskName.setTextColor(0xFF999999.toInt())
+        if (plans.isEmpty()) {
+            binding.tvNoPlans.visibility = View.VISIBLE
+        } else {
+            binding.tvNoPlans.visibility = View.GONE
+            plans.forEach { plan ->
+                val itemBinding =
+                        ItemStudyTaskBinding.inflate(
+                                LayoutInflater.from(requireContext()),
+                                binding.tasksContainer,
+                                false
+                        )
 
-            } else {
-                itemBinding.ivTaskStatus.setImageResource(R.drawable.ic_study_circle_outline)
+                itemBinding.tvTaskName.text = plan.content
+                if (plan.isFinished) {
+                    itemBinding.ivTaskStatus.setImageResource(R.drawable.ic_study_check)
+                    itemBinding.tvTaskName.setTextColor(0xFF999999.toInt())
+                } else {
+                    itemBinding.ivTaskStatus.setImageResource(R.drawable.ic_study_circle_outline)
+                }
+
+                itemBinding.ivTaskStatus.setOnClickListener {
+                    sendIntent(StudyIntent.TogglePlanComplete(plan.id))
+                }
+
+                itemBinding.ivTaskDelete.setOnClickListener {
+                    sendIntent(StudyIntent.DeletePlan(plan.id))
+                }
+                binding.tasksContainer.addView(itemBinding.root)
             }
-            
-            itemBinding.ivTaskStatus.setOnClickListener {
-                sendIntent(StudyIntent.TogglePlanComplete(plan.id))
-            }
-            
-            itemBinding.ivTaskDelete.setOnClickListener {
-                sendIntent(StudyIntent.DeletePlan(plan.id))
-            }
-            binding.tasksContainer.addView(itemBinding.root)
         }
     }
-
-
 }

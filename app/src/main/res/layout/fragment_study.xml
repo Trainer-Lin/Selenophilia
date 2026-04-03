@@ -490,18 +490,23 @@
 
                 </LinearLayout>
 
-                <!-- Tasks Container -->
+                <!-- tasks Container -->
                 <LinearLayout
                     android:id="@+id/tasksContainer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:orientation="vertical" />
 
-                    <include layout="@layout/item_study_task" />
-                    <include layout="@layout/item_study_task" />
-                    <include layout="@layout/item_study_task" />
-
-                </LinearLayout>
+                <!-- Empty State -->
+                <TextView
+                    android:id="@+id/tvNoPlans"
+                    android:layout_width="match_parent"
+                    android:layout_height="80dp"
+                    android:gravity="center"
+                    android:text="暂无计划"
+                    android:textColor="#999999"
+                    android:textSize="18sp"
+                    android:visibility="gone" />
 
                 <!-- Add Task Button -->
                 <TextView

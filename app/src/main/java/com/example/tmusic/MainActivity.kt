@@ -24,7 +24,7 @@ import androidx.media3.common.util.UnstableApi
 import com.bumptech.glide.Glide
 import com.example.tmusic.base.FullScreenActivity
 import com.example.tmusic.databinding.ActivityMainBinding
-import com.example.tmusic.home.HomeFragment
+import com.example.tmusic.home.ui.HomeFragment
 import com.example.tmusic.localMusicList.data.room.MusicEntity
 import com.example.tmusic.localMusicList.ui.LocalMusicListFragment
 import com.example.tmusic.service.PlayMusicService

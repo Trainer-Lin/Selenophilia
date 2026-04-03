@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:fillViewport="true"
     android:background="@drawable/bg_main_gradient"
-    tools:context=".home.HomeFragment">
+    tools:context=".home.ui.HomeFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -38,110 +38,71 @@
         <!--            app:layout_constraintStart_toStartOf="parent"-->
         <!--            app:layout_constraintTop_toBottomOf="@id/tvHeaderTitle" />-->
 
-        <!-- Top Row: Local Music & Personal Music (Slimmer) -->
-        <LinearLayout
-            android:id="@+id/quickActions"
-            android:layout_width="0dp"
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id ="@+id/greeting"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:orientation="horizontal"
-            android:baselineAligned="false"
+            android:layout_marginTop="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/musicCard">
+            app:layout_constraintTop_toBottomOf="@id/tvHeaderTitle">
 
-            <!-- Local Music Card -->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/localMusic"
-                android:layout_width="0dp"
-                android:layout_height="64dp"
-                android:layout_weight="1"
-                android:layout_marginEnd="8dp"
-                app:cardBackgroundColor="#FFF0F5"
-                app:cardCornerRadius="20dp"
-                app:cardElevation="2dp">
+            <TextView
+                android:id="@+id/tvGreetingGood"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Good"
+                android:textColor="#4C444D"
+                android:textSize="20sp"
+                android:fontFamily="@font/font_iansui"
+                app:layout_constraintEnd_toStartOf="@id/tvGreetingTime"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:paddingStart="16dp"
-                    android:paddingEnd="12dp"
-                    android:gravity="center_vertical|start">
+            <TextView
+                android:id="@+id/tvGreetingTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/font_iansui"
+                android:text=" Morning"
+                android:textColor="#4C444D"
+                android:textSize="20sp"
+                app:layout_constraintEnd_toStartOf="@id/tvGreetingEmoji"
+                app:layout_constraintStart_toEndOf="@id/tvGreetingGood"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
 
-                    <ImageView
-                        android:layout_width="36dp"
-                        android:layout_height="36dp"
-                        android:background="@drawable/bg_home_icon_circle"
-                        android:padding="9dp"
-                        android:src="@drawable/ic_home_folder" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="12dp"
-                        android:text="本地音乐"
-                        android:textColor="#4C444D"
-                        android:textSize="16sp"
-                        android:fontFamily="@font/font_gengsha_semibold" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- Personal Music Card (Uses myMusic ID) -->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/myMusic"
-                android:layout_width="0dp"
-                android:layout_height="64dp"
-                android:layout_weight="1"
+            <TextView
+                android:id="@+id/tvGreetingEmoji"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🌙"
+                android:textSize="20sp"
                 android:layout_marginStart="8dp"
-                app:cardBackgroundColor="#F5F0FF"
-                app:cardCornerRadius="20dp"
-                app:cardElevation="2dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:paddingStart="16dp"
-                    android:paddingEnd="12dp"
-                    android:gravity="center_vertical|start">
-
-                    <ImageView
-                        android:layout_width="36dp"
-                        android:layout_height="36dp"
-                        android:background="@drawable/bg_home_icon_circle"
-                        android:padding="9dp"
-                        android:src="@drawable/ic_home_person" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="12dp"
-                        android:fontFamily="@font/font_gengsha_semibold"
-                        android:text="个人音乐"
-                        android:textColor="#4C444D"
-                        android:textSize="16sp" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-        </LinearLayout>
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/tvGreetingTime"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <!-- Music Card (Re-styled) - Larger -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/musicCard"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="90dp"
+            android:layout_marginTop="30dp"
             android:layout_marginBottom="60dp"
-            android:layout_marginStart="12dp"
-            android:layout_marginEnd="12dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
             app:cardBackgroundColor="#efdfed"
             app:cardCornerRadius="28dp"
             app:cardElevation="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvHeaderTitle"
+            app:layout_constraintTop_toBottomOf="@id/greeting"
             app:layout_constraintVertical_bias="0.5">
 
             <LinearLayout
@@ -294,6 +255,94 @@
 
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
+
+        <LinearLayout
+            android:id="@+id/quickActions"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
+            android:orientation="horizontal"
+            android:baselineAligned="false"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/musicCard">
+
+            <!-- Local Music Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/localMusic"
+                android:layout_width="0dp"
+                android:layout_height="64dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"
+                app:cardBackgroundColor="#FFF0F5"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="12dp"
+                    android:gravity="center_vertical|start">
+
+                    <ImageView
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:background="@drawable/bg_home_icon_circle"
+                        android:padding="9dp"
+                        android:src="@drawable/ic_home_folder" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:text="本地音乐"
+                        android:textColor="#4C444D"
+                        android:textSize="16sp"
+                        android:fontFamily="@font/font_gengsha_semibold" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Personal Music Card (Uses myMusic ID) -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/myMusic"
+                android:layout_width="0dp"
+                android:layout_height="64dp"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                app:cardBackgroundColor="#F5F0FF"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="12dp"
+                    android:gravity="center_vertical|start">
+
+                    <ImageView
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:background="@drawable/bg_home_icon_circle"
+                        android:padding="9dp"
+                        android:src="@drawable/ic_home_person" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:fontFamily="@font/font_gengsha_semibold"
+                        android:text="个人音乐"
+                        android:textColor="#4C444D"
+                        android:textSize="16sp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
 
         <!-- Bottom Actions Area -->
         <LinearLayout

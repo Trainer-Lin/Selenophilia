@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
@@ -40,7 +41,16 @@ class LocalMusicListFragment : BaseMviFragment<LocalMusicState, LocalMusicIntent
         super.onViewCreated(view, savedInstanceState)
         viewModel = LocalMusicViewModel(repository)
         initView()
-        
+
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    (activity as MainActivity).switchFragment(MainActivity.TAG_HOME)
+                }
+            }
+        )
+
         // Setup Toolbar
         binding.btnBack.setOnClickListener {
             (activity as MainActivity).switchFragment(MainActivity.TAG_HOME)
@@ -127,5 +137,6 @@ class LocalMusicListFragment : BaseMviFragment<LocalMusicState, LocalMusicIntent
         if (currentMusicList.isEmpty()) return 0
         return currentMusicIndex.coerceIn(0, currentMusicList.lastIndex)
     }
+    
 
 }
