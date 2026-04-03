@@ -1,14 +1,9 @@
 package com.example.tmusic.study.ui
 
-import android.app.Dialog
 import android.icu.util.Calendar
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import android.view.Window
-import android.widget.EditText
-import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
@@ -21,11 +16,11 @@ import com.example.tmusic.databinding.ItemStudyTaskBinding
 import com.example.tmusic.study.data.PlanEntity
 import com.example.tmusic.study.mvi.StudyIntent
 import com.example.tmusic.study.mvi.StudyViewModel
+import com.example.tmusic.widget.AddPlanDialog
 import kotlinx.coroutines.launch
 
 class StudyFragment : BaseFragment<FragmentStudyBinding>(FragmentStudyBinding::inflate) {
 
-    private var addPlanDialog: Dialog? = null
     private lateinit var viewModel: StudyViewModel
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -49,43 +44,11 @@ class StudyFragment : BaseFragment<FragmentStudyBinding>(FragmentStudyBinding::i
     }
 
     private fun showAddPlanDialog() {
-        if (addPlanDialog?.isShowing == true) return
-
-        addPlanDialog =
-                Dialog(requireContext()).apply {
-                    requestWindowFeature(Window.FEATURE_NO_TITLE)
-                    setContentView(R.layout.dialog_add_plan)
-
-                    window?.apply {
-                        setLayout(
-                                ViewGroup.LayoutParams.MATCH_PARENT,
-                                ViewGroup.LayoutParams.WRAP_CONTENT
-                        )
-                        setBackgroundDrawableResource(android.R.color.transparent)
-                        setGravity(android.view.Gravity.BOTTOM)
-                    }
-
-                    val etPlanContent = findViewById<EditText>(R.id.etPlanContent)
-                    val btnConfirm = findViewById<ImageButton>(R.id.btnConfirm)
-                    val btnClose = findViewById<ImageButton>(R.id.btnClose)
-
-                    btnConfirm.setOnClickListener {
-                        val content = etPlanContent.text.toString().trim()
-                        if (content.isBlank()) {
-                            (activity as MainActivity).showMessage("请输入计划内容")
-                            return@setOnClickListener
-                        }
-
-                        val plan =
-                                PlanEntity(content = content, isFinished = false, date = getDate())
-                        sendIntent(StudyIntent.AddPlan(plan))
-                        dismiss()
-                    }
-
-                    btnClose.setOnClickListener { dismiss() }
-
-                    show()
-                }
+        AddPlanDialog(requireContext()) { content ->
+            val plan = PlanEntity(content = content, isFinished = false, date = getDate())
+            sendIntent(StudyIntent.AddPlan(plan))
+        }
+                .show()
     }
 
     private fun getDate(): String {
@@ -217,7 +180,8 @@ class StudyFragment : BaseFragment<FragmentStudyBinding>(FragmentStudyBinding::i
         }
     }
 
-    private fun formatTime(seconds: Int): String = String.format("%02d:%02d", seconds / 60, seconds % 60)
+    private fun formatTime(seconds: Int): String =
+            String.format("%02d:%02d", seconds / 60, seconds % 60)
 
     private fun createPlans(plans: List<PlanEntity>) {
         binding.tasksContainer.removeAllViews()

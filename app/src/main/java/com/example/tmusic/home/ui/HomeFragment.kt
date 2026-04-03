@@ -1,11 +1,9 @@
 package com.example.tmusic.home.ui
 
-import android.app.AlertDialog
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.EditText
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -17,6 +15,7 @@ import com.example.tmusic.databinding.FragmentHomeBinding
 import com.example.tmusic.databinding.ItemPlaylistBinding
 import com.example.tmusic.home.data.room.PlaylistEntity
 import com.example.tmusic.home.mvvm.PlaylistViewModel
+import com.example.tmusic.widget.AddPlaylistDialog
 import kotlinx.coroutines.launch
 
 class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::inflate) {
@@ -99,25 +98,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
     }
 
     private fun showAddPlaylistDialog() {
-        val editText =
-                EditText(requireContext()).apply {
-                    hint = "输入歌单名称"
-                    setPadding(48, 32, 48, 32)
-                }
-
-        AlertDialog.Builder(requireContext())
-                .setTitle("创建歌单")
-                .setView(editText)
-                .setPositiveButton("创建") { _, _ ->
-                    val name = editText.text.toString()
-                    if (name.isNotBlank()) {
-                        viewModel.addPlaylist(name)
-                    } else {
-                        Toast.makeText(context, "歌单名称不能为空", Toast.LENGTH_SHORT).show()
-                    }
-                }
-                .setNegativeButton("取消", null)
-                .show()
+        AddPlaylistDialog(requireContext()) { name -> viewModel.addPlaylist(name) }.show()
     }
 
     private fun updateUi() {

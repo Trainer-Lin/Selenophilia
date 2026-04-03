@@ -10,7 +10,8 @@ import com.example.tmusic.localMusicList.data.room.MusicEntity
 
 class LocalMusicListAdapter(
     private val musicList: ArrayList<MusicEntity>,
-    private val onMusicClick: (musicList: List<MusicEntity>, index: Int) -> Unit // 点击事件
+    private val onMusicClick: (musicList: List<MusicEntity>, index: Int) -> Unit,
+    private val onAddToPlaylist: (MusicEntity) -> Unit
 ) : RecyclerView.Adapter<LocalMusicListAdapter.ViewHolder>() {
     inner class ViewHolder(val binding: MusicListItemBinding) : RecyclerView.ViewHolder(binding.root)
 
@@ -36,7 +37,14 @@ class LocalMusicListAdapter(
             val index = holder.bindingAdapterPosition
             if (index != RecyclerView.NO_POSITION) {
                 onMusicClick(musicList.toList(), index)
-            }// 向Fragment发送点击事件
+            }
+        }
+
+        binding.addToList.setOnClickListener {
+            val index = holder.bindingAdapterPosition
+            if (index != RecyclerView.NO_POSITION) {
+                onAddToPlaylist(musicList[index])
+            }
         }
     }
 
