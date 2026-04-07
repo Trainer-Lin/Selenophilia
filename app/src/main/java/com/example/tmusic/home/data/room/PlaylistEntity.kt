@@ -10,6 +10,5 @@ data class PlaylistEntity(
         val description: String = "",
         val coverPath: String? = null,
         val createTime: Long = System.currentTimeMillis(),
-        val musicCount: Int = 0,
         val colorIndex: Int = 0
 )

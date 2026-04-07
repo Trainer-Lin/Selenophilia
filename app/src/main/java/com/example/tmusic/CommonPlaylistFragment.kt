@@ -1,0 +1,150 @@
+package com.example.tmusic
+
+import android.os.Bundle
+import android.view.View
+import android.widget.Toast
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.tmusic.base.BaseFragment
+import com.example.tmusic.databinding.FragmentCommonPlaylistBinding
+import com.example.tmusic.home.data.room.PlaylistDatabase
+import com.example.tmusic.home.mvvm.PlaylistViewModel
+import com.example.tmusic.home.ui.HomeFragment
+import com.example.tmusic.listAndMusic.ListMusicRepository
+import com.example.tmusic.listAndMusic.ListMusicViewModel
+import com.example.tmusic.localMusicList.data.room.MusicDatabase
+import com.example.tmusic.localMusicList.data.room.MusicEntity
+import com.example.tmusic.widget.PlaylistSelectDialog
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+
+class CommonPlaylistFragment :
+        BaseFragment<FragmentCommonPlaylistBinding>(FragmentCommonPlaylistBinding::inflate) {
+
+    private val playlistViewModel by viewModels<PlaylistViewModel>()
+    private lateinit var listMusicViewModel: ListMusicViewModel
+    private lateinit var adapter: CommonPlaylistAdapter
+
+    private var playlistId: Long = -1
+    private var currentMusicList: List<MusicEntity> = emptyList()
+    private var currentMusicIndex: Int = 0
+
+    companion object {
+        fun newInstance(playlistId: Long): CommonPlaylistFragment {
+            return CommonPlaylistFragment().apply {
+                arguments = Bundle().apply { putLong("playlistId", playlistId) }
+            }
+        }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        playlistId = arguments?.getLong("playlistId") ?: -1
+
+        initRepository()
+        initView()
+        observeMusicList()
+        observeListMusicState()
+    }
+
+    private fun initRepository() {
+        val application = requireActivity().application
+        val musicDb = MusicDatabase.getInstance(application)
+        val musicDao = musicDb.musicDao()
+        val playlistDb = PlaylistDatabase.getInstance(application)
+        val playlistMusicDao = playlistDb.playlistMusicDao()
+        val listMusicRepository = ListMusicRepository(playlistMusicDao, musicDao)
+
+        listMusicViewModel = ListMusicViewModel(application)
+        listMusicViewModel.initRepository(listMusicRepository)
+    }
+
+    override fun initView() {
+        adapter = CommonPlaylistAdapter(
+                        ArrayList(),
+                        { list, index ->
+                            currentMusicList = list
+                            currentMusicIndex = index
+                            (activity as? MainActivity)?.playOrPause(list, index)
+                        },
+                        { music -> showPlaylistSelectDialogForMusic(music) },
+                        { music -> deleteMusicFromPlaylist(music) }
+                )
+
+        binding.playlistList.layoutManager = LinearLayoutManager(requireContext())
+        binding.playlistList.adapter = adapter
+
+        binding.btnBack.setOnClickListener {
+            (activity as? MainActivity)?.switchFragment("1")
+        }
+
+        binding.btnSearch.setOnClickListener {
+            Toast.makeText(context, "搜索功能开发中...", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun observeMusicList() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            listMusicViewModel.getMusicFromList(playlistId).collectLatest { musicIds ->
+                if (musicIds.isEmpty()) {
+                    currentMusicList = emptyList()
+                    adapter.updateMusicList(emptyList())
+                } else {
+                    viewLifecycleOwner.lifecycleScope.launch {
+                        val musicList = getMusicByIds(musicIds)
+                        currentMusicList = musicList
+                        adapter.updateMusicList(musicList)
+                    }
+                }
+            }
+        }
+    }
+
+    private suspend fun getMusicByIds(ids: List<Long>): List<MusicEntity> {
+        val musicDb = MusicDatabase.getInstance(requireActivity().application)
+        val musicDao = musicDb.musicDao()
+        return musicDao.getMusicByIds(ids)
+    }
+
+    private fun observeListMusicState() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            listMusicViewModel.uiState.collect { state ->
+                state.successMessage?.let { msg ->
+                    Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
+                    listMusicViewModel.consumeSuccessMessage()
+                }
+                state.error?.let { err ->
+                    Toast.makeText(context, err, Toast.LENGTH_SHORT).show()
+                    listMusicViewModel.consumeError()
+                }
+            }
+        }
+    }
+
+    private fun showPlaylistSelectDialogForMusic(music: MusicEntity) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            val state = playlistViewModel.uiState.value
+            if (state.playlists.isNotEmpty()) {
+                PlaylistSelectDialog(requireContext(), state.playlists) { playlist ->
+                            listMusicViewModel.addMusicToPlaylist(playlist.id, music.id)
+                        }
+                        .show()
+            } else {
+                Toast.makeText(context, "暂无歌单，请先创建歌单", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun deleteMusicFromPlaylist(music: MusicEntity) {
+        listMusicViewModel.deleteMusicFromPlaylist(playlistId, music.id)
+    }
+
+    fun getCurrentMusicList(): List<MusicEntity> = currentMusicList
+
+    fun getCurrentMusicIndex(): Int {
+        if (currentMusicList.isEmpty()) return 0
+        return currentMusicIndex.coerceIn(0, currentMusicList.lastIndex)
+    }
+}

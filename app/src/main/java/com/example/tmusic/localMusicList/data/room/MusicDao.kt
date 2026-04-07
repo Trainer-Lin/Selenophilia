@@ -18,4 +18,7 @@ interface MusicDao {
 
     @Query("DELETE FROM music WHERE id = :id")
     suspend fun deleteMusic(id: Long) //根据id删除音乐
+
+    @Query("SELECT * FROM music WHERE id IN (:ids)")
+    suspend fun getMusicByIds(ids: List<Long>): List<MusicEntity>
 }

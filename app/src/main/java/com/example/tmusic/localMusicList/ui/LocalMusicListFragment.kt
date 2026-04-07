@@ -15,8 +15,12 @@ import com.example.tmusic.MainActivity
 import com.example.tmusic.R
 import com.example.tmusic.base.BaseMviFragment
 import com.example.tmusic.databinding.FragmentLocalMusicListBinding
+import com.example.tmusic.home.data.room.PlaylistDatabase
 import com.example.tmusic.home.data.room.PlaylistEntity
 import com.example.tmusic.home.mvvm.PlaylistViewModel
+import com.example.tmusic.listAndMusic.ListMusicRepository
+import com.example.tmusic.listAndMusic.ListMusicViewModel
+import com.example.tmusic.listAndMusic.model.ListMusicState
 import com.example.tmusic.localMusicList.data.Repository
 import com.example.tmusic.localMusicList.data.room.MusicDatabase
 import com.example.tmusic.localMusicList.data.room.MusicEntity
@@ -43,6 +47,7 @@ class LocalMusicListFragment :
     private val repository by lazy { Repository(application, musicDao) }
     private lateinit var viewModel: LocalMusicViewModel
     private lateinit var playlistViewModel: PlaylistViewModel
+    private lateinit var listMusicViewModel: ListMusicViewModel
     companion object {
         const val TAG = "MusicListFragment"
     }
@@ -51,6 +56,11 @@ class LocalMusicListFragment :
         super.onViewCreated(view, savedInstanceState)
         viewModel = LocalMusicViewModel(repository)
         playlistViewModel = ViewModelProvider(this)[PlaylistViewModel::class.java]
+        val playlistDb = PlaylistDatabase.getInstance(application)
+        val playlistMusicDao = playlistDb.playlistMusicDao()
+        val listMusicRepository = ListMusicRepository(playlistMusicDao, musicDao)
+        listMusicViewModel = ListMusicViewModel(application)
+        listMusicViewModel.initRepository(listMusicRepository)
         initView()
 
         requireActivity()
@@ -79,6 +89,9 @@ class LocalMusicListFragment :
         }
 
         lifecycleScope.launch { viewModel.viewState.collect { state -> handleUiState(state) } }
+        lifecycleScope.launch {
+            listMusicViewModel.uiState.collect { state -> handleListMusicState(state) }
+        }
     }
 
     override fun createViewBinding(
@@ -98,6 +111,17 @@ class LocalMusicListFragment :
             currentMusicIndex = currentMusicIndex.coerceIn(0, currentMusicList.lastIndex)
         }
         adapter.updateMusicList(state.musicList)
+    }
+
+    private fun handleListMusicState(state: ListMusicState) {
+        state.successMessage?.let { msg ->
+            Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
+            listMusicViewModel.consumeSuccessMessage()
+        }
+        state.error?.let { err ->
+            Toast.makeText(context, err, Toast.LENGTH_SHORT).show()
+            listMusicViewModel.consumeError()
+        }
     }
 
     override fun sendIntent(intent: LocalMusicIntent) {
@@ -152,7 +176,7 @@ class LocalMusicListFragment :
     }
 
     private fun addMusicToPlaylist(music: MusicEntity, playlist: PlaylistEntity) {
-        Toast.makeText(context, "已添加到歌单: ${playlist.name}", Toast.LENGTH_SHORT).show()
+        listMusicViewModel.addMusicToPlaylist(playlist.id, music.id)
     }
 
     fun getCurrentMusicList(): List<MusicEntity> {

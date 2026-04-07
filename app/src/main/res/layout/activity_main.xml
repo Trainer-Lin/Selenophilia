@@ -45,7 +45,7 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:focusable="true"
-                android:padding="16dp"
+                android:padding="20dp"
                 android:src="@drawable/icon_pen" />
 
             <ImageView
@@ -56,7 +56,7 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:focusable="true"
-                android:padding="16dp"
+                android:padding="20dp"
                 android:src="@drawable/icon_home" />
 
             <ImageView
@@ -67,7 +67,7 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:focusable="true"
-                android:padding="16dp"
+                android:padding="20dp"
                 android:src="@drawable/icon_daily_note" />
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>

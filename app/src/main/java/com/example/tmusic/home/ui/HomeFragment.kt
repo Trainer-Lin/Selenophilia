@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
@@ -90,8 +89,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
                             colorList[playlist.colorIndex % colorList.size]
                     )
             )
+            val playlistId = playlist.id
             itemBinding.root.setOnClickListener {
-                Toast.makeText(context, "点击了歌单: ${playlist.name}", Toast.LENGTH_SHORT).show()
+                (activity as MainActivity).goToMusicList(playlistId)
             }
             binding.playlistItemsContainer.addView(itemBinding.root)
         }

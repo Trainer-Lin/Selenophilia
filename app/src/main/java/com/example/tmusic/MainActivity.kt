@@ -11,17 +11,12 @@ import android.os.Looper
 import android.view.Gravity
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.annotation.OptIn
-import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.media3.common.util.UnstableApi
-import com.bumptech.glide.Glide
 import com.example.tmusic.base.FullScreenActivity
 import com.example.tmusic.databinding.ActivityMainBinding
 import com.example.tmusic.home.ui.HomeFragment
@@ -115,15 +110,6 @@ class MainActivity : FullScreenActivity<ActivityMainBinding>() {
         }
     }
 
-   /*  fun switchFragment(fragment: Fragment) {
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, fragment)
-            .addToBackStack(null)
-            .commit()
-            
-        updateBottomNavVisibility(fragment)
-    }*/
-
     fun switchFragment(tag: String) {
         val transaction = supportFragmentManager.beginTransaction()
         val newFragment = fragments[tag]!!
@@ -144,6 +130,15 @@ class MainActivity : FullScreenActivity<ActivityMainBinding>() {
         updateBottomNavVisibility(newFragment)
     }
 
+    fun goToMusicList(id : Long){
+        val fragment = CommonPlaylistFragment.newInstance(id)
+        supportFragmentManager
+                .beginTransaction()
+                .replace(R.id.fragment_container, fragment)
+                .commit()
+        updateBottomNavVisibility(fragment)
+    }
+
     override fun onBackPressed() {
         super.onBackPressed()
         // Update visibility when popping back stack
@@ -154,7 +149,9 @@ class MainActivity : FullScreenActivity<ActivityMainBinding>() {
     }
 
     private fun updateBottomNavVisibility(fragment: Fragment) {
-        if (fragment is com.example.tmusic.localMusicList.ui.LocalMusicListFragment) {
+        if (fragment is LocalMusicListFragment) {
+            binding.bottomNavCard.visibility = android.view.View.GONE
+        } else if (fragment is CommonPlaylistFragment) {
             binding.bottomNavCard.visibility = android.view.View.GONE
         } else {
             binding.bottomNavCard.visibility = android.view.View.VISIBLE
