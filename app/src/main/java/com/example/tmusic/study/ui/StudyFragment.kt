@@ -2,10 +2,12 @@ package com.example.tmusic.study.ui
 
 import android.icu.util.Calendar
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.example.tmusic.MainActivity
@@ -17,14 +19,16 @@ import com.example.tmusic.study.data.PlanEntity
 import com.example.tmusic.study.mvi.StudyIntent
 import com.example.tmusic.study.mvi.StudyViewModel
 import com.example.tmusic.widget.AddPlanDialog
+import com.example.tmusic.widget.SelectDurationDialog
 import kotlinx.coroutines.launch
 
 class StudyFragment : BaseFragment<FragmentStudyBinding>(FragmentStudyBinding::inflate) {
 
-    private lateinit var viewModel: StudyViewModel
+    private val viewModel: StudyViewModel by viewModels()
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = StudyViewModel(requireActivity().application)
+        Log.d("StudyFragment" ,"Hello")
         initView()
     }
 
@@ -41,13 +45,21 @@ class StudyFragment : BaseFragment<FragmentStudyBinding>(FragmentStudyBinding::i
             host.playOrPause(host.currentMusicList, host.currentIndex)
             updateUi()
         }
+        binding.btnSettings.setOnClickListener { showSelectDurationDialog() }
     }
 
     private fun showAddPlanDialog() {
         AddPlanDialog(requireContext()) { content ->
-            val plan = PlanEntity(content = content, isFinished = false, date = getDate())
-            sendIntent(StudyIntent.AddPlan(plan))
-        }
+                    val plan = PlanEntity(content = content, isFinished = false, date = getDate())
+                    sendIntent(StudyIntent.AddPlan(plan))
+                }
+                .show()
+    }
+
+    private fun showSelectDurationDialog() {
+        SelectDurationDialog(requireContext()) { minutes, isCountUp ->
+                    sendIntent(StudyIntent.SetDuration(minutes, isCountUp))
+                }
                 .show()
     }
 

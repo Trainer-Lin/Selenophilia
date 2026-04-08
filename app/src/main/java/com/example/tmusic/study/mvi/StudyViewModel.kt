@@ -1,30 +1,30 @@
 package com.example.tmusic.study.mvi
 
-import android.app.Application
 import android.icu.util.Calendar
 import androidx.lifecycle.viewModelScope
-import com.example.tmusic.TAppliaction
+import com.example.tmusic.TApplication
 import com.example.tmusic.base.BaseMviViewModel
-import com.example.tmusic.localMusicList.data.room.MusicDatabase
+import com.example.tmusic.study.data.PlanDatabase
 import com.example.tmusic.study.data.PlanEntity
-import com.example.tmusic.study.data.room.PlanDatabase
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class StudyViewModel(application: Application): BaseMviViewModel<StudyState, StudyIntent>() {
-    private var timerJob: Job? = null //计时器任务
-    private val db = PlanDatabase.getInstance(application)
+class StudyViewModel : BaseMviViewModel<StudyState, StudyIntent>() {
+    private var timerJob: Job? = null
+    private val db = PlanDatabase.getInstance(TApplication.instance)
     private val dao = db.planDao()
 
     override fun initState(): StudyState {
-        return StudyState()
+        val mk = TApplication.mmkv
+        val savedTotalSeconds = mk.decodeInt("totalSeconds", 25 * 60)
+
+        return StudyState(totalSeconds = savedTotalSeconds, remainSeconds = savedTotalSeconds)
     }
     override fun handleIntent(intent: StudyIntent) {
-        when(intent){
+        when (intent) {
             is StudyIntent.StartPause -> {
-               if(!viewState.value.isWorking)startTimer()
-               else pauseTimer()
+                if (!viewState.value.isWorking) startTimer() else pauseTimer()
             }
             is StudyIntent.Restart -> {
                 resetTimer()
@@ -38,122 +38,127 @@ class StudyViewModel(application: Application): BaseMviViewModel<StudyState, Stu
             is StudyIntent.TogglePlanComplete -> {
                 togglePlanComplete(intent.planId)
             }
+            is StudyIntent.SetDuration -> {
+                setDuration(intent.minutes, intent.isCountUp)
+            }
         }
     }
 
-    fun loadPlans(){
-        viewModelScope.launch{
+    fun loadPlans() {
+        viewModelScope.launch {
             val date = getDate()
             val plans = dao.queryPlanByDate(date)
-            updateState{ oldState ->
-                oldState.copy(plans = plans)
-            }
+            updateState { oldState -> oldState.copy(plans = plans) }
         }
     }
 
     fun loadPlansByDate(date: String) {
         viewModelScope.launch {
             val plans = dao.queryPlanByDate(date)
-            updateState { oldState ->
-                oldState.copy(plans = plans)
-            }
+            updateState { oldState -> oldState.copy(plans = plans) }
         }
     }
-    private fun addPlan(plan: PlanEntity){
+    private fun addPlan(plan: PlanEntity) {
         viewModelScope.launch {
             dao.insertPlan(plan)
             val date = plan.date
             val plans = dao.queryPlanByDate(date)
-            updateState{ oldState ->
-                oldState.copy(plans = plans)
-            }
+            updateState { oldState -> oldState.copy(plans = plans) }
         }
     }
 
     private fun deletePlan(planId: Int) {
-        viewModelScope.launch{
+        viewModelScope.launch {
             val plan = dao.queryPlanById(planId)
-            val date = plan.date  // 先获取 date
-            dao.deletePlan(planId)  // 再删除
-            val plans = dao.queryPlanByDate(date)  // 查询同一天的计划
-            updateState { oldState ->
-                oldState.copy(plans = plans)
-            }
+            val date = plan.date // 先获取 date
+            dao.deletePlan(planId) // 再删除
+            val plans = dao.queryPlanByDate(date) // 查询同一天的计划
+            updateState { oldState -> oldState.copy(plans = plans) }
         }
     }
 
     private fun togglePlanComplete(planId: Int) {
-      viewModelScope.launch {
-          val plan = dao.queryPlanById(planId)
-          dao.updatePlan(planId, !plan.isFinished)
-          val plans = dao.queryPlanByDate(plan.date)
-          updateState{oldState ->
-              oldState.copy(plans = plans)
-          }
-      }
+        viewModelScope.launch {
+            val plan = dao.queryPlanById(planId)
+            dao.updatePlan(planId, !plan.isFinished)
+            val plans = dao.queryPlanByDate(plan.date)
+            updateState { oldState -> oldState.copy(plans = plans) }
+        }
     }
 
-    //启动计时器
-    private fun startTimer(){
-        if (timerJob?.isActive == true || viewState.value.remainSeconds <= 0) return
-        updateState { oldState ->
-            oldState.copy(
-                isWorking = true
-            )
-        }
-        timerJob = viewModelScope.launch {
-            while(viewState.value.remainSeconds > 0){
-                delay(1000)
-                if (viewState.value.remainSeconds <= 0) break
-                updateState{ oldState ->
-                    oldState.copy(
-                        remainSeconds = (oldState.remainSeconds - 1).coerceAtLeast(0)
-                    )
+    // 启动计时器
+    private fun startTimer() {
+        if (timerJob?.isActive == true) return
+        updateState { oldState -> oldState.copy(isWorking = true) }
+        timerJob =
+                viewModelScope.launch {
+                    if (viewState.value.isCountUp) {
+                        while (viewState.value.isWorking) {
+                            delay(1000)
+                            updateState { oldState ->
+                                oldState.copy(remainSeconds = oldState.remainSeconds + 1)
+                            }
+                        }
+                    } else {
+                        while (viewState.value.remainSeconds > 0) {
+                            delay(1000)
+                            if (viewState.value.remainSeconds <= 0) break
+                            updateState { oldState ->
+                                oldState.copy(
+                                        remainSeconds =
+                                                (oldState.remainSeconds - 1).coerceAtLeast(0)
+                                )
+                            }
+                        }
+                        timerJob = null
+                        updateState { oldState ->
+                            oldState.copy(remainSeconds = 0, isWorking = false)
+                        }
+                    }
                 }
-            }
-            timerJob = null
-            updateState { oldState ->
-                oldState.copy(
-                    remainSeconds = 0,
-                    isWorking = false
-                )
-            }
-        }
     }
-    //暂停计时器
-    private fun pauseTimer(){
+
+    // 设置时长
+    private fun setDuration(minutes: Int, isCountUp: Boolean) {
+        val mk = TApplication.mmkv
         timerJob?.cancel()
         timerJob = null
-        viewModelScope.launch{
-            updateState{oldState ->
+        val seconds = minutes * 60
+        mk.encode("totalSeconds", seconds)
+        viewModelScope.launch {
+            updateState { oldState ->
                 oldState.copy(
-                    isWorking = false
+                        remainSeconds = seconds,
+                        totalSeconds = seconds,
+                        isWorking = false,
+                        isCountUp = false
                 )
             }
         }
     }
-    //重置计时器
-    private fun resetTimer(){
+    // 暂停计时器
+    private fun pauseTimer() {
+        timerJob?.cancel()
+        timerJob = null
+        viewModelScope.launch { updateState { oldState -> oldState.copy(isWorking = false) } }
+    }
+    // 重置计时器
+    private fun resetTimer() {
         timerJob?.cancel()
         timerJob = null
         viewModelScope.launch {
-            updateState{oldState ->
-                oldState.copy(
-                    remainSeconds = oldState.totalSeconds,
-                    isWorking = false
-                )
+            updateState { oldState ->
+                oldState.copy(remainSeconds = oldState.totalSeconds, isWorking = false)
             }
         }
     }
 
-    private fun getDate(): String{
+    private fun getDate(): String {
         val date = Calendar.getInstance()
         val year = date.get(Calendar.YEAR)
         val month = date.get(Calendar.MONTH) + 1
         val day = date.get(Calendar.DAY_OF_MONTH)
-        val dateString = String.format("%04d-%02d-%02d", year,month,day)
+        val dateString = String.format("%04d-%02d-%02d", year, month, day)
         return dateString
     }
-
-
 }

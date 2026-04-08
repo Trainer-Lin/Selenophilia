@@ -33,13 +33,13 @@ class MainActivity : FullScreenActivity<ActivityMainBinding>() {
         const val TAG_HOME = "1"
         const val TAG_STUDY = "2"
         const val TAG_DIARY = "3"
-        const val TAG_LOCAL_MUSIC= "4"
+        const val TAG_LOCAL_MUSIC = "4"
         const val UPDATE_MUSIC_REQUEST = 1001
         const val READ_MUSIC_PERMISSION = 1002
         const val POST_NOTIFICATION_PERMISSION = 1003
     }
 
-    private var musicService:PlayMusicService ?= null
+    private var musicService: PlayMusicService? = null
 
     override fun createViewBinding(): ActivityMainBinding {
         return ActivityMainBinding.inflate(layoutInflater)
@@ -48,39 +48,43 @@ class MainActivity : FullScreenActivity<ActivityMainBinding>() {
     var currentMusicList: List<MusicEntity> = emptyList()
     var currentIndex: Int = 0
 
-    var albumCover: String?= null
-    var songTitle: String ?= null
-    var artistName: String ?= null
+    var albumCover: String? = null
+    var songTitle: String? = null
+    var artistName: String? = null
 
     private var currentFragmentTag: String? = TAG_HOME
-    private val fragments = mutableMapOf<String, Fragment>(
-        TAG_HOME to HomeFragment(),
-        TAG_STUDY to StudyFragment(),
-        //TAG_DIARY to DiaryFragment(),
-        TAG_LOCAL_MUSIC to LocalMusicListFragment()
+    private val fragments = mutableMapOf<String, Fragment>()
 
-    )
-
-    private val serviceConnection = object: ServiceConnection{
-        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-            val binder = service as PlayMusicService.MusicBinder
-            musicService = binder.getService()
-        }
-
-        override fun onServiceDisconnected(name: ComponentName?) {
-            musicService = null
-        }
-
+    private fun getOrCreateFragment(tag: String): Fragment {
+        return fragments[tag]
+                ?: when (tag) {
+                    TAG_HOME -> HomeFragment()
+                    TAG_STUDY -> StudyFragment()
+                    TAG_LOCAL_MUSIC -> LocalMusicListFragment()
+                    else -> HomeFragment()
+                }.also { fragments[tag] = it }
     }
 
-    private fun initService(){
+    private val serviceConnection =
+            object : ServiceConnection {
+                override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+                    val binder = service as PlayMusicService.MusicBinder
+                    musicService = binder.getService()
+                }
+
+                override fun onServiceDisconnected(name: ComponentName?) {
+                    musicService = null
+                }
+            }
+
+    private fun initService() {
         val intent = Intent(this, PlayMusicService::class.java)
         bindService(intent, serviceConnection, BIND_AUTO_CREATE)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        
+
         initService()
         requestAudioPermission()
         Looper.myQueue().addIdleHandler {
@@ -98,26 +102,22 @@ class MainActivity : FullScreenActivity<ActivityMainBinding>() {
                 switchFragment(TAG_HOME)
             }
         }
-        
+
         binding.navStudy.setOnClickListener {
             if (currentFragmentTag != TAG_STUDY) {
                 switchFragment(TAG_STUDY)
             }
         }
 
-        binding.navDiary.setOnClickListener {
-            showMessage("功能开发中...")
-        }
+        binding.navDiary.setOnClickListener { showMessage("功能开发中...") }
     }
 
     fun switchFragment(tag: String) {
         val transaction = supportFragmentManager.beginTransaction()
-        val newFragment = fragments[tag]!!
+        val newFragment = getOrCreateFragment(tag)
 
         if (currentFragmentTag != tag) {
-            fragments[currentFragmentTag]?.let {
-                transaction.hide(it)
-            }
+            fragments[currentFragmentTag]?.let { transaction.hide(it) }
         }
 
         if (newFragment.isAdded) {
@@ -130,7 +130,7 @@ class MainActivity : FullScreenActivity<ActivityMainBinding>() {
         updateBottomNavVisibility(newFragment)
     }
 
-    fun goToMusicList(id : Long){
+    fun goToMusicList(id: Long) {
         val fragment = CommonPlaylistFragment.newInstance(id)
         supportFragmentManager
                 .beginTransaction()
@@ -157,7 +157,7 @@ class MainActivity : FullScreenActivity<ActivityMainBinding>() {
             binding.bottomNavCard.visibility = android.view.View.VISIBLE
         }
     }
-    
+
     fun togglePlayFromHome() {
         if (musicService == null) return
         if (musicService!!.isPlaying) {
@@ -170,8 +170,9 @@ class MainActivity : FullScreenActivity<ActivityMainBinding>() {
         }
     }
 
-    //获取当前Fragment
-    private fun getCurrentFragment(): Fragment? = supportFragmentManager.findFragmentById(R.id.fragment_container)
+    // 获取当前Fragment
+    private fun getCurrentFragment(): Fragment? =
+            supportFragmentManager.findFragmentById(R.id.fragment_container)
 
     fun playOrPause(musicList: List<MusicEntity>, index: Int) {
         if (musicList.isEmpty()) {
@@ -192,7 +193,7 @@ class MainActivity : FullScreenActivity<ActivityMainBinding>() {
         syncSongInfoFromService()
     }
 
-    fun playPrevious() {     
+    fun playPrevious() {
         musicService?.playPrevious()
         syncSongInfoFromService()
     }
@@ -214,7 +215,7 @@ class MainActivity : FullScreenActivity<ActivityMainBinding>() {
         }
         saveSongInfo(list, service.getCurrentMusicIndex())
     }
-    private fun saveSongInfo(musicList: List<MusicEntity>, index: Int){
+    private fun saveSongInfo(musicList: List<MusicEntity>, index: Int) {
         if (musicList.isEmpty()) {
             clearSongInfo()
             return
@@ -235,22 +236,24 @@ class MainActivity : FullScreenActivity<ActivityMainBinding>() {
         artistName = null
     }
 
-   fun showMessage(message: String) {
+    fun showMessage(message: String) {
         Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).apply {
-            val cardView = CardView(applicationContext).apply {
-                radius = 25f
-                cardElevation = 8f
-                setCardBackgroundColor(getColor(R.color.white))
-                useCompatPadding = true
-            }
+            val cardView =
+                    CardView(applicationContext).apply {
+                        radius = 25f
+                        cardElevation = 8f
+                        setCardBackgroundColor(getColor(R.color.white))
+                        useCompatPadding = true
+                    }
 
-            val textView = TextView(applicationContext).apply {
-                text = message
-                textSize = 17f
-                setTextColor(getColor(R.color.black))
-                gravity = Gravity.CENTER
-                setPadding(80, 40, 80, 40)
-            }
+            val textView =
+                    TextView(applicationContext).apply {
+                        text = message
+                        textSize = 17f
+                        setTextColor(getColor(R.color.black))
+                        gravity = Gravity.CENTER
+                        setPadding(80, 40, 80, 40)
+                    }
             cardView.addView(textView)
             setGravity(Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL, 0, 140)
             view = cardView
@@ -263,15 +266,10 @@ class MainActivity : FullScreenActivity<ActivityMainBinding>() {
         val permission = Manifest.permission.READ_MEDIA_AUDIO
 
         // 检查权限是否已授予
-        if (ContextCompat.checkSelfPermission(this, permission)
-            != PackageManager.PERMISSION_GRANTED
+        if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED
         ) {
             // 未授予，申请权限
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(permission),
-                READ_MUSIC_PERMISSION
-            )
+            ActivityCompat.requestPermissions(this, arrayOf(permission), READ_MUSIC_PERMISSION)
         }
     }
 
@@ -280,27 +278,25 @@ class MainActivity : FullScreenActivity<ActivityMainBinding>() {
         val permission = Manifest.permission.POST_NOTIFICATIONS
 
         // 检查权限是否已授予
-        if (ContextCompat.checkSelfPermission(this, permission)
-            != PackageManager.PERMISSION_GRANTED
+        if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED
         ) {
             // 未授予，申请权限
             ActivityCompat.requestPermissions(
-                this,
-                arrayOf(permission),
-                POST_NOTIFICATION_PERMISSION
+                    this,
+                    arrayOf(permission),
+                    POST_NOTIFICATION_PERMISSION
             )
         }
     }
-    
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        when(requestCode){
-            READ_MUSIC_PERMISSION ->
-                requestNotificationPermission()
 
+    override fun onRequestPermissionsResult(
+            requestCode: Int,
+            permissions: Array<out String>,
+            grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            READ_MUSIC_PERMISSION -> requestNotificationPermission()
         }
     }
-
-
-    
 }
