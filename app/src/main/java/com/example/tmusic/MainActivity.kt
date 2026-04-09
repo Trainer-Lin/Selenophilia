@@ -1,5 +1,6 @@
 package com.example.tmusic
 
+import WebMusicFragment
 import android.Manifest
 import android.content.ComponentName
 import android.content.Intent
@@ -32,7 +33,7 @@ class MainActivity : FullScreenActivity<ActivityMainBinding>() {
         const val TAG = "MainActivity"
         const val TAG_HOME = "1"
         const val TAG_STUDY = "2"
-        const val TAG_DIARY = "3"
+        const val TAG_WEB = "3"
         const val TAG_LOCAL_MUSIC = "4"
         const val UPDATE_MUSIC_REQUEST = 1001
         const val READ_MUSIC_PERMISSION = 1002
@@ -61,6 +62,7 @@ class MainActivity : FullScreenActivity<ActivityMainBinding>() {
                     TAG_HOME -> HomeFragment()
                     TAG_STUDY -> StudyFragment()
                     TAG_LOCAL_MUSIC -> LocalMusicListFragment()
+                    TAG_WEB -> WebMusicFragment()
                     else -> HomeFragment()
                 }.also { fragments[tag] = it }
     }
@@ -109,7 +111,11 @@ class MainActivity : FullScreenActivity<ActivityMainBinding>() {
             }
         }
 
-        binding.navDiary.setOnClickListener { showMessage("功能开发中...") }
+        binding.navDiary.setOnClickListener {
+            if (currentFragmentTag != TAG_WEB) {
+                switchFragment(TAG_WEB)
+            }
+        }
     }
 
     fun switchFragment(tag: String) {
@@ -152,6 +158,8 @@ class MainActivity : FullScreenActivity<ActivityMainBinding>() {
         if (fragment is LocalMusicListFragment) {
             binding.bottomNavCard.visibility = android.view.View.GONE
         } else if (fragment is CommonPlaylistFragment) {
+            binding.bottomNavCard.visibility = android.view.View.GONE
+        } else if (fragment is WebMusicFragment) {
             binding.bottomNavCard.visibility = android.view.View.GONE
         } else {
             binding.bottomNavCard.visibility = android.view.View.VISIBLE

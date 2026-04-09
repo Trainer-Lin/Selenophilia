@@ -136,7 +136,7 @@ class LocalMusicListFragment :
         if (loadingDialog != null) return
         val dialog = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_loading, null)
         loadingDialog =
-                AlertDialog.Builder(requireContext()).setView(dialog).setCancelable(false).show()
+                AlertDialog.Builder(requireContext(), R.style.TransparentAlertDialog).setView(dialog).setCancelable(false).show()
     }
 
     private fun hideDialog() {

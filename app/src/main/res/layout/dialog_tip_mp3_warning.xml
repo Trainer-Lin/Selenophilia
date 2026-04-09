@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="400dp"
+    android:layout_height="600dp"
+    android:orientation="vertical"
+    android:padding="32dp"
+    android:gravity="center"
+    android:background="@drawable/bg_dialog_add_playlist">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="温馨提示"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:textColor="@color/black"
+        android:gravity="center" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="1. 该功能只限于下载MP3格式，不建议作为主要下载方式"
+        android:textSize="16sp"
+        android:textColor="@color/black" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="2. 如需更高音质或更好的下载体验，可下载青听音乐"
+        android:textSize="16sp"
+        android:textColor="@color/black" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="https://pan.quark.cn/s/f74853da9a8"
+        android:textSize="15sp"
+        android:textColor="@color/purple_500" />
+
+    <Button
+        android:id="@+id/btnConfirm"
+        android:layout_width="160dp"
+        android:layout_height="52dp"
+        android:layout_marginTop="28dp"
+        android:text="我已知晓"
+        android:textSize="16sp"
+        android:textColor="@color/white"
+        android:background="@drawable/bg_btn_primary_study" />
+
+</LinearLayout>
