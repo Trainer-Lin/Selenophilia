@@ -98,7 +98,7 @@ class StudyViewModel : BaseMviViewModel<StudyState, StudyIntent>() {
                             updateState { oldState ->
                                 oldState.copy(remainSeconds = oldState.remainSeconds + 1)
                             }
-                        }
+                        } //正计时逻辑
                     } else {
                         while (viewState.value.remainSeconds > 0) {
                             delay(1000)
@@ -127,12 +127,21 @@ class StudyViewModel : BaseMviViewModel<StudyState, StudyIntent>() {
         mk.encode("totalSeconds", seconds)
         viewModelScope.launch {
             updateState { oldState ->
-                oldState.copy(
-                        remainSeconds = seconds,
-                        totalSeconds = seconds,
-                        isWorking = false,
-                        isCountUp = false
-                )
+                if (isCountUp) {
+                    oldState.copy(
+                            remainSeconds = 0,
+                            totalSeconds = seconds,
+                            isWorking = false,
+                            isCountUp = true
+                    )
+                } else {
+                    oldState.copy(
+                            remainSeconds = seconds,
+                            totalSeconds = seconds,
+                            isWorking = false,
+                            isCountUp = false
+                    )
+                }
             }
         }
     }
@@ -146,9 +155,18 @@ class StudyViewModel : BaseMviViewModel<StudyState, StudyIntent>() {
     private fun resetTimer() {
         timerJob?.cancel()
         timerJob = null
-        viewModelScope.launch {
-            updateState { oldState ->
-                oldState.copy(remainSeconds = oldState.totalSeconds, isWorking = false)
+        if(viewState.value.isCountUp){
+            viewModelScope.launch {
+                updateState { oldState ->
+                    oldState.copy(remainSeconds = 0, isWorking = false)
+                }
+            }
+        }
+        else {
+            viewModelScope.launch {
+                updateState { oldState ->
+                    oldState.copy(remainSeconds = oldState.totalSeconds, isWorking = false)
+                }
             }
         }
     }
