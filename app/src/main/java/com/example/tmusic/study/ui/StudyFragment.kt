@@ -176,19 +176,24 @@ class StudyFragment : BaseFragment<FragmentStudyBinding>(FragmentStudyBinding::i
     private fun observeState() {
         lifecycleScope.launch {
             viewModel.viewState.collect { state ->
-                renderTimer(state.remainSeconds, state.isWorking)
+                renderTimer(state.remainSeconds, state.isWorking, state.isCountUp)
                 createPlans(state.plans)
                 binding.plansCount.text = "${state.plans.size} TASKS"
             }
         }
     }
 
-    private fun renderTimer(remainSeconds: Int, isWorking: Boolean) {
+    private fun renderTimer(remainSeconds: Int, isWorking: Boolean, isCountUp: Boolean) {
         binding.tvTime.text = formatTime(remainSeconds)
         if (isWorking) {
             binding.tvStartPause.text = "Pause"
         } else {
             binding.tvStartPause.text = "Start\nFocusing"
+        }
+        if (isCountUp) {
+            binding.btnRestart.setImageResource(R.drawable.ic_study_stop)
+        } else {
+            binding.btnRestart.setImageResource(R.drawable.ic_study_refresh)
         }
     }
 

@@ -6,11 +6,11 @@ import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.example.tmusic.base.BaseFragment
 import com.example.tmusic.databinding.FragmentCommonPlaylistBinding
 import com.example.tmusic.home.data.room.PlaylistDatabase
 import com.example.tmusic.home.mvvm.PlaylistViewModel
-import com.example.tmusic.home.ui.HomeFragment
 import com.example.tmusic.listAndMusic.ListMusicRepository
 import com.example.tmusic.listAndMusic.ListMusicViewModel
 import com.example.tmusic.localMusicList.data.room.MusicDatabase
@@ -62,12 +62,14 @@ class CommonPlaylistFragment :
     }
 
     override fun initView() {
-        adapter = CommonPlaylistAdapter(
+        adapter =
+                CommonPlaylistAdapter(
                         ArrayList(),
                         { list, index ->
                             currentMusicList = list
                             currentMusicIndex = index
                             (activity as? MainActivity)?.playOrPause(list, index)
+                            updateNowPlaying()
                         },
                         { music -> showPlaylistSelectDialogForMusic(music) },
                         { music -> deleteMusicFromPlaylist(music) }
@@ -76,13 +78,21 @@ class CommonPlaylistFragment :
         binding.playlistList.layoutManager = LinearLayoutManager(requireContext())
         binding.playlistList.adapter = adapter
 
-        binding.btnBack.setOnClickListener {
-            (activity as? MainActivity)?.switchFragment("1")
-        }
+        binding.btnBack.setOnClickListener { (activity as? MainActivity)?.switchFragment("1") }
 
         binding.btnSearch.setOnClickListener {
             Toast.makeText(context, "搜索功能开发中...", Toast.LENGTH_SHORT).show()
         }
+
+        binding.playPauseBtn.setOnClickListener {
+            (activity as? MainActivity)?.playOrPause(
+                    (activity as? MainActivity)?.currentMusicList ?: emptyList(),
+                    (activity as? MainActivity)?.currentIndex ?: 0
+            )
+            updateNowPlaying()
+        }
+
+        updateNowPlaying()
     }
 
     private fun observeMusicList() {
@@ -146,5 +156,38 @@ class CommonPlaylistFragment :
     fun getCurrentMusicIndex(): Int {
         if (currentMusicList.isEmpty()) return 0
         return currentMusicIndex.coerceIn(0, currentMusicList.lastIndex)
+    }
+
+    private fun updateNowPlaying() {
+        val host = activity as? MainActivity ?: return
+        host.updateSongInfo()
+
+        val cover = host.albumCover
+        if (cover != null) {
+            Glide.with(this).load(cover).into(binding.albumCover)
+        } else {
+            binding.albumCover.setImageResource(R.drawable.bg_moon_new)
+        }
+
+        binding.songTitle.text = host.songTitle ?: "暂无歌曲播放哦"
+        binding.artistName.text = host.artistName ?: "未知艺术家"
+
+        if (host.isPlaying()) {
+            binding.playPauseBtn.setImageResource(R.drawable.icon_pause_new)
+        } else {
+            binding.playPauseBtn.setImageResource(R.drawable.icon_play_new)
+        }
+    }
+
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (!hidden) {
+            updateNowPlaying()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        updateNowPlaying()
     }
 }

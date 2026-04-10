@@ -9,10 +9,9 @@ import android.content.Context
 import android.content.Intent
 import android.os.Binder
 import android.os.Build
-import android.os.Bundle
 import android.os.IBinder
+import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
-import androidx.core.net.toUri
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
@@ -21,14 +20,11 @@ import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaSession
-import androidx.media3.session.SessionCommand
-import androidx.media3.session.legacy.MediaSessionCompat
-import androidx.media3.session.legacy.PlaybackStateCompat
-import androidx.annotation.RequiresApi
 import com.example.tmusic.localMusicList.data.room.MusicEntity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+
 @UnstableApi
 @SuppressLint("RestrictedApi")
 class PlayMusicService : Service() {
@@ -47,7 +43,7 @@ class PlayMusicService : Service() {
             exoPlayer?.playWhenReady = value
         }
 
-    companion object{
+    companion object {
         const val CHANNEL_ID = "play_music"
         const val NOTIFICATION_ID = 1
         const val ACTION_PLAY_OR_PAUSE = "com.example.tmusic.service.ACTION_PLAY_OR_PAUSE"
@@ -56,10 +52,10 @@ class PlayMusicService : Service() {
         const val EXTRA_MUSIC_LIST = "extra_music_list"
         const val EXTRA_MUSIC_INDEX = "extra_music_index"
     }
-    inner class MusicBinder: Binder(){
-        fun getService() = this@PlayMusicService //Activity拿到binder后，获取Service实例，调用其中方法
+    inner class MusicBinder : Binder() {
+        fun getService() = this@PlayMusicService // Activity拿到binder后，获取Service实例，调用其中方法
     }
-    override fun onBind(intent: Intent): IBinder{
+    override fun onBind(intent: Intent): IBinder {
         return musicBinder
     }
 
@@ -83,73 +79,72 @@ class PlayMusicService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        when(intent?.action){
-            ACTION_PLAY_OR_PAUSE ->{
-                if(!isPlaying){
-                    val newMusicList = intent.getParcelableArrayListExtra<MusicEntity>(EXTRA_MUSIC_LIST)
+        when (intent?.action) {
+            ACTION_PLAY_OR_PAUSE -> {
+                if (!isPlaying) {
+                    val newMusicList =
+                            intent.getParcelableArrayListExtra<MusicEntity>(EXTRA_MUSIC_LIST)
                     val newIndex = intent.getIntExtra(EXTRA_MUSIC_INDEX, 0)
                     if (newMusicList != null) playOrPauseMusic(newMusicList.toList(), newIndex)
-                }
-                else pauseMusic()
+                } else pauseMusic()
             }
-
             ACTION_PREVIOUS -> playPrevious()
             ACTION_NEXT -> playNext()
         }
         return START_STICKY
     }
 
-    private fun initExoplayer(){
-        val audioAttributes = AudioAttributes.Builder()
-            .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
-            .setUsage(C.USAGE_MEDIA)
-            .build()
+    private fun initExoplayer() {
+        val audioAttributes =
+                AudioAttributes.Builder()
+                        .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
+                        .setUsage(C.USAGE_MEDIA)
+                        .build()
 
-        exoPlayer = ExoPlayer.Builder(this)
-            .setAudioAttributes(audioAttributes, true)
-            .build()
+        exoPlayer = ExoPlayer.Builder(this).setAudioAttributes(audioAttributes, true).build()
 
-        exoPlayer?.addListener(object: Player.Listener{
-            override fun onPlaybackStateChanged(playbackState: Int) {
-                when(playbackState){
-                    Player.STATE_ENDED -> {
-                        playNext()
+        exoPlayer?.addListener(
+                object : Player.Listener {
+                    override fun onPlaybackStateChanged(playbackState: Int) {
+                        when (playbackState) {
+                            Player.STATE_ENDED -> {
+                                playNext()
+                            }
+                        }
                     }
                 }
-            }
-        }
         )
     }
     private fun initMediaSession() {
         mediaSession = MediaSession.Builder(this, exoPlayer!!).build()
     }
 
-    private fun createNotificationChannel(){
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                CHANNEL_ID,
-                "Play Music",
-                NotificationManager.IMPORTANCE_MIN
-            ).apply {
-                setShowBadge(false)
-            }
+    private fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel =
+                    NotificationChannel(
+                                    CHANNEL_ID,
+                                    "Play Music",
+                                    NotificationManager.IMPORTANCE_MIN
+                            )
+                            .apply { setShowBadge(false) }
             val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             manager.createNotificationChannel(channel)
         }
     }
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun createNotification(): Notification{
+    private fun createNotification(): Notification {
         // return android.app.Notification.Builder(this, "hidden_music_playback")
         return NotificationCompat.Builder(this, CHANNEL_ID)
-            .setSmallIcon(android.R.drawable.ic_media_play) // 系统强制要求必须有小图标
-            .setShowWhen(false) // 不显示时间
-            .build()
+                .setSmallIcon(android.R.drawable.ic_media_play) // 系统强制要求必须有小图标
+                .setShowWhen(false) // 不显示时间
+                .build()
     }
 
-    fun pauseMusic(){
+    fun pauseMusic() {
         exoPlayer?.pause()
     }
-    fun playMusic(){
+    fun playMusic() {
         exoPlayer?.play()
     }
 
@@ -160,29 +155,31 @@ class PlayMusicService : Service() {
         }
     }
 
-    fun playPrevious(){
+    fun playPrevious() {
         syncCurrentMusicIndex()
-        if(musicList.isEmpty()) return
-        val prevIndex = if (currentMusicIndex > 0) {
-            currentMusicIndex - 1
-        } else {
-            musicList.size - 1
-        }
+        if (musicList.isEmpty()) return
+        val prevIndex =
+                if (currentMusicIndex > 0) {
+                    currentMusicIndex - 1
+                } else {
+                    musicList.size - 1
+                }
         exoPlayer?.seekTo(prevIndex, 0)
         currentMusicIndex = prevIndex
     }
-    fun playNext(){
+    fun playNext() {
         syncCurrentMusicIndex()
-        if(musicList.isEmpty()) return
-        val nextIndex = if(currentMusicIndex < musicList.size - 1){
-            currentMusicIndex + 1
-        }else {
-            0
-        }
+        if (musicList.isEmpty()) return
+        val nextIndex =
+                if (currentMusicIndex < musicList.size - 1) {
+                    currentMusicIndex + 1
+                } else {
+                    0
+                }
         exoPlayer?.seekTo(nextIndex, 0)
         currentMusicIndex = nextIndex
     }
-    fun playOrPauseMusic(musicList: List<MusicEntity>, index: Int){
+    fun playOrPauseMusic(musicList: List<MusicEntity>, index: Int) {
         if (musicList.isEmpty()) return
         syncCurrentMusicIndex()
         val sameList = this.musicList.map { it.uri } == musicList.map { it.uri }
@@ -196,21 +193,22 @@ class PlayMusicService : Service() {
                 playMusic()
             }
             return
-        }//处理点击同一首歌的逻辑
+        } // 处理点击同一首歌的逻辑
 
         this.musicList = musicList
         this.currentMusicIndex = safeIndex
-        val mediaItems = musicList.map{music ->
-            MediaItem.Builder()
-                .setUri(music.uri)
-                .setMediaMetadata(
-                  MediaMetadata.Builder()
-                        .setTitle(music.title)
-                        .setArtist(music.artist)
-                        .build()
-                )
-                .build()
-        }
+        val mediaItems =
+                musicList.map { music ->
+                    MediaItem.Builder()
+                            .setUri(music.uri)
+                            .setMediaMetadata(
+                                    MediaMetadata.Builder()
+                                            .setTitle(music.title)
+                                            .setArtist(music.artist)
+                                            .build()
+                            )
+                            .build()
+                }
         exoPlayer?.clearMediaItems()
         exoPlayer?.addMediaItems(mediaItems)
         exoPlayer?.prepare()
@@ -230,11 +228,10 @@ class PlayMusicService : Service() {
         if (musicList.isEmpty()) return null
         return musicList[getCurrentMusicIndex()]
     }
-    fun resumeMusic(){
+    fun resumeMusic() {
         playMusic()
     }
-    fun seekTo(pos: Long){
+    fun seekTo(pos: Long) {
         exoPlayer?.seekTo(pos)
     }
-
 }

@@ -20,7 +20,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:text="1. 该功能只限于下载MP3格式，不建议作为主要下载方式"
+        android:text="1. 该功能暂不成熟，不建议作为主要下载方式"
         android:textSize="16sp"
         android:textColor="@color/black" />
 

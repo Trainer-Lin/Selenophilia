@@ -59,9 +59,12 @@ class PlaylistViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
-    fun updatePlaylist(playlist: PlaylistEntity) {
+    fun updatePlaylist(name: String, playlistId: Long) {
+        if(name.isBlank())return
         viewModelScope.launch {
-            repository.updatePlaylist(playlist)
+           val playlist = _uiState.value.playlists.first{ it.id == playlistId }
+            val newPlaylist = playlist.copy(name = name.trim())
+            repository.updatePlaylist(newPlaylist)
         }
     }
 

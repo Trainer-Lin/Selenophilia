@@ -16,6 +16,7 @@ import com.example.tmusic.home.data.room.PlaylistEntity
 import com.example.tmusic.home.mvvm.PlaylistViewModel
 import com.example.tmusic.widget.AddPlaylistDialog
 import kotlinx.coroutines.launch
+import androidx.core.graphics.toColorInt
 
 class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::inflate) {
 
@@ -85,11 +86,18 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
                     )
             itemBinding.tvPlaylistTitle.text = playlist.name
             itemBinding.root.setCardBackgroundColor(
-                    android.graphics.Color.parseColor(
-                            colorList[playlist.colorIndex % colorList.size]
-                    )
+                colorList[playlist.colorIndex % colorList.size].toColorInt()
             )
             val playlistId = playlist.id
+
+            itemBinding.btnEditPlaylist.setOnClickListener {
+               showUpdatePlaylistDialog(playlistId)
+            }
+
+            itemBinding.btnDeletePlaylist.setOnClickListener {
+                viewModel.deletePlaylist(playlist)
+            }
+
             itemBinding.root.setOnClickListener {
                 (activity as MainActivity).goToMusicList(playlistId)
             }
@@ -98,7 +106,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
     }
 
     private fun showAddPlaylistDialog() {
-        AddPlaylistDialog(requireContext()) { name -> viewModel.addPlaylist(name) }.show()
+        AddPlaylistDialog(requireContext(), "创建歌单") { name ->
+            viewModel.addPlaylist(name) }.show()
+    }
+
+    private fun showUpdatePlaylistDialog(id: Long) {
+        AddPlaylistDialog(requireContext(), "编辑歌单名称") { name->
+            viewModel.updatePlaylist(name,id) }.show()
     }
 
     private fun updateUi() {

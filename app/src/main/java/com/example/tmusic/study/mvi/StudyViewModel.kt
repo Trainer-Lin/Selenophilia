@@ -18,8 +18,23 @@ class StudyViewModel : BaseMviViewModel<StudyState, StudyIntent>() {
     override fun initState(): StudyState {
         val mk = TApplication.mmkv
         val savedTotalSeconds = mk.decodeInt("totalSeconds", 25 * 60)
+        val savedIsCountUp = mk.decodeBool("isCountUp", false)
 
-        return StudyState(totalSeconds = savedTotalSeconds, remainSeconds = savedTotalSeconds)
+        if(!savedIsCountUp) {
+            return StudyState(
+                totalSeconds = savedTotalSeconds,
+                remainSeconds = savedTotalSeconds,
+                isCountUp = savedIsCountUp
+            )
+        }
+
+        else {
+            return StudyState(
+                totalSeconds = 0,
+                remainSeconds = 0,
+                isCountUp = savedIsCountUp
+            )
+        }
     }
     override fun handleIntent(intent: StudyIntent) {
         when (intent) {
@@ -98,7 +113,7 @@ class StudyViewModel : BaseMviViewModel<StudyState, StudyIntent>() {
                             updateState { oldState ->
                                 oldState.copy(remainSeconds = oldState.remainSeconds + 1)
                             }
-                        } //正计时逻辑
+                        } // 正计时逻辑
                     } else {
                         while (viewState.value.remainSeconds > 0) {
                             delay(1000)
@@ -125,6 +140,7 @@ class StudyViewModel : BaseMviViewModel<StudyState, StudyIntent>() {
         timerJob = null
         val seconds = minutes * 60
         mk.encode("totalSeconds", seconds)
+        mk.encode("isCountUp", isCountUp)
         viewModelScope.launch {
             updateState { oldState ->
                 if (isCountUp) {
@@ -155,14 +171,11 @@ class StudyViewModel : BaseMviViewModel<StudyState, StudyIntent>() {
     private fun resetTimer() {
         timerJob?.cancel()
         timerJob = null
-        if(viewState.value.isCountUp){
+        if (viewState.value.isCountUp) {
             viewModelScope.launch {
-                updateState { oldState ->
-                    oldState.copy(remainSeconds = 0, isWorking = false)
-                }
+                updateState { oldState -> oldState.copy(remainSeconds = 0, isWorking = false) }
             }
-        }
-        else {
+        } else {
             viewModelScope.launch {
                 updateState { oldState ->
                     oldState.copy(remainSeconds = oldState.totalSeconds, isWorking = false)

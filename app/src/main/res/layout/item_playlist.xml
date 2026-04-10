@@ -46,5 +46,33 @@
             android:fontFamily="@font/font_qishou"
             android:maxLines="1"
             android:ellipsize="end" />
+
+        <!-- Action Buttons Container -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="1dp"
+            android:gravity="center_vertical">
+
+            <!-- Edit Button -->
+            <ImageButton
+                android:id="@+id/btnEditPlaylist"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@android:drawable/ic_menu_edit"
+                android:contentDescription="编辑歌单"
+                android:layout_marginEnd="8dp" />
+
+            <!-- Delete Button -->
+            <ImageButton
+                android:id="@+id/btnDeletePlaylist"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@android:drawable/ic_menu_delete"
+                android:contentDescription="删除歌单" />
+        </LinearLayout>
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

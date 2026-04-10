@@ -11,6 +11,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.example.tmusic.MainActivity
 import com.example.tmusic.R
 import com.example.tmusic.base.BaseMviFragment
@@ -88,10 +89,17 @@ class LocalMusicListFragment :
             Toast.makeText(context, "搜索功能开发中...", Toast.LENGTH_SHORT).show()
         }
 
+        binding.playPauseBtn.setOnClickListener {
+            val host = activity as MainActivity
+            host.playOrPause(host.currentMusicList, host.currentIndex)
+            updateNowPlaying()
+        }
+
         lifecycleScope.launch { viewModel.viewState.collect { state -> handleUiState(state) } }
         lifecycleScope.launch {
             listMusicViewModel.uiState.collect { state -> handleListMusicState(state) }
         }
+        updateNowPlaying()
     }
 
     override fun createViewBinding(
@@ -136,7 +144,10 @@ class LocalMusicListFragment :
         if (loadingDialog != null) return
         val dialog = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_loading, null)
         loadingDialog =
-                AlertDialog.Builder(requireContext(), R.style.TransparentAlertDialog).setView(dialog).setCancelable(false).show()
+                AlertDialog.Builder(requireContext(), R.style.TransparentAlertDialog)
+                        .setView(dialog)
+                        .setCancelable(false)
+                        .show()
     }
 
     private fun hideDialog() {
@@ -155,6 +166,7 @@ class LocalMusicListFragment :
                             currentMusicIndex = index
                             val host = activity as MainActivity
                             host.playOrPause(list, index)
+                            updateNowPlaying()
                         },
                         { music -> showPlaylistSelectDialog(music) }
                 )
@@ -186,5 +198,40 @@ class LocalMusicListFragment :
     fun getCurrentMusicIndex(): Int {
         if (currentMusicList.isEmpty()) return 0
         return currentMusicIndex.coerceIn(0, currentMusicList.lastIndex)
+    }
+
+    private fun updateNowPlaying() {
+        val host = activity as? MainActivity ?: return
+        host.updateSongInfo()
+
+        val cover = host.albumCover
+        if (cover != null) {
+            Glide.with(this).load(cover).into(binding.albumCover)
+        } else {
+            binding.albumCover.setImageResource(R.drawable.bg_moon_new)
+        }
+
+        binding.songTitle.text = host.songTitle ?: "暂无歌曲播放哦"
+        binding.artistName.text = host.artistName ?: "未知艺术家"
+
+        Log.d("LocalMusicList", "${binding.songTitle.text}")
+
+        if (host.isPlaying()) {
+            binding.playPauseBtn.setImageResource(R.drawable.icon_pause_new)
+        } else {
+            binding.playPauseBtn.setImageResource(R.drawable.icon_play_new)
+        }
+    }
+
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (!hidden) {
+            updateNowPlaying()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        updateNowPlaying()
     }
 }

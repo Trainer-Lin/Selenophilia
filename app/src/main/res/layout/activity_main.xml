@@ -46,7 +46,7 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:padding="20dp"
-                android:src="@drawable/icon_pen" />
+                android:src="@drawable/icon_study_new" />
 
             <ImageView
                 android:id="@+id/navHome"
@@ -57,7 +57,7 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:padding="20dp"
-                android:src="@drawable/icon_home" />
+                android:src="@drawable/icon_home_new" />
 
             <ImageView
                 android:id="@+id/navDiary"
@@ -68,7 +68,7 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:padding="20dp"
-                android:src="@drawable/icon_daily_note" />
+                android:src="@drawable/icon_global_new" />
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 

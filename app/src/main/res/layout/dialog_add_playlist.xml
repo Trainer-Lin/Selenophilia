@@ -7,6 +7,7 @@
     android:padding="24dp">
 
     <TextView
+        android:id="@+id/tvDialogTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="创建歌单"
@@ -50,7 +51,7 @@
             android:id="@+id/btnConfirm"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="创建"
+            android:text="确定"
             android:textSize="16sp"
             android:textColor="#9C7ED4"
             android:fontFamily="sans-serif-medium"

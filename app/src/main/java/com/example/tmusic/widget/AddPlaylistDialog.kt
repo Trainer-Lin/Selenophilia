@@ -9,7 +9,8 @@ import com.example.tmusic.databinding.DialogAddPlaylistBinding
 
 class AddPlaylistDialog(
         private val context: Context,
-        private val onPlaylistConfirmed: (String) -> Unit
+        private var title: String = "创建歌单",
+        private val onPlaylistConfirmed: (String) -> Unit,
 ) {
     private val dialog = Dialog(context)
     private lateinit var binding: DialogAddPlaylistBinding
@@ -21,6 +22,7 @@ class AddPlaylistDialog(
                                 android.view.LayoutInflater
                 )
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        binding.tvDialogTitle.text = title
         dialog.setContentView(binding.root)
         dialog.window?.apply {
             setLayout(

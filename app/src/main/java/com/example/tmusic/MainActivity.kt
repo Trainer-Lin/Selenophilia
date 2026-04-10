@@ -145,6 +145,16 @@ class MainActivity : FullScreenActivity<ActivityMainBinding>() {
         updateBottomNavVisibility(fragment)
     }
 
+    fun goToMusicPlay() {
+        val fragment = MusicPlayFragment()
+        supportFragmentManager
+                .beginTransaction()
+                .replace(R.id.fragment_container, fragment)
+                .addToBackStack(null)
+                .commit()
+        updateBottomNavVisibility(fragment)
+    }
+
     override fun onBackPressed() {
         super.onBackPressed()
         // Update visibility when popping back stack
