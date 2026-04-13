@@ -22,7 +22,7 @@
             android:text="Selenophilia"
             android:textColor="#1E1B1E"
             android:textSize="24sp"
-            android:fontFamily="@font/font_siyuan_bold"
+            android:fontFamily="@font/font_popping_extrabold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -55,7 +55,7 @@
                 android:text="Good"
                 android:textColor="#4C444D"
                 android:textSize="20sp"
-                android:fontFamily="@font/font_iansui"
+                android:fontFamily="@font/font_robotoslab_light"
                 app:layout_constraintEnd_toStartOf="@id/tvGreetingTime"
                 app:layout_constraintHorizontal_chainStyle="packed"
                 app:layout_constraintStart_toStartOf="parent"
@@ -66,7 +66,7 @@
                 android:id="@+id/tvGreetingTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/font_iansui"
+                android:fontFamily="@font/font_robotoslab_light"
                 android:text=" Morning"
                 android:textColor="#4C444D"
                 android:textSize="20sp"
@@ -302,7 +302,7 @@
                         android:text="本地音乐"
                         android:textColor="#4C444D"
                         android:textSize="16sp"
-                        android:fontFamily="@font/font_gengsha_semibold" />
+                        android:fontFamily="@font/font_noto_semibold" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -336,7 +336,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="12dp"
-                        android:fontFamily="@font/font_gengsha_semibold"
+                        android:fontFamily="@font/font_noto_semibold"
                         android:text="个人音乐"
                         android:textColor="#4C444D"
                         android:textSize="16sp" />
@@ -381,7 +381,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/font_gengsha_bold"
+                        android:fontFamily="@font/font_noto_bold"
                         android:text="我的歌单"
                         android:textColor="#1E1B1E"
                         android:textSize="22sp" />
@@ -413,7 +413,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="6dp"
-                            android:fontFamily="@font/font_gengsha_semibold"
+                            android:fontFamily="@font/font_noto_light"
                             android:text="添加歌单"
                             android:textColor="#7853A8"
                             android:textSize="10sp"

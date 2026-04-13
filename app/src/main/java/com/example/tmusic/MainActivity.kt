@@ -19,6 +19,8 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.media3.common.util.UnstableApi
 import com.example.tmusic.base.FullScreenActivity
+import com.example.tmusic.common.CommonPlaylistFragment
+import com.example.tmusic.common.MusicPlayFragment
 import com.example.tmusic.databinding.ActivityMainBinding
 import com.example.tmusic.home.ui.HomeFragment
 import com.example.tmusic.localMusicList.data.room.MusicEntity
@@ -165,15 +167,24 @@ class MainActivity : FullScreenActivity<ActivityMainBinding>() {
     }
 
     private fun updateBottomNavVisibility(fragment: Fragment) {
-        if (fragment is LocalMusicListFragment) {
-            binding.bottomNavCard.visibility = android.view.View.GONE
-        } else if (fragment is CommonPlaylistFragment) {
-            binding.bottomNavCard.visibility = android.view.View.GONE
-        } else if (fragment is WebMusicFragment) {
-            binding.bottomNavCard.visibility = android.view.View.GONE
-        } else {
-            binding.bottomNavCard.visibility = android.view.View.VISIBLE
+//        if (fragment is LocalMusicListFragment) {
+//            binding.bottomNavCard.visibility = android.view.View.GONE
+//        } else if (fragment is CommonPlaylistFragment) {
+//            binding.bottomNavCard.visibility = android.view.View.GONE
+//        } else if (fragment is WebMusicFragment) {
+//            binding.bottomNavCard.visibility = android.view.View.GONE
+//        } else {
+//            binding.bottomNavCard.visibility = android.view.View.VISIBLE
+//        }
+//
+        when(fragment){
+            is LocalMusicListFragment -> binding.bottomNavCard.visibility = android.view.View.GONE
+            is CommonPlaylistFragment -> binding.bottomNavCard.visibility = android.view.View.GONE
+            is WebMusicFragment -> binding.bottomNavCard.visibility = android.view.View.GONE
+            is MusicPlayFragment -> binding.bottomNavCard.visibility = android.view.View.GONE
+            else -> binding.bottomNavCard.visibility = android.view.View.VISIBLE
         }
+
     }
 
     fun togglePlayFromHome() {

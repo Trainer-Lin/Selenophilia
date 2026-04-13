@@ -14,7 +14,7 @@
         android:text="请选择专注时长"
         android:textSize="20sp"
         android:textColor="#864D2C"
-        android:fontFamily="sans-serif-medium"
+        android:fontFamily="@font/font_robotoslab_extrabold"
         android:gravity="center" />
 
     <EditText
@@ -41,6 +41,7 @@
             android:id="@+id/tvCountUpLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/font_robotoslab_light"
             android:text="采用正计时？"
             android:textSize="16sp"
             android:textColor="#666666"
@@ -57,6 +58,7 @@
         android:id="@+id/btnConfirm"
         android:layout_width="match_parent"
         android:layout_height="56dp"
+        android:fontFamily="@font/font_robotoslab_regular"
         android:text="确认"
         android:textSize="18sp"
         android:textColor="#FFFFFF"

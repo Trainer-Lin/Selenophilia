@@ -46,6 +46,10 @@ class StudyFragment : BaseFragment<FragmentStudyBinding>(FragmentStudyBinding::i
             updateUi()
         }
         binding.btnSettings.setOnClickListener { showSelectDurationDialog() }
+
+        binding.cardMusic.setOnClickListener {
+            (activity as MainActivity).goToMusicPlay()
+        }
     }
 
     private fun showAddPlanDialog() {

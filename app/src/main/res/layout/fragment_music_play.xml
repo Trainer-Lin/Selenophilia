@@ -28,10 +28,11 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="The Sonic Sanctuary"
+            android:text="Selenophilia"
+            android:fontFamily="@font/font_robotoslab_extrabold"
             android:textSize="18sp"
             android:textColor="#2F342E"
-            android:textStyle="bold"
+            android:textStyle="italic"
             android:gravity="center"
             android:letterSpacing="-0.02" />
 
@@ -74,7 +75,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:scaleType="centerCrop"
-                        android:src="@drawable/bg_moon_new" />
+                        android:src="@drawable/bg_heart" />
                 </androidx.cardview.widget.CardView>
 
                 <View
@@ -94,12 +95,12 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="NOW PLAYING"
-                    android:textSize="11sp"
-                    android:textColor="#5C605A99"
                     android:gravity="center"
                     android:letterSpacing="0.14"
-                    android:textAllCaps="true" />
+                    android:text="NOW PLAYING"
+                    android:textAllCaps="true"
+                    android:textColor="#5C605A99"
+                    android:textSize="11sp" />
 
                 <TextView
                     android:id="@+id/songTitle"
@@ -107,7 +108,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:text="暂无歌曲播放哦"
-                    android:fontFamily="@font/font_siyuan_bold"
+                    android:fontFamily="@font/font_noto_semibold"
                     android:textSize="36sp"
                     android:textColor="#2F342E"
                     android:gravity="center"
@@ -122,7 +123,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:text="未知艺术家"
-                    android:fontFamily="@font/font_gengsha_normal"
+                    android:fontFamily="@font/font_noto_regular"
                     android:textSize="20sp"
                     android:textColor="#5C605A"
                     android:gravity="center"
