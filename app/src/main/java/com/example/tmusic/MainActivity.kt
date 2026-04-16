@@ -234,6 +234,13 @@ class MainActivity : FullScreenActivity<ActivityMainBinding>() {
     fun isPlaying(): Boolean {
         return musicService?.isPlaying == true
     }
+    
+    /**
+     * 获取音乐播放服务实例，供Fragment调用
+     */
+    fun getMusicService(): PlayMusicService? {
+        return musicService
+    }
 
     private fun syncSongInfoFromService() {
         val service = musicService ?: return

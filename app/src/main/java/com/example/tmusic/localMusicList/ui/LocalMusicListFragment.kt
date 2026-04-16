@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -48,6 +49,7 @@ class LocalMusicListFragment :
     private val repository by lazy { Repository(application, musicDao) }
     private lateinit var viewModel: LocalMusicViewModel
     private lateinit var playlistViewModel: PlaylistViewModel
+   // private val playlistViewModel by viewModels<PlaylistViewModel>(ownerProducer = {this})
     private lateinit var listMusicViewModel: ListMusicViewModel
     companion object {
         const val TAG = "MusicListFragment"
@@ -93,6 +95,10 @@ class LocalMusicListFragment :
             val host = activity as MainActivity
             host.playOrPause(host.currentMusicList, host.currentIndex)
             updateNowPlaying()
+        }
+
+        binding.nowPlayingCard.setOnClickListener {
+            (activity as MainActivity).goToMusicPlay()
         }
 
         lifecycleScope.launch { viewModel.viewState.collect { state -> handleUiState(state) } }
@@ -175,7 +181,7 @@ class LocalMusicListFragment :
 
     private fun showPlaylistSelectDialog(music: MusicEntity) {
         lifecycleScope.launch {
-            val state = playlistViewModel.uiState.first()
+            val state = playlistViewModel.uiState.value
             if (state.playlists.isNotEmpty()) {
                 PlaylistSelectDialog(requireContext(), state.playlists) { playlist ->
                             addMusicToPlaylist(music, playlist)

@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FAF9F5"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:fitsSystemWindows="true">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -13,7 +14,7 @@
         android:gravity="center_vertical"
         android:paddingStart="24dp"
         android:paddingEnd="24dp"
-        android:paddingTop="16dp"
+        android:paddingTop="48dp"
         android:paddingBottom="16dp">
 
         <ImageView
@@ -45,20 +46,15 @@
             android:padding="4dp" />
     </LinearLayout>
 
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:fillViewport="true">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="center_horizontal"
-            android:paddingHorizontal="32dp"
-            android:paddingTop="60dp"
-            android:paddingBottom="92dp">
+        android:orientation="vertical"
+        android:gravity="center_horizontal|top"
+        android:paddingHorizontal="32dp"
+        android:paddingTop="48dp"
+        android:paddingBottom="16dp">
 
             <FrameLayout
                 android:layout_width="288dp"
@@ -79,8 +75,8 @@
                 </androidx.cardview.widget.CardView>
 
                 <View
-                    android:layout_width="320dp"
-                    android:layout_height="320dp"
+                    android:layout_width="240dp"
+                    android:layout_height="240dp"
                     android:layout_gravity="center"
                     android:alpha="0.05"
                     android:background="@drawable/bg_album_shadow" />
@@ -90,23 +86,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_marginTop="48dp">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:letterSpacing="0.14"
-                    android:text="NOW PLAYING"
-                    android:textAllCaps="true"
-                    android:textColor="#5C605A99"
-                    android:textSize="11sp" />
+                android:layout_marginTop="2dp">
 
                 <TextView
                     android:id="@+id/songTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="1dp"
                     android:text="暂无歌曲播放哦"
                     android:fontFamily="@font/font_noto_semibold"
                     android:textSize="36sp"
@@ -121,7 +107,7 @@
                     android:id="@+id/artistName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="1dp"
                     android:text="未知艺术家"
                     android:fontFamily="@font/font_noto_regular"
                     android:textSize="20sp"
@@ -135,14 +121,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_marginTop="48dp">
+                android:layout_marginTop="6dp">
 
                 <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="6dp"
                     android:background="@drawable/bg_progress_bar_background">
 
-                    <ProgressBar
+                    <SeekBar
                         android:id="@+id/progressBar"
                         style="?android:attr/progressBarStyleHorizontal"
                         android:layout_width="123dp"
@@ -155,7 +141,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:layout_marginTop="12dp">
+                    android:layout_marginTop="8dp">
 
                     <TextView
                         android:id="@+id/currentTime"
@@ -187,7 +173,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center"
-                android:layout_marginTop="48dp">
+                android:layout_marginTop="20dp">
 
                 <ImageButton
                     android:id="@+id/btnPlayOrder"
@@ -209,14 +195,15 @@
 
                 <com.google.android.material.floatingactionbutton.FloatingActionButton
                     android:id="@+id/btnPlayPause"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
+                    android:layout_width="72dp"
+                    android:layout_height="72dp"
                     android:src="@drawable/icon_play_new"
-                    app:fabCustomSize="80dp"
+                    app:fabCustomSize="72dp"
                     app:backgroundTint="#556253"
                     app:tint="@android:color/white"
-                    app:elevation="2dp"
-                    android:layout_marginHorizontal="40dp" />
+                    app:elevation="4dp"
+                    app:shapeAppearanceOverlay="@style/Widget.MaterialComponents.FloatingActionButton"
+                    android:layout_marginHorizontal="32dp" />
 
                 <ImageButton
                     android:id="@+id/btnNext"
@@ -236,6 +223,5 @@
                     android:scaleType="fitCenter"
                     android:padding="12dp" />
             </LinearLayout>
-        </LinearLayout>
-    </ScrollView>
+    </LinearLayout>
 </LinearLayout>

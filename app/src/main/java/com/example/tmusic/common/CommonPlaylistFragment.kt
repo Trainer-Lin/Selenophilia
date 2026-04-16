@@ -1,9 +1,11 @@
 package com.example.tmusic.common
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
@@ -19,13 +21,15 @@ import com.example.tmusic.localMusicList.data.room.MusicDatabase
 import com.example.tmusic.localMusicList.data.room.MusicEntity
 import com.example.tmusic.widget.PlaylistSelectDialog
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlin.getValue
 
 class CommonPlaylistFragment :
         BaseFragment<FragmentCommonPlaylistBinding>(FragmentCommonPlaylistBinding::inflate) {
 
-    private val playlistViewModel by viewModels<PlaylistViewModel>()
-    private lateinit var listMusicViewModel: ListMusicViewModel
+    private lateinit var playlistViewModel: PlaylistViewModel
+    private val  listMusicViewModel by viewModels<ListMusicViewModel>()
     private lateinit var adapter: CommonPlaylistAdapter
 
     private var playlistId: Long = -1
@@ -59,11 +63,12 @@ class CommonPlaylistFragment :
         val playlistMusicDao = playlistDb.playlistMusicDao()
         val listMusicRepository = ListMusicRepository(playlistMusicDao, musicDao)
 
-        listMusicViewModel = ListMusicViewModel(application)
+    //    listMusicViewModel = ListMusicViewModel(application)
         listMusicViewModel.initRepository(listMusicRepository)
     }
 
     override fun initView() {
+        playlistViewModel = ViewModelProvider(this)[PlaylistViewModel::class.java]
         adapter =
             CommonPlaylistAdapter(
                 ArrayList(),
@@ -140,13 +145,13 @@ class CommonPlaylistFragment :
     }
 
     private fun showPlaylistSelectDialogForMusic(music: MusicEntity) {
-        viewLifecycleOwner.lifecycleScope.launch {
+       lifecycleScope.launch {
             val state = playlistViewModel.uiState.value
+            Log.d("CommonPlaylistFragment", "${state.playlists.size}")
             if (state.playlists.isNotEmpty()) {
                 PlaylistSelectDialog(requireContext(), state.playlists) { playlist ->
                     listMusicViewModel.addMusicToPlaylist(playlist.id, music.id)
-                }
-                        .show()
+                }.show()
             } else {
                 Toast.makeText(context, "暂无歌单，请先创建歌单", Toast.LENGTH_SHORT).show()
             }

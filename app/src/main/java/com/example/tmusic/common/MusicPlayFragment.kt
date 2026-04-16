@@ -3,23 +3,31 @@ package com.example.tmusic.common
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.SeekBar
+import androidx.annotation.OptIn
+import androidx.lifecycle.lifecycleScope
+import androidx.media3.common.util.UnstableApi
 import com.bumptech.glide.Glide
 import com.example.tmusic.MainActivity
 import com.example.tmusic.R
 import com.example.tmusic.base.BaseFragment
 import com.example.tmusic.databinding.FragmentMusicPlayBinding
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class MusicPlayFragment :
         BaseFragment<FragmentMusicPlayBinding>(FragmentMusicPlayBinding::inflate) {
 
+    private var isUserSeeking: Boolean = false
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Log.d("MusicPlay" , "beforeInitView")
         initView()
-        Log.d("MusicPlay", "AfterInitView")
     }
 
     override fun initView() {
+        startProgressListener()
+
         binding.btnBack.setOnClickListener { activity?.onBackPressed() }
 
         binding.btnPlayPause.setOnClickListener {
@@ -39,6 +47,51 @@ class MusicPlayFragment :
             host.playPrevious()
             updateUi()
         }
+
+        binding.progressBar.setOnSeekBarChangeListener(
+            object: SeekBar.OnSeekBarChangeListener{
+                @UnstableApi
+                override fun onProgressChanged(
+                    seekBar: SeekBar?,
+                    progress: Int, //进度百分比
+                    fromUser: Boolean
+                ) {
+                    if(fromUser){
+                        val service = (activity as MainActivity).getMusicService()
+                        if(service != null){
+                            val duration = service.getCurrentDuration()
+                            val newPosition = progress.toLong() * duration / 1000
+                            binding.currentTime.text = formatTime(newPosition)//拖动改变显示时间
+                            if(!isUserSeeking)service.seekTo(newPosition) //单击事件跳转
+                        }
+                    }
+                }
+
+                override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                    isUserSeeking = true
+                }
+
+                @OptIn(UnstableApi::class)
+                override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                    isUserSeeking = false
+                    val service = (activity as MainActivity).getMusicService()
+                    if(service != null){
+                        val progress = seekBar?.progress?:0
+                        val duration = service.getCurrentDuration()
+                        val newPosition = progress * duration / 1000
+                        service.seekTo(newPosition)
+                    }
+                }
+            }
+        )
+
+    }
+
+    private fun formatTime(ms: Long): String{
+        val totalSeconds = ms / 1000
+        val minutes = totalSeconds / 60
+        val seconds = totalSeconds % 60
+        return String.format("%02d:%02d", minutes, seconds)
     }
 
     private fun updateUi() {
@@ -61,8 +114,33 @@ class MusicPlayFragment :
         }
     }
 
+    @UnstableApi
+    private fun updateProgress(){
+        val service= (activity as MainActivity).getMusicService() ?: return
+        val currentDuration = service.getCurrentDuration()
+        val currentPosition = service.getCurrentPosition()
+        val progress = (currentPosition.toFloat() / currentDuration * 1000).toInt() //防止两个Long除出0
+        binding.progressBar.progress = progress
+        binding.currentTime.text = formatTime(currentPosition)
+        binding.totalTime.text = formatTime(currentDuration)
+    }
+
+    @OptIn(UnstableApi::class)
+    private fun startProgressListener(){
+        lifecycleScope.launch{
+            while(true){
+                if(!isUserSeeking){
+                    updateProgress()
+                }
+                delay(500)
+            }
+        }
+    }
+
+
     override fun onResume() {
         super.onResume()
+        startProgressListener()
         updateUi()
     }
 }

@@ -231,6 +231,21 @@ class PlayMusicService : Service() {
     fun resumeMusic() {
         playMusic()
     }
+    
+    /**
+     * 获取当前播放位置（毫秒）
+     */
+    fun getCurrentPosition(): Long {
+        return exoPlayer?.currentPosition ?: 0
+    }
+    
+    /**
+     * 获取当前歌曲总时长（毫秒）
+     */
+    fun getCurrentDuration(): Long {
+        return exoPlayer?.duration ?: 0
+    }
+    
     fun seekTo(pos: Long) {
         exoPlayer?.seekTo(pos)
     }
