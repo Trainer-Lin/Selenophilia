@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -30,7 +29,6 @@ import com.example.tmusic.localMusicList.mvi.LocalMusicIntent
 import com.example.tmusic.localMusicList.mvi.LocalMusicState
 import com.example.tmusic.localMusicList.mvi.LocalMusicViewModel
 import com.example.tmusic.widget.PlaylistSelectDialog
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class LocalMusicListFragment :
@@ -49,7 +47,7 @@ class LocalMusicListFragment :
     private val repository by lazy { Repository(application, musicDao) }
     private lateinit var viewModel: LocalMusicViewModel
     private lateinit var playlistViewModel: PlaylistViewModel
-   // private val playlistViewModel by viewModels<PlaylistViewModel>(ownerProducer = {this})
+    // private val playlistViewModel by viewModels<PlaylistViewModel>(ownerProducer = {this})
     private lateinit var listMusicViewModel: ListMusicViewModel
     companion object {
         const val TAG = "MusicListFragment"
@@ -97,9 +95,7 @@ class LocalMusicListFragment :
             updateNowPlaying()
         }
 
-        binding.nowPlayingCard.setOnClickListener {
-            (activity as MainActivity).goToMusicPlay()
-        }
+        binding.nowPlayingCard.setOnClickListener { (activity as MainActivity).goToMusicPlay() }
 
         lifecycleScope.launch { viewModel.viewState.collect { state -> handleUiState(state) } }
         lifecycleScope.launch {

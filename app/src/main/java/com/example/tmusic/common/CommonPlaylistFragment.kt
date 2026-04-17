@@ -20,16 +20,15 @@ import com.example.tmusic.listAndMusic.ListMusicViewModel
 import com.example.tmusic.localMusicList.data.room.MusicDatabase
 import com.example.tmusic.localMusicList.data.room.MusicEntity
 import com.example.tmusic.widget.PlaylistSelectDialog
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
 import kotlin.getValue
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 class CommonPlaylistFragment :
         BaseFragment<FragmentCommonPlaylistBinding>(FragmentCommonPlaylistBinding::inflate) {
 
     private lateinit var playlistViewModel: PlaylistViewModel
-    private val  listMusicViewModel by viewModels<ListMusicViewModel>()
+    private val listMusicViewModel by viewModels<ListMusicViewModel>()
     private lateinit var adapter: CommonPlaylistAdapter
 
     private var playlistId: Long = -1
@@ -63,24 +62,24 @@ class CommonPlaylistFragment :
         val playlistMusicDao = playlistDb.playlistMusicDao()
         val listMusicRepository = ListMusicRepository(playlistMusicDao, musicDao)
 
-    //    listMusicViewModel = ListMusicViewModel(application)
+        //    listMusicViewModel = ListMusicViewModel(application)
         listMusicViewModel.initRepository(listMusicRepository)
     }
 
     override fun initView() {
         playlistViewModel = ViewModelProvider(this)[PlaylistViewModel::class.java]
         adapter =
-            CommonPlaylistAdapter(
-                ArrayList(),
-                { list, index ->
-                    currentMusicList = list
-                    currentMusicIndex = index
-                    (activity as? MainActivity)?.playOrPause(list, index)
-                    updateNowPlaying()
-                },
-                { music -> showPlaylistSelectDialogForMusic(music) },
-                { music -> deleteMusicFromPlaylist(music) }
-            )
+                CommonPlaylistAdapter(
+                        ArrayList(),
+                        { list, index ->
+                            currentMusicList = list
+                            currentMusicIndex = index
+                            (activity as? MainActivity)?.playOrPause(list, index)
+                            updateNowPlaying()
+                        },
+                        { music -> showPlaylistSelectDialogForMusic(music) },
+                        { music -> deleteMusicFromPlaylist(music) }
+                )
 
         binding.playlistList.layoutManager = LinearLayoutManager(requireContext())
         binding.playlistList.adapter = adapter
@@ -99,9 +98,7 @@ class CommonPlaylistFragment :
             updateNowPlaying()
         }
 
-        binding.nowPlayingCard.setOnClickListener {
-            (activity as? MainActivity)?.goToMusicPlay()
-        }
+        binding.nowPlayingCard.setOnClickListener { (activity as? MainActivity)?.goToMusicPlay() }
 
         updateNowPlaying()
     }
@@ -145,13 +142,14 @@ class CommonPlaylistFragment :
     }
 
     private fun showPlaylistSelectDialogForMusic(music: MusicEntity) {
-       lifecycleScope.launch {
+        lifecycleScope.launch {
             val state = playlistViewModel.uiState.value
             Log.d("CommonPlaylistFragment", "${state.playlists.size}")
             if (state.playlists.isNotEmpty()) {
                 PlaylistSelectDialog(requireContext(), state.playlists) { playlist ->
-                    listMusicViewModel.addMusicToPlaylist(playlist.id, music.id)
-                }.show()
+                            listMusicViewModel.addMusicToPlaylist(playlist.id, music.id)
+                        }
+                        .show()
             } else {
                 Toast.makeText(context, "暂无歌单，请先创建歌单", Toast.LENGTH_SHORT).show()
             }

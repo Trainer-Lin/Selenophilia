@@ -28,7 +28,7 @@ class StudyFragment : BaseFragment<FragmentStudyBinding>(FragmentStudyBinding::i
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Log.d("StudyFragment" ,"Hello")
+        Log.d("StudyFragment", "Hello")
         initView()
     }
 
@@ -47,9 +47,7 @@ class StudyFragment : BaseFragment<FragmentStudyBinding>(FragmentStudyBinding::i
         }
         binding.btnSettings.setOnClickListener { showSelectDurationDialog() }
 
-        binding.cardMusic.setOnClickListener {
-            (activity as MainActivity).goToMusicPlay()
-        }
+        binding.cardMusic.setOnClickListener { (activity as MainActivity).goToMusicPlay() }
     }
 
     private fun showAddPlanDialog() {
@@ -94,9 +92,9 @@ class StudyFragment : BaseFragment<FragmentStudyBinding>(FragmentStudyBinding::i
         binding.tvArtistName.text = host.artistName ?: "未知艺术家"
 
         if (host.isPlaying()) {
-            binding.btnPlayMusic.setImageResource(R.drawable.ic_study_pause)
+            binding.btnPlayMusic.setImageResource(R.drawable.icon_pause_new)
         } else {
-            binding.btnPlayMusic.setImageResource(R.drawable.icon_play_new)
+            binding.btnPlayMusic.setImageResource(R.drawable.ic_study_pause)
         }
         updateDateSelector()
     }
@@ -171,6 +169,11 @@ class StudyFragment : BaseFragment<FragmentStudyBinding>(FragmentStudyBinding::i
         if (!hidden) {
             updateUi()
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        updateUi()
     }
 
     private fun sendIntent(intent: StudyIntent) {

@@ -38,7 +38,7 @@ class PlayMusicService : Service() {
     private var musicList: List<MusicEntity> = emptyList() // 播放列表
     private var currentMusicIndex: Int = 0
     var isPlaying: Boolean
-        get() = exoPlayer?.isPlaying ?: false
+        get() = exoPlayer?.isPlaying == true || exoPlayer?.playWhenReady == true
         set(value) {
             exoPlayer?.playWhenReady = value
         }
