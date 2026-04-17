@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <item
-        android:gravity="fill_vertical|left"
-        android:width="123dp">
-        <shape android:shape="rectangle">
-            <solid android:color="#556253"/>
-            <corners android:radius="9999dp"/>
-            <size android:height="6dp"/>
-        </shape>
+    <item android:id="@android:id/progress">
+        <clip
+            android:clipOrientation="horizontal"
+            android:gravity="left">
+            <shape android:shape="rectangle">
+                <solid android:color="#556253"/>
+                <corners android:radius="9999dp"/>
+                <size android:height="6dp"/>
+            </shape>
+        </clip>
     </item>
 </layer-list>

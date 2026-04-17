@@ -131,10 +131,13 @@
                     <SeekBar
                         android:id="@+id/progressBar"
                         style="?android:attr/progressBarStyleHorizontal"
-                        android:layout_width="123dp"
+                        android:layout_width="match_parent"
                         android:layout_height="6dp"
                         android:progressDrawable="@drawable/bg_progress_bar_foreground"
-                        android:max="1000" />
+                        android:max="1000"
+                        android:thumb="@null"
+                        android:paddingStart="0dp"
+                        android:paddingEnd="0dp" />
                 </FrameLayout>
 
                 <LinearLayout
