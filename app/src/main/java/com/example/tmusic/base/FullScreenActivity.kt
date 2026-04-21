@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.Application
 import android.content.ComponentCallbacks
 import android.content.res.Configuration
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -60,11 +61,14 @@ abstract class FullScreenActivity<VB: ViewBinding> : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            window.isNavigationBarContrastEnforced = false
+        }
 
         setCustomDensity(this, application, 412)
         ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, 0, systemBars.right, systemBars.bottom)
+            v.setPadding(systemBars.left, 0, systemBars.right, 0)
             insets
         }//这个listener是监听系统配置 , 比如窗口创建完成 , 屏幕旋转 , 系统UI变化 , 就是保证时刻正确显示界面
         binding = createViewBinding()

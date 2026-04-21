@@ -16,6 +16,8 @@ import androidx.annotation.OptIn
 import androidx.cardview.widget.CardView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.media3.common.util.UnstableApi
 import com.example.tmusic.base.FullScreenActivity
@@ -37,6 +39,8 @@ class MainActivity : FullScreenActivity<ActivityMainBinding>() {
         const val TAG_STUDY = "2"
         const val TAG_WEB = "3"
         const val TAG_LOCAL_MUSIC = "4"
+        const val TAG_COMMON_PLAYLIST = "5"
+        const val TAG_MUSIC_PLAY = "6"
         const val UPDATE_MUSIC_REQUEST = 1001
         const val READ_MUSIC_PERMISSION = 1002
         const val POST_NOTIFICATION_PERMISSION = 1003
@@ -55,7 +59,9 @@ class MainActivity : FullScreenActivity<ActivityMainBinding>() {
     var songTitle: String? = null
     var artistName: String? = null
 
-    private var currentFragmentTag: String? = TAG_HOME
+    var lastTag: String = TAG_HOME
+    var lastPlaylistId: Long = -1L
+    private var currentFragmentTag: String? = null
     private val fragments = mutableMapOf<String, Fragment>()
 
     private fun getOrCreateFragment(tag: String): Fragment {
@@ -65,6 +71,7 @@ class MainActivity : FullScreenActivity<ActivityMainBinding>() {
                     TAG_STUDY -> StudyFragment()
                     TAG_LOCAL_MUSIC -> LocalMusicListFragment()
                     TAG_WEB -> WebMusicFragment()
+                    TAG_MUSIC_PLAY -> MusicPlayFragment()
                     else -> HomeFragment()
                 }.also { fragments[tag] = it }
     }
@@ -121,7 +128,22 @@ class MainActivity : FullScreenActivity<ActivityMainBinding>() {
     }
 
     fun switchFragment(tag: String) {
+        if (currentFragmentTag == tag && tag != TAG_MUSIC_PLAY) {
+            return
+        }
+
         val transaction = supportFragmentManager.beginTransaction()
+
+        if (tag == TAG_MUSIC_PLAY) {
+            val fragment = MusicPlayFragment()
+            transaction.replace(R.id.fragment_container, fragment, tag)
+            currentFragmentTag = tag
+            transaction.commit()
+            updateBottomNavVisibility(fragment)
+            ensureStatusBarVisible()
+            return
+        }
+
         val newFragment = getOrCreateFragment(tag)
 
         if (currentFragmentTag != tag) {
@@ -136,34 +158,48 @@ class MainActivity : FullScreenActivity<ActivityMainBinding>() {
         currentFragmentTag = tag
         transaction.commit()
         updateBottomNavVisibility(newFragment)
+        ensureStatusBarVisible()
     }
 
     fun goToMusicList(id: Long) {
+        lastPlaylistId = id
         val fragment = CommonPlaylistFragment.newInstance(id)
         supportFragmentManager
                 .beginTransaction()
-                .replace(R.id.fragment_container, fragment)
+                .replace(R.id.fragment_container, fragment, TAG_COMMON_PLAYLIST)
                 .commit()
+        currentFragmentTag = TAG_COMMON_PLAYLIST
         updateBottomNavVisibility(fragment)
+        ensureStatusBarVisible()
     }
 
     fun goToMusicPlay() {
-        val fragment = MusicPlayFragment()
-        supportFragmentManager
-                .beginTransaction()
-                .replace(R.id.fragment_container, fragment)
-                .addToBackStack(null)
-                .commit()
-        updateBottomNavVisibility(fragment)
+        switchFragment(TAG_MUSIC_PLAY)
+    }
+
+    fun navigateBack(){
+        if (lastTag == TAG_COMMON_PLAYLIST && lastPlaylistId != -1L) {
+            goToMusicList(lastPlaylistId)
+            return
+        }
+        switchFragment(lastTag)
     }
 
     override fun onBackPressed() {
-        super.onBackPressed()
-        // Update visibility when popping back stack
-        val currentFragment = getCurrentFragment()
-        if (currentFragment != null) {
-            updateBottomNavVisibility(currentFragment)
+        if (currentFragmentTag != TAG_HOME) {
+            switchFragment(TAG_HOME)
+        } else {
+            super.onBackPressed()
         }
+    }
+
+    fun navigateToHome() {
+        switchFragment(TAG_HOME)
+    }
+
+    fun ensureStatusBarVisible() {
+        WindowCompat.getInsetsController(window, window.decorView)
+            ?.show(WindowInsetsCompat.Type.statusBars())
     }
 
     private fun updateBottomNavVisibility(fragment: Fragment) {

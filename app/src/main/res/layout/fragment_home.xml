@@ -99,7 +99,9 @@
             android:layout_marginEnd="4dp"
             app:cardBackgroundColor="#efdfed"
             app:cardCornerRadius="28dp"
-            app:cardElevation="8dp"
+            app:cardElevation="4dp"
+            app:strokeWidth="1dp"
+            app:strokeColor="#66FFFFFF"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/greeting"
@@ -125,7 +127,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:scaleType="centerCrop"
-                        android:src="@drawable/bg_moon_new" />
+                        android:src="@drawable/bg_moon_cat" />
 
                 </com.google.android.material.card.MaterialCardView>
 
@@ -160,13 +162,14 @@
                             android:id="@+id/songTitle"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="6dp"
+                            android:layout_marginTop="-16dp"
                             android:ellipsize="end"
-                            android:fontFamily="@font/font_one"
+                            android:fontFamily="@font/font_noto_bold"
+                            android:includeFontPadding="true"
                             android:maxLines="1"
                             android:text="暂无歌曲播放哦"
                             android:textColor="#1E1B1E"
-                            android:textSize="22sp" />
+                            android:textSize="24sp" />
 
                         <TextView
                             android:id="@+id/artistName"
@@ -278,7 +281,9 @@
                 android:layout_marginEnd="8dp"
                 app:cardBackgroundColor="#FFF0F5"
                 app:cardCornerRadius="20dp"
-                app:cardElevation="2dp">
+                app:cardElevation="1dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="#80FFFFFF">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -315,7 +320,9 @@
                 android:layout_marginStart="8dp"
                 app:cardBackgroundColor="#F5F0FF"
                 app:cardCornerRadius="20dp"
-                app:cardElevation="2dp">
+                app:cardElevation="1dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="#80FFFFFF">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -366,7 +373,7 @@
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="40dp"
                 android:orientation="vertical"
-                android:elevation="8dp">
+                android:elevation="3dp">
 
                 <!-- Header Row: Title + View All + Add Button -->
 

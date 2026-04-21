@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -48,10 +49,12 @@ class CommonPlaylistFragment :
 
         playlistId = arguments?.getLong("playlistId") ?: -1
 
+        registerBackPressedHandler()
         initRepository()
         initView()
         observeMusicList()
         observeListMusicState()
+        refreshSystemBars()
     }
 
     private fun initRepository() {
@@ -84,7 +87,7 @@ class CommonPlaylistFragment :
         binding.playlistList.layoutManager = LinearLayoutManager(requireContext())
         binding.playlistList.adapter = adapter
 
-        binding.btnBack.setOnClickListener { (activity as? MainActivity)?.switchFragment("1") }
+        binding.btnBack.setOnClickListener { navigateBackToHome() }
 
         binding.btnSearch.setOnClickListener {
             Toast.makeText(context, "搜索功能开发中...", Toast.LENGTH_SHORT).show()
@@ -98,9 +101,35 @@ class CommonPlaylistFragment :
             updateNowPlaying()
         }
 
-        binding.nowPlayingCard.setOnClickListener { (activity as? MainActivity)?.goToMusicPlay() }
+        binding.nowPlayingCard.setOnClickListener {
+            val host = activity as? MainActivity ?: return@setOnClickListener
+            host.lastTag = MainActivity.TAG_COMMON_PLAYLIST
+            host.lastPlaylistId = playlistId
+            host.goToMusicPlay()
+        }
 
         updateNowPlaying()
+    }
+
+    private fun registerBackPressedHandler() {
+        requireActivity()
+            .onBackPressedDispatcher
+            .addCallback(
+                viewLifecycleOwner,
+                object : OnBackPressedCallback(true) {
+                    override fun handleOnBackPressed() {
+                        navigateBackToHome()
+                    }
+                }
+            )
+    }
+
+    private fun navigateBackToHome() {
+        (activity as? MainActivity)?.navigateToHome()
+    }
+
+    private fun refreshSystemBars() {
+        (activity as? MainActivity)?.ensureStatusBarVisible()
     }
 
     private fun observeMusicList() {
@@ -191,12 +220,22 @@ class CommonPlaylistFragment :
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
         if (!hidden) {
+            refreshSystemBars()
             updateNowPlaying()
         }
     }
 
     override fun onResume() {
         super.onResume()
+        refreshSystemBars()
         updateNowPlaying()
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
+        super.setUserVisibleHint(isVisibleToUser)
+        if (isVisibleToUser) {
+            refreshSystemBars()
+        }
     }
 }

@@ -55,7 +55,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
 
         binding.btnAddPlaylist.setOnClickListener { showAddPlaylistDialog() }
 
-        binding.musicCard.setOnClickListener { (activity as MainActivity).goToMusicPlay() }
+        binding.musicCard.setOnClickListener {
+            (activity as MainActivity).lastTag = MainActivity.TAG_HOME
+            (activity as MainActivity).goToMusicPlay()
+        }
     }
 
     private fun updateGreeting() {

@@ -2,8 +2,8 @@ package com.example.tmusic.common
 
 import android.animation.ValueAnimator
 import android.os.Bundle
+import android.util.Log
 import android.view.View
-import android.view.animation.DecelerateInterpolator
 import android.view.animation.LinearInterpolator
 import android.widget.SeekBar
 import androidx.annotation.OptIn
@@ -15,12 +15,17 @@ import com.example.tmusic.R
 import com.example.tmusic.base.BaseFragment
 import com.example.tmusic.databinding.FragmentMusicPlayBinding
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 class MusicPlayFragment :
         BaseFragment<FragmentMusicPlayBinding>(FragmentMusicPlayBinding::inflate) {
 
     private var isUserSeeking: Boolean = false
+    private var progressJob: Job? = null
+    private var progressAnimator: ValueAnimator? = null
+    private var progressInitialized = false
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -28,9 +33,13 @@ class MusicPlayFragment :
     }
 
     override fun initView() {
+        Log.d("MusicPlay", "initViewStart")
         startProgressListener()
+        Log.d("MusicPlay", "startProgressListener")
 
-        binding.btnBack.setOnClickListener { activity?.onBackPressed() }
+        binding.btnBack.setOnClickListener {
+            (activity as? MainActivity)?.navigateBack()
+        }
 
         binding.btnPlayPause.setOnClickListener {
             val host = activity as? MainActivity ?: return@setOnClickListener
@@ -119,33 +128,45 @@ class MusicPlayFragment :
 
     @OptIn(UnstableApi::class)
     private fun updateProgress(){
-        val service = (activity as MainActivity).getMusicService() ?: return
+        val host = activity as? MainActivity ?: return
+        val service = host.getMusicService() ?: return
         val duration = service.getCurrentDuration()
+        if (duration <= 0L) return
         val position = service.getCurrentPosition()
         val actualProgress =(position.toFloat() / duration * 1000).toInt()
-        val currentProgress = binding.progressBar.progress
-        updateProgressAnimate(currentProgress,  actualProgress)
+        if (!progressInitialized) {
+            binding.progressBar.progress = actualProgress
+            progressInitialized = true
+        } else {
+            val currentProgress = binding.progressBar.progress
+            updateProgressAnimate(currentProgress,  actualProgress)
+        }
         binding.currentTime.text = formatTime(position)
         binding.totalTime.text = formatTime(duration)
     }
 
     private fun updateProgressAnimate(currentProgress: Int, targetProgress: Int){
+        progressAnimator?.cancel()
+        progressAnimator = null
         if(kotlin.math.abs(currentProgress - targetProgress ) <=5){
             binding.progressBar. progress = targetProgress
         }else{
             val animator = ValueAnimator.ofInt(currentProgress, targetProgress) //创建动画 ，从当前进度到目标进度
+            val progressBar = binding.progressBar
             animator.duration = 1000
             animator.interpolator = LinearInterpolator()
             animator.addUpdateListener {animation ->
-                binding.progressBar.progress = animation.animatedValue as Int //动画每更新一次， 更新一次Progress
+                progressBar.progress = animation.animatedValue as Int //动画每更新一次， 更新一次Progress
             }
             animator.start()
+            progressAnimator = animator
         }
     }
     @OptIn(UnstableApi::class)
     private fun startProgressListener() {
-        lifecycleScope.launch {
-            while (true) {
+        if (progressJob?.isActive == true) return
+        progressJob = viewLifecycleOwner.lifecycleScope.launch { //让生命周期到onDestroyView就结束
+            while (isActive) {
                 if (!isUserSeeking) {
                     updateProgress()
                 }
@@ -158,5 +179,14 @@ class MusicPlayFragment :
         super.onResume()
         startProgressListener()
         updateUi()
+    }
+
+    override fun onDestroyView() {
+        progressJob?.cancel()
+        progressJob = null
+        progressAnimator?.cancel()
+        progressAnimator = null
+        progressInitialized = false
+        super.onDestroyView()
     }
 }

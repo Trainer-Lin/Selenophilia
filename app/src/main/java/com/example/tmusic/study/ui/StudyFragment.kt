@@ -47,7 +47,10 @@ class StudyFragment : BaseFragment<FragmentStudyBinding>(FragmentStudyBinding::i
         }
         binding.btnSettings.setOnClickListener { showSelectDurationDialog() }
 
-        binding.cardMusic.setOnClickListener { (activity as MainActivity).goToMusicPlay() }
+        binding.cardMusic.setOnClickListener {
+            (activity as MainActivity).lastTag = MainActivity.TAG_STUDY
+            (activity as MainActivity).goToMusicPlay()
+        }
     }
 
     private fun showAddPlanDialog() {

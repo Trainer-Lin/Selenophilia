@@ -70,14 +70,14 @@ class LocalMusicListFragment :
                         viewLifecycleOwner,
                         object : OnBackPressedCallback(true) {
                             override fun handleOnBackPressed() {
-                                (activity as MainActivity).switchFragment(MainActivity.TAG_HOME)
+                                (activity as MainActivity).navigateToHome()
                             }
                         }
                 )
 
         // Setup Toolbar
         binding.btnBack.setOnClickListener {
-            (activity as MainActivity).switchFragment(MainActivity.TAG_HOME)
+            (activity as MainActivity).navigateToHome()
         }
 
         binding.btnAdd.setOnClickListener {
@@ -95,12 +95,16 @@ class LocalMusicListFragment :
             updateNowPlaying()
         }
 
-        binding.nowPlayingCard.setOnClickListener { (activity as MainActivity).goToMusicPlay() }
+        binding.nowPlayingCard.setOnClickListener {
+            (activity as MainActivity).lastTag = MainActivity.TAG_LOCAL_MUSIC
+            (activity as MainActivity).goToMusicPlay()
+        }
 
         lifecycleScope.launch { viewModel.viewState.collect { state -> handleUiState(state) } }
         lifecycleScope.launch {
             listMusicViewModel.uiState.collect { state -> handleListMusicState(state) }
         }
+        refreshSystemBars()
         updateNowPlaying()
     }
 
@@ -175,6 +179,10 @@ class LocalMusicListFragment :
         recyclerView.adapter = adapter
     }
 
+    private fun refreshSystemBars() {
+        (activity as? MainActivity)?.ensureStatusBarVisible()
+    }
+
     private fun showPlaylistSelectDialog(music: MusicEntity) {
         lifecycleScope.launch {
             val state = playlistViewModel.uiState.value
@@ -204,6 +212,7 @@ class LocalMusicListFragment :
 
     private fun updateNowPlaying() {
         val host = activity as? MainActivity ?: return
+        host.ensureStatusBarVisible()
         host.updateSongInfo()
 
         val cover = host.albumCover
@@ -228,12 +237,22 @@ class LocalMusicListFragment :
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
         if (!hidden) {
+            refreshSystemBars()
             updateNowPlaying()
         }
     }
 
     override fun onResume() {
         super.onResume()
+        refreshSystemBars()
         updateNowPlaying()
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
+        super.setUserVisibleHint(isVisibleToUser)
+        if (isVisibleToUser) {
+            refreshSystemBars()
+        }
     }
 }
