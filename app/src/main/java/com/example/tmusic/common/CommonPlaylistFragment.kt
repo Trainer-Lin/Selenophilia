@@ -46,10 +46,7 @@ class CommonPlaylistFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         playlistId = arguments?.getLong("playlistId") ?: -1
-
-        registerBackPressedHandler()
         initRepository()
         initView()
         observeMusicList()
@@ -110,20 +107,6 @@ class CommonPlaylistFragment :
 
         updateNowPlaying()
     }
-
-    private fun registerBackPressedHandler() {
-        requireActivity()
-            .onBackPressedDispatcher
-            .addCallback(
-                viewLifecycleOwner,
-                object : OnBackPressedCallback(true) {
-                    override fun handleOnBackPressed() {
-                        navigateBackToHome()
-                    }
-                }
-            )
-    }
-
     private fun navigateBackToHome() {
         (activity as? MainActivity)?.navigateToHome()
     }

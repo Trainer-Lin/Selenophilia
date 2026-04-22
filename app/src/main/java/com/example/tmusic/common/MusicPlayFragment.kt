@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.View
 import android.view.animation.LinearInterpolator
 import android.widget.SeekBar
+import androidx.activity.OnBackPressedCallback
 import androidx.annotation.OptIn
 import androidx.lifecycle.lifecycleScope
 import androidx.media3.common.util.UnstableApi
@@ -33,10 +34,7 @@ class MusicPlayFragment :
     }
 
     override fun initView() {
-        Log.d("MusicPlay", "initViewStart")
         startProgressListener()
-        Log.d("MusicPlay", "startProgressListener")
-
         binding.btnBack.setOnClickListener {
             (activity as? MainActivity)?.navigateBack()
         }
@@ -162,6 +160,7 @@ class MusicPlayFragment :
             progressAnimator = animator
         }
     }
+
     @OptIn(UnstableApi::class)
     private fun startProgressListener() {
         if (progressJob?.isActive == true) return

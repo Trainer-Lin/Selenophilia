@@ -186,7 +186,9 @@ class MainActivity : FullScreenActivity<ActivityMainBinding>() {
     }
 
     override fun onBackPressed() {
-        if (currentFragmentTag != TAG_HOME) {
+        if (currentFragmentTag == TAG_MUSIC_PLAY) {
+            navigateBack()
+        } else if (currentFragmentTag != TAG_HOME) {
             switchFragment(TAG_HOME)
         } else {
             super.onBackPressed()

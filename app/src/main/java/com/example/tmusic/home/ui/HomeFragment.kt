@@ -123,7 +123,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         if (cover != null) {
             Glide.with(this).load(cover).into(binding.albumCover)
         } else {
-            binding.albumCover.setImageResource(R.drawable.bg_moon_new)
+            binding.albumCover.setImageResource(R.drawable.bg_moon_cat)
         }
 
         binding.songTitle.text = host.songTitle ?: "暂无歌曲播放哦"
