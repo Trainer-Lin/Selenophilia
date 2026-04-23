@@ -1,3 +1,5 @@
+package com.example.tmusic.web
+
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -6,10 +8,8 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.webkit.WebResourceRequest
 import android.webkit.WebSettings
 import android.webkit.WebView
-import android.webkit.WebViewClient
 import android.widget.Button
 import android.widget.ImageButton
 import androidx.appcompat.app.AlertDialog
@@ -17,6 +17,7 @@ import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import com.example.tmusic.MainActivity
 import com.example.tmusic.R
+import kotlin.math.abs
 
 class WebMusicFragment : Fragment() {
     private var webView: WebView? = null
@@ -25,9 +26,9 @@ class WebMusicFragment : Fragment() {
     }
 
     override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_web_music, container, false)
         webView = view.findViewById<WebView>(R.id.webView)
@@ -85,8 +86,8 @@ class WebMusicFragment : Fragment() {
                 MotionEvent.ACTION_UP -> {
                     val deltaX = event.rawX - initialTouchX
                     val deltaY = event.rawY - initialTouchY
-                    if (kotlin.math.abs(deltaX) < 10 && kotlin.math.abs(deltaY) < 10) {
-                        (activity as? MainActivity)?.switchFragment(MainActivity.TAG_HOME)
+                    if (abs(deltaX) < 10 && abs(deltaY) < 10) {
+                        (activity as MainActivity).navigateToHome()
                     }
                     true
                 }

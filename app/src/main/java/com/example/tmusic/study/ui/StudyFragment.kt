@@ -7,8 +7,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.bumptech.glide.Glide
 import com.example.tmusic.MainActivity
 import com.example.tmusic.R
@@ -24,7 +26,7 @@ import kotlinx.coroutines.launch
 
 class StudyFragment : BaseFragment<FragmentStudyBinding>(FragmentStudyBinding::inflate) {
 
-    private val viewModel: StudyViewModel by viewModels()
+    private val viewModel: StudyViewModel by activityViewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -48,7 +50,6 @@ class StudyFragment : BaseFragment<FragmentStudyBinding>(FragmentStudyBinding::i
         binding.btnSettings.setOnClickListener { showSelectDurationDialog() }
 
         binding.cardMusic.setOnClickListener {
-            (activity as MainActivity).lastTag = MainActivity.TAG_STUDY
             (activity as MainActivity).goToMusicPlay()
         }
     }
@@ -184,11 +185,13 @@ class StudyFragment : BaseFragment<FragmentStudyBinding>(FragmentStudyBinding::i
     }
 
     private fun observeState() {
-        lifecycleScope.launch {
-            viewModel.viewState.collect { state ->
-                renderTimer(state.remainSeconds, state.isWorking, state.isCountUp)
-                createPlans(state.plans)
-                binding.plansCount.text = "${state.plans.size} TASKS"
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.viewState.collect { state ->
+                    renderTimer(state.remainSeconds, state.isWorking, state.isCountUp)
+                    createPlans(state.plans)
+                    binding.plansCount.text = "${state.plans.size} TASKS"
+                }
             }
         }
     }

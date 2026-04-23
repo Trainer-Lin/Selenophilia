@@ -64,20 +64,9 @@ class LocalMusicListFragment :
         listMusicViewModel.initRepository(listMusicRepository)
         initView()
 
-        requireActivity()
-                .onBackPressedDispatcher
-                .addCallback(
-                        viewLifecycleOwner,
-                        object : OnBackPressedCallback(true) {
-                            override fun handleOnBackPressed() {
-                                (activity as MainActivity).navigateToHome()
-                            }
-                        }
-                )
-
         // Setup Toolbar
         binding.btnBack.setOnClickListener {
-            (activity as MainActivity).navigateToHome()
+            (activity as MainActivity).navigateBack()
         }
 
         binding.btnAdd.setOnClickListener {
@@ -96,7 +85,6 @@ class LocalMusicListFragment :
         }
 
         binding.nowPlayingCard.setOnClickListener {
-            (activity as MainActivity).lastTag = MainActivity.TAG_LOCAL_MUSIC
             (activity as MainActivity).goToMusicPlay()
         }
 
@@ -255,4 +243,6 @@ class LocalMusicListFragment :
             refreshSystemBars()
         }
     }
+
+
 }

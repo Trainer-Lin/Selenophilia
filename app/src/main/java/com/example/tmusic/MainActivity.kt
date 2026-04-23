@@ -1,6 +1,6 @@
 package com.example.tmusic
 
-import WebMusicFragment
+import com.example.tmusic.web.WebMusicFragment
 import android.Manifest
 import android.content.ComponentName
 import android.content.Intent
@@ -9,6 +9,7 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.IBinder
 import android.os.Looper
+import android.util.Log
 import android.view.Gravity
 import android.widget.TextView
 import android.widget.Toast
@@ -20,6 +21,8 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.media3.common.util.UnstableApi
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
 import com.example.tmusic.base.FullScreenActivity
 import com.example.tmusic.common.CommonPlaylistFragment
 import com.example.tmusic.common.MusicPlayFragment
@@ -35,19 +38,13 @@ class MainActivity : FullScreenActivity<ActivityMainBinding>() {
 
     companion object {
         const val TAG = "MainActivity"
-        const val TAG_HOME = "1"
-        const val TAG_STUDY = "2"
-        const val TAG_WEB = "3"
-        const val TAG_LOCAL_MUSIC = "4"
-        const val TAG_COMMON_PLAYLIST = "5"
-        const val TAG_MUSIC_PLAY = "6"
         const val UPDATE_MUSIC_REQUEST = 1001
         const val READ_MUSIC_PERMISSION = 1002
         const val POST_NOTIFICATION_PERMISSION = 1003
     }
 
     private var musicService: PlayMusicService? = null
-
+    private lateinit var navController: NavController
     override fun createViewBinding(): ActivityMainBinding {
         return ActivityMainBinding.inflate(layoutInflater)
     }
@@ -58,23 +55,6 @@ class MainActivity : FullScreenActivity<ActivityMainBinding>() {
     var albumCover: String? = null
     var songTitle: String? = null
     var artistName: String? = null
-
-    var lastTag: String = TAG_HOME
-    var lastPlaylistId: Long = -1L
-    private var currentFragmentTag: String? = null
-    private val fragments = mutableMapOf<String, Fragment>()
-
-    private fun getOrCreateFragment(tag: String): Fragment {
-        return fragments[tag]
-                ?: when (tag) {
-                    TAG_HOME -> HomeFragment()
-                    TAG_STUDY -> StudyFragment()
-                    TAG_LOCAL_MUSIC -> LocalMusicListFragment()
-                    TAG_WEB -> WebMusicFragment()
-                    TAG_MUSIC_PLAY -> MusicPlayFragment()
-                    else -> HomeFragment()
-                }.also { fragments[tag] = it }
-    }
 
     private val serviceConnection =
             object : ServiceConnection {
@@ -103,100 +83,24 @@ class MainActivity : FullScreenActivity<ActivityMainBinding>() {
             false
         }
 
-        initBottomNavigation()
-        switchFragment(TAG_HOME)
-    }
-
-    private fun initBottomNavigation() {
-        binding.navHome.setOnClickListener {
-            if (currentFragmentTag != TAG_HOME) {
-                switchFragment(TAG_HOME)
-            }
-        }
-
-        binding.navStudy.setOnClickListener {
-            if (currentFragmentTag != TAG_STUDY) {
-                switchFragment(TAG_STUDY)
-            }
-        }
-
-        binding.navDiary.setOnClickListener {
-            if (currentFragmentTag != TAG_WEB) {
-                switchFragment(TAG_WEB)
-            }
-        }
-    }
-
-    fun switchFragment(tag: String) {
-        if (currentFragmentTag == tag && tag != TAG_MUSIC_PLAY) {
-            return
-        }
-
-        val transaction = supportFragmentManager.beginTransaction()
-
-        if (tag == TAG_MUSIC_PLAY) {
-            val fragment = MusicPlayFragment()
-            transaction.replace(R.id.fragment_container, fragment, tag)
-            currentFragmentTag = tag
-            transaction.commit()
-            updateBottomNavVisibility(fragment)
-            ensureStatusBarVisible()
-            return
-        }
-
-        val newFragment = getOrCreateFragment(tag)
-
-        if (currentFragmentTag != tag) {
-            fragments[currentFragmentTag]?.let { transaction.hide(it) }
-        }
-
-        if (newFragment.isAdded) {
-            transaction.show(newFragment)
-        } else {
-            transaction.add(R.id.fragment_container, newFragment, tag)
-        }
-        currentFragmentTag = tag
-        transaction.commit()
-        updateBottomNavVisibility(newFragment)
-        ensureStatusBarVisible()
+        initNavigation()
     }
 
     fun goToMusicList(id: Long) {
-        lastPlaylistId = id
-        val fragment = CommonPlaylistFragment.newInstance(id)
-        supportFragmentManager
-                .beginTransaction()
-                .replace(R.id.fragment_container, fragment, TAG_COMMON_PLAYLIST)
-                .commit()
-        currentFragmentTag = TAG_COMMON_PLAYLIST
-        updateBottomNavVisibility(fragment)
-        ensureStatusBarVisible()
+        val bundle = Bundle().apply { putLong("playlistId", id) }
+        navController.navigate(R.id.commonPlaylist, bundle)
     }
 
     fun goToMusicPlay() {
-        switchFragment(TAG_MUSIC_PLAY)
+        navController.navigate(R.id.musicPlayFragment)
     }
 
     fun navigateBack(){
-        if (lastTag == TAG_COMMON_PLAYLIST && lastPlaylistId != -1L) {
-            goToMusicList(lastPlaylistId)
-            return
-        }
-        switchFragment(lastTag)
-    }
-
-    override fun onBackPressed() {
-        if (currentFragmentTag == TAG_MUSIC_PLAY) {
-            navigateBack()
-        } else if (currentFragmentTag != TAG_HOME) {
-            switchFragment(TAG_HOME)
-        } else {
-            super.onBackPressed()
-        }
+        navController.navigateUp()
     }
 
     fun navigateToHome() {
-        switchFragment(TAG_HOME)
+        navController.popBackStack(R.id.homeFragment, false)
     }
 
     fun ensureStatusBarVisible() {
@@ -204,36 +108,40 @@ class MainActivity : FullScreenActivity<ActivityMainBinding>() {
             ?.show(WindowInsetsCompat.Type.statusBars())
     }
 
-    private fun updateBottomNavVisibility(fragment: Fragment) {
-//        if (fragment is LocalMusicListFragment) {
-//            binding.bottomNavCard.visibility = android.view.View.GONE
-//        } else if (fragment is CommonPlaylistFragment) {
-//            binding.bottomNavCard.visibility = android.view.View.GONE
-//        } else if (fragment is WebMusicFragment) {
-//            binding.bottomNavCard.visibility = android.view.View.GONE
-//        } else {
-//            binding.bottomNavCard.visibility = android.view.View.VISIBLE
-//        }
-//
-        when(fragment){
-            is LocalMusicListFragment -> binding.bottomNavCard.visibility = android.view.View.GONE
-            is CommonPlaylistFragment -> binding.bottomNavCard.visibility = android.view.View.GONE
-            is WebMusicFragment -> binding.bottomNavCard.visibility = android.view.View.GONE
-            is MusicPlayFragment -> binding.bottomNavCard.visibility = android.view.View.GONE
-            else -> binding.bottomNavCard.visibility = android.view.View.VISIBLE
+    private fun initNavigation(){
+        val navHost = supportFragmentManager.findFragmentById(R.id.fragment_container) as NavHostFragment
+        navController = navHost.navController
+        setupDestination()
+        navController.addOnDestinationChangedListener {
+            _, destination, _->
+                updateBottomNavVisibility(destination.id)
+                ensureStatusBarVisible()
         }
-
     }
 
-    fun togglePlayFromHome() {
-        if (musicService == null) return
-        if (musicService!!.isPlaying) {
-            musicService!!.pauseMusic()
-        } else {
-            // If we just want to resume or play current list
-            // PlayMusicService logic: playOrPauseMusic checks if same track.
-            // If we just call resumeMusic() or playMusic(), it might work if prepared.
-            musicService!!.playMusic()
+    private fun navigateTo(id: Int){
+        if(navController.currentDestination?.id == id)  return
+        navController.navigate(id)
+    }
+
+    private fun setupDestination(){
+        binding.navHome.setOnClickListener {
+            navigateTo(R.id.homeFragment)
+        }
+        binding.navStudy.setOnClickListener {
+            navigateTo(R.id.studyFragment)
+        }
+        binding.navDiary.setOnClickListener {
+            navigateTo(R.id.webMusicFragment)
+        }
+    }
+    private fun updateBottomNavVisibility(id: Int) {
+        when(id){
+            R.id.localMusicFragment ->binding.bottomNavCard.visibility = android.view.View.GONE
+            R.id.commonPlaylist-> binding.bottomNavCard.visibility = android.view.View.GONE
+            R.id.webMusicFragment-> binding.bottomNavCard.visibility = android.view.View.GONE
+            R.id.musicPlayFragment -> binding.bottomNavCard.visibility = android.view.View.GONE
+            else -> binding.bottomNavCard.visibility = android.view.View.VISIBLE
         }
     }
 

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_main"
+    app:startDestination="@id/homeFragment">
+
+    <fragment
+        android:id="@+id/studyFragment"
+        android:name = "com.example.tmusic.study.ui.StudyFragment"/>
+
+    <fragment
+        android:id = "@+id/homeFragment"
+        android:name = "com.example.tmusic.home.ui.HomeFragment"/>
+
+    <fragment
+        android:id="@+id/webMusicFragment"
+        android:name = "com.example.tmusic.web.WebMusicFragment"/>
+
+    <fragment
+        android:id = "@+id/localMusicFragment"
+        android:name="com.example.tmusic.localMusicList.ui.LocalMusicListFragment"/>
+
+    <fragment
+        android:id = "@+id/commonPlaylist"
+        android:name="com.example.tmusic.common.CommonPlaylistFragment">
+
+        <argument
+          android:name="playlistId"
+          app:argType="long"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/musicPlayFragment"
+        android:name = "com.example.tmusic.common.MusicPlayFragment"/>
+
+</navigation>

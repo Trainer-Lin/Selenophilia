@@ -100,15 +100,13 @@ class CommonPlaylistFragment :
 
         binding.nowPlayingCard.setOnClickListener {
             val host = activity as? MainActivity ?: return@setOnClickListener
-            host.lastTag = MainActivity.TAG_COMMON_PLAYLIST
-            host.lastPlaylistId = playlistId
             host.goToMusicPlay()
         }
 
         updateNowPlaying()
     }
     private fun navigateBackToHome() {
-        (activity as? MainActivity)?.navigateToHome()
+        (activity as? MainActivity)?.navigateBack()
     }
 
     private fun refreshSystemBars() {

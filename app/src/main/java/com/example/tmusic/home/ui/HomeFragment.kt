@@ -7,6 +7,8 @@ import android.view.View
 import androidx.core.graphics.toColorInt
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavController
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.example.tmusic.MainActivity
 import com.example.tmusic.R
@@ -16,11 +18,13 @@ import com.example.tmusic.databinding.ItemPlaylistBinding
 import com.example.tmusic.home.data.room.PlaylistEntity
 import com.example.tmusic.home.mvvm.PlaylistViewModel
 import com.example.tmusic.widget.AddPlaylistDialog
+import com.google.android.gms.dynamic.SupportFragmentWrapper
 import kotlinx.coroutines.launch
 
 class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::inflate) {
 
     private lateinit var viewModel: PlaylistViewModel
+    private lateinit var navController: NavController
     private val colorList = listOf("#A772BE", "#9C9BEB", "#E1B5D4")
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -32,9 +36,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
 
     override fun initView() {
         updateGreeting()
-
+        initNavigation()
         binding.localMusic.setOnClickListener {
-            (activity as MainActivity).switchFragment(MainActivity.Companion.TAG_LOCAL_MUSIC)
+            navController.navigate(R.id.localMusicFragment)
         }
 
         binding.playPauseBtn.setOnClickListener {
@@ -56,9 +60,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         binding.btnAddPlaylist.setOnClickListener { showAddPlaylistDialog() }
 
         binding.musicCard.setOnClickListener {
-            (activity as MainActivity).lastTag = MainActivity.TAG_HOME
             (activity as MainActivity).goToMusicPlay()
         }
+    }
+
+    private fun initNavigation(){
+        navController = findNavController()
     }
 
     private fun updateGreeting() {

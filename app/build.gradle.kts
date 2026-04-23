@@ -87,6 +87,10 @@ dependencies {
     implementation("io.github.scwang90:refresh-footer-classics:2.1.0")
 
     implementation("androidx.fragment:fragment-ktx:1.6.0")
+    // Navigation (XML NavGraph)
+    implementation("androidx.navigation:navigation-fragment-ktx:2.8.9")
+    implementation("androidx.navigation:navigation-ui-ktx:2.8.9")
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
