@@ -19,6 +19,10 @@ class LocalMusicViewModel(private val repository: Repository): BaseMviViewModel<
     override fun handleIntent(intent: LocalMusicIntent){
         when(intent){
             is LocalMusicIntent.LoadLocalMusic -> loadMusic()
+            is LocalMusicIntent.SortMusic.ByName -> sortMusic(SortType.BY_NAME)
+            is LocalMusicIntent.SortMusic.ByDateNewToOld -> sortMusic(SortType.BY_DATE_NEW_TO_OLD)
+            is LocalMusicIntent.SortMusic.ByDateOldToNew -> sortMusic(SortType.BY_DATE_OLD_TO_NEW)
+            is LocalMusicIntent.SortMusic.ByArtist -> sortMusic(SortType.BY_ARTIST)
         }
     }
 
@@ -68,4 +72,20 @@ class LocalMusicViewModel(private val repository: Repository): BaseMviViewModel<
         }
     }
 
+    private fun sortMusic(sortType: SortType) {
+        val currentList = viewState.value.musicList
+        val sortedList = when (sortType) {
+            SortType.BY_NAME -> currentList.sortedBy { it.title }
+            SortType.BY_DATE_NEW_TO_OLD -> currentList.sortedByDescending { it.id }
+            SortType.BY_DATE_OLD_TO_NEW -> currentList.sortedBy { it.id }
+            SortType.BY_ARTIST -> currentList.sortedBy { it.artist }
+            else -> currentList
+        }
+        updateState { state ->
+            state.copy(
+                musicList = sortedList,
+                sortType = sortType
+            )
+        }
+    }
 }

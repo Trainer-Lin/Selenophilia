@@ -9,71 +9,71 @@
     android:background="@drawable/bg_main_gradient"
     tools:context=".localMusicList.ui.LocalMusicListFragment">
 
+    <!-- 顶部导航栏 -->
     <LinearLayout
-        android:id="@+id/nowPlayingCard"
+        android:id="@+id/topNavBar"
         android:layout_width="match_parent"
-        android:layout_height="80dp"
+        android:layout_height="64dp"
         android:orientation="horizontal"
-        android:padding="12dp"
         android:gravity="center_vertical"
-        android:background="#efdfed">
+        android:paddingHorizontal="16dp">
 
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="56dp"
-            android:layout_height="56dp"
-            app:cardBackgroundColor="#000000"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="0dp">
-
-            <ImageView
-                android:id="@+id/albumCover"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="centerCrop"
-                android:src="@drawable/bg_moon_new" />
-
-        </com.google.android.material.card.MaterialCardView>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_weight="1"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/songTitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:text="暂无歌曲播放哦"
-                android:textColor="#1E1B1E"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/artistName"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:text="未知艺术家"
-                android:textColor="#4C444D"
-                android:textSize="14sp" />
-        </LinearLayout>
-
-        <ImageButton
-            android:id="@+id/playPauseBtn"
+        <ImageView
+            android:id="@+id/btnBack"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:padding="12dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="播放/暂停"
-            android:padding="10dp"
-            android:src="@drawable/icon_play_new"
-            app:tint="#745185" />
+            android:clickable="true"
+            android:focusable="true"
+            android:src="@drawable/icon_back_minimal"
+            android:contentDescription="返回" />
 
+        <TextView
+            android:id="@+id/tvPlaylistName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            android:text="本地音乐"
+            android:textColor="#1E1B1E"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:maxLines="1"
+            android:ellipsize="end" />
+
+        <ImageView
+            android:id="@+id/btnAdd"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:padding="12dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
+            android:src="@drawable/icon_add"
+            android:contentDescription="添加" />
+
+        <ImageView
+            android:id="@+id/btnSort"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:padding="12dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
+            android:src="@drawable/ic_sort"
+            android:contentDescription="排序" />
+
+        <ImageView
+            android:id="@+id/btnSearch"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:padding="12dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
+            android:src="@drawable/icon_search_minimal"
+            android:contentDescription="搜索" />
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
@@ -81,63 +81,105 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
-        android:layout_marginTop="80dp"
+        android:layout_marginTop="64dp"
         android:paddingBottom="100dp"
         android:scrollbars="none" />
 
+    <!-- 底部悬浮播放卡片 -->
     <com.google.android.material.card.MaterialCardView
-        android:id="@+id/bottomNavCard"
+        android:id="@+id/nowPlayingCard"
         android:layout_width="match_parent"
-        android:layout_height="64dp"
+        android:layout_height="72dp"
         android:layout_gravity="bottom"
-        android:layout_marginStart="40dp"
-        android:layout_marginEnd="40dp"
-        android:layout_marginBottom="16dp"
-        app:cardBackgroundColor="#D6D3F0"
-        app:cardCornerRadius="32dp"
-        app:cardElevation="6dp">
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginBottom="24dp"
+        app:cardBackgroundColor="#9D85A8"
+        app:cardCornerRadius="24dp"
+        app:cardElevation="8dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:paddingHorizontal="16dp"
+            android:gravity="center_vertical">
 
-            <ImageView
-                android:id="@+id/btnBack"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:clickable="true"
-                android:contentDescription="返回"
-                android:focusable="true"
-                android:padding="20dp"
-                android:src="@drawable/icon_back_minimal" />
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+                app:cardBackgroundColor="#000000"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="0dp">
 
-            <ImageView
-                android:id="@+id/btnAdd"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:clickable="true"
-                android:focusable="true"
-                android:padding="20dp"
-                android:src="@drawable/icon_add"
-                android:contentDescription="添加" />
+                <ImageView
+                    android:id="@+id/albumCover"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/bg_moon_new" />
 
-            <ImageView
-                android:id="@+id/btnSearch"
+            </com.google.android.material.card.MaterialCardView>
+
+            <LinearLayout
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
                 android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/songTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="暂无歌曲播放哦"
+                    android:textColor="#FFFFFF"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/artistName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="未知艺术家"
+                    android:textColor="#EFEFEF"
+                    android:textSize="13sp" />
+            </LinearLayout>
+
+            <ImageButton
+                android:id="@+id/btnPrevious"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:clickable="true"
-                android:focusable="true"
-                android:padding="20dp"
-                android:src="@drawable/icon_search_minimal"
-                android:contentDescription="搜索" />
+                android:contentDescription="上一曲"
+                android:padding="10dp"
+                android:src="@drawable/ic_skip_previous"
+                app:tint="#FFFFFF" />
+
+            <ImageButton
+                android:id="@+id/playPauseBtn"
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="播放/暂停"
+                android:padding="12dp"
+                android:src="@drawable/icon_play_new"
+                app:tint="#FFFFFF" />
+
+            <ImageButton
+                android:id="@+id/btnNext"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="下一曲"
+                android:padding="10dp"
+                android:src="@drawable/ic_skip_next"
+                app:tint="#FFFFFF" />
+
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 

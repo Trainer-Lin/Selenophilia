@@ -60,6 +60,10 @@ class ListMusicViewModel(application: Application) : AndroidViewModel(applicatio
     fun getMusicFromList(playlistId: Long): Flow<List<Long>> =
             repository.getMusicIdFromList(playlistId)
 
+    fun sortPlaylistMusic(sortType: com.example.tmusic.localMusicList.mvi.SortType) {
+        _uiState.update { it.copy(sortType = sortType) }
+    }
+
     suspend fun isMusicInPlaylist(playlistId: Long, musicId: Long): Boolean =
             repository.isMusicInPlaylist(playlistId, musicId)
 

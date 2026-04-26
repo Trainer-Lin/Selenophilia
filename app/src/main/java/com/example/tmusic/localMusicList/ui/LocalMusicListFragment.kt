@@ -78,9 +78,39 @@ class LocalMusicListFragment :
             Toast.makeText(context, "搜索功能开发中...", Toast.LENGTH_SHORT).show()
         }
 
+        binding.btnSort.setOnClickListener { view ->
+            val popupMenu = androidx.appcompat.widget.PopupMenu(requireContext(), view)
+            popupMenu.menu.add(0, 1, 0, "按歌曲名称排序")
+            popupMenu.menu.add(0, 2, 0, "按从新到旧排序")
+            popupMenu.menu.add(0, 3, 0, "按从旧到新排序")
+            popupMenu.menu.add(0, 4, 0, "按歌手名称排序")
+            popupMenu.setOnMenuItemClickListener { item ->
+                when (item.itemId) {
+                    1 -> sendIntent(LocalMusicIntent.SortMusic.ByName)
+                    2 -> sendIntent(LocalMusicIntent.SortMusic.ByDateNewToOld)
+                    3 -> sendIntent(LocalMusicIntent.SortMusic.ByDateOldToNew)
+                    4 -> sendIntent(LocalMusicIntent.SortMusic.ByArtist)
+                }
+                true
+            }
+            popupMenu.show()
+        }
+
         binding.playPauseBtn.setOnClickListener {
             val host = activity as MainActivity
             host.playOrPause(host.currentMusicList, host.currentIndex)
+            updateNowPlaying()
+        }
+
+        binding.btnPrevious.setOnClickListener {
+            val host = activity as? MainActivity ?: return@setOnClickListener
+            host.playPrevious()
+            updateNowPlaying()
+        }
+
+        binding.btnNext.setOnClickListener {
+            val host = activity as? MainActivity ?: return@setOnClickListener
+            host.playNext()
             updateNowPlaying()
         }
 

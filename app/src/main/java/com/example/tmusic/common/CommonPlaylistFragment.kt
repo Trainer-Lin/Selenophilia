@@ -20,6 +20,7 @@ import com.example.tmusic.listAndMusic.ListMusicRepository
 import com.example.tmusic.listAndMusic.ListMusicViewModel
 import com.example.tmusic.localMusicList.data.room.MusicDatabase
 import com.example.tmusic.localMusicList.data.room.MusicEntity
+import com.example.tmusic.localMusicList.mvi.SortType
 import com.example.tmusic.widget.PlaylistSelectDialog
 import kotlin.getValue
 import kotlinx.coroutines.flow.collectLatest
@@ -90,11 +91,50 @@ class CommonPlaylistFragment :
             Toast.makeText(context, "搜索功能开发中...", Toast.LENGTH_SHORT).show()
         }
 
+        binding.btnSort.setOnClickListener { view ->
+            val popupMenu = androidx.appcompat.widget.PopupMenu(requireContext(), view)
+            popupMenu.menu.add(0, 1, 0, "按歌曲名称排序")
+            popupMenu.menu.add(0, 2, 0, "按从新到旧排序")
+            popupMenu.menu.add(0, 3, 0, "按从旧到新排序")
+            popupMenu.menu.add(0, 4, 0, "按歌手名称排序")
+            popupMenu.setOnMenuItemClickListener { item ->
+                val sortType = when (item.itemId) {
+                    1 -> SortType.BY_NAME
+                    2 -> SortType.BY_DATE_NEW_TO_OLD
+                    3 -> SortType.BY_DATE_OLD_TO_NEW
+                    4 -> SortType.BY_ARTIST
+                    else -> SortType.DEFAULT
+                }
+                listMusicViewModel.sortPlaylistMusic(sortType)
+                true
+            }
+            popupMenu.show()
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            playlistViewModel.uiState.collectLatest { state ->
+                val playlist = state.playlists.find { it.id == playlistId }
+                binding.tvPlaylistName.text = playlist?.name ?: "歌单详情"
+            }
+        }
+
         binding.playPauseBtn.setOnClickListener {
             (activity as? MainActivity)?.playOrPause(
                     (activity as? MainActivity)?.currentMusicList ?: emptyList(),
                     (activity as? MainActivity)?.currentIndex ?: 0
             )
+            updateNowPlaying()
+        }
+
+        binding.btnPrevious.setOnClickListener {
+            val host = activity as? MainActivity ?: return@setOnClickListener
+            host.playPrevious()
+            updateNowPlaying()
+        }
+
+        binding.btnNext.setOnClickListener {
+            val host = activity as? MainActivity ?: return@setOnClickListener
+            host.playNext()
             updateNowPlaying()
         }
 
@@ -146,6 +186,19 @@ class CommonPlaylistFragment :
                 state.error?.let { err ->
                     Toast.makeText(context, err, Toast.LENGTH_SHORT).show()
                     listMusicViewModel.consumeError()
+                }
+                if (currentMusicList.isNotEmpty()) {
+                    val sortedList = when (state.sortType) {
+                        SortType.BY_NAME -> currentMusicList.sortedBy { it.title }
+                        SortType.BY_DATE_NEW_TO_OLD -> currentMusicList.sortedByDescending { it.id }
+                        SortType.BY_DATE_OLD_TO_NEW -> currentMusicList.sortedBy { it.id }
+                        SortType.BY_ARTIST -> currentMusicList.sortedBy { it.artist }
+                        else -> currentMusicList
+                    }
+                    if (sortedList != currentMusicList || state.sortType != SortType.DEFAULT) {
+                        currentMusicList = sortedList
+                        adapter.updateMusicList(sortedList)
+                    }
                 }
             }
         }
