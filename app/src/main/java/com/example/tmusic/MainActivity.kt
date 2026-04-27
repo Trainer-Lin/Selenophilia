@@ -73,6 +73,12 @@ class MainActivity : FullScreenActivity<ActivityMainBinding>() {
         bindService(intent, serviceConnection, BIND_AUTO_CREATE)
     }
 
+    override fun onResume() {
+        super.onResume()
+        // 修复部分包含 WebView 或特殊窗口的 Fragment 返回后导致屏幕适配丢失的问题
+        setCustomDensity(this, application, 412)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -155,12 +161,10 @@ class MainActivity : FullScreenActivity<ActivityMainBinding>() {
             return
         }
         val safeIndex = index.coerceIn(0, musicList.lastIndex)
+        // 在传给 Service 之前，我们必须先在宿主这里强制记录最新的正确状态，防止被 Service 异步刷回老状态
+        saveSongInfo(musicList, safeIndex)
+        
         musicService?.playOrPauseMusic(musicList, safeIndex)
-        if (musicService != null) {
-            syncSongInfoFromService()
-        } else {
-            saveSongInfo(musicList, safeIndex)
-        }
     }
 
     fun playNext() {

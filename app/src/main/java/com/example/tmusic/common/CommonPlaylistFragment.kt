@@ -1,10 +1,13 @@
 package com.example.tmusic.common
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -35,6 +38,7 @@ class CommonPlaylistFragment :
 
     private var playlistId: Long = -1
     private var currentMusicList: List<MusicEntity> = emptyList()
+    private var originalMusicList: List<MusicEntity> = emptyList()
     private var currentMusicIndex: Int = 0
 
     companion object {
@@ -75,7 +79,13 @@ class CommonPlaylistFragment :
                         { list, index ->
                             currentMusicList = list
                             currentMusicIndex = index
-                            (activity as? MainActivity)?.playOrPause(list, index)
+                            val host = activity as? MainActivity
+                            if (host != null) {
+                                // 强制同步更新 host 里的播放列表和索引
+                                host.currentMusicList = list
+                                host.currentIndex = index
+                                host.playOrPause(list, index)
+                            }
                             updateNowPlaying()
                         },
                         { music -> showPlaylistSelectDialogForMusic(music) },
@@ -88,11 +98,27 @@ class CommonPlaylistFragment :
         binding.btnBack.setOnClickListener { navigateBackToHome() }
 
         binding.btnSearch.setOnClickListener {
-            Toast.makeText(context, "搜索功能开发中...", Toast.LENGTH_SHORT).show()
+            binding.titleContainer.visibility = View.GONE
+            binding.searchContainer.visibility = View.VISIBLE
+            binding.etSearch.requestFocus()
         }
 
+        binding.btnCloseSearch.setOnClickListener {
+            binding.etSearch.text.clear()
+            binding.searchContainer.visibility = View.GONE
+            binding.titleContainer.visibility = View.VISIBLE
+        }
+
+        binding.etSearch.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+                listMusicViewModel.searchPlaylistMusic(s.toString())
+            }
+        })
+
         binding.btnSort.setOnClickListener { view ->
-            val popupMenu = androidx.appcompat.widget.PopupMenu(requireContext(), view)
+            val popupMenu = PopupMenu(requireContext(), view)
             popupMenu.menu.add(0, 1, 0, "按歌曲名称排序")
             popupMenu.menu.add(0, 2, 0, "按从新到旧排序")
             popupMenu.menu.add(0, 3, 0, "按从旧到新排序")
@@ -103,7 +129,7 @@ class CommonPlaylistFragment :
                     2 -> SortType.BY_DATE_NEW_TO_OLD
                     3 -> SortType.BY_DATE_OLD_TO_NEW
                     4 -> SortType.BY_ARTIST
-                    else -> SortType.DEFAULT
+                    else -> SortType.BY_NAME
                 }
                 listMusicViewModel.sortPlaylistMusic(sortType)
                 true
@@ -158,12 +184,14 @@ class CommonPlaylistFragment :
             listMusicViewModel.getMusicFromList(playlistId).collectLatest { musicIds ->
                 if (musicIds.isEmpty()) {
                     currentMusicList = emptyList()
+                    originalMusicList = emptyList()
                     adapter.updateMusicList(emptyList())
                 } else {
                     viewLifecycleOwner.lifecycleScope.launch {
                         val musicList = getMusicByIds(musicIds)
-                        currentMusicList = musicList
-                        adapter.updateMusicList(musicList)
+                        originalMusicList = musicList
+                        currentMusicList = applySearchAndSort(musicList, listMusicViewModel.uiState.value.searchQuery, listMusicViewModel.uiState.value.sortType)
+                        adapter.updateMusicList(currentMusicList)
                     }
                 }
             }
@@ -187,20 +215,39 @@ class CommonPlaylistFragment :
                     Toast.makeText(context, err, Toast.LENGTH_SHORT).show()
                     listMusicViewModel.consumeError()
                 }
-                if (currentMusicList.isNotEmpty()) {
-                    val sortedList = when (state.sortType) {
-                        SortType.BY_NAME -> currentMusicList.sortedBy { it.title }
-                        SortType.BY_DATE_NEW_TO_OLD -> currentMusicList.sortedByDescending { it.id }
-                        SortType.BY_DATE_OLD_TO_NEW -> currentMusicList.sortedBy { it.id }
-                        SortType.BY_ARTIST -> currentMusicList.sortedBy { it.artist }
-                        else -> currentMusicList
-                    }
-                    if (sortedList != currentMusicList || state.sortType != SortType.DEFAULT) {
-                        currentMusicList = sortedList
-                        adapter.updateMusicList(sortedList)
+                if (originalMusicList.isNotEmpty()) {
+                    val processedList = applySearchAndSort(originalMusicList, state.searchQuery, state.sortType)
+                    if (processedList != currentMusicList || state.sortType != SortType.BY_NAME || state.searchQuery.isNotEmpty()) {
+                        currentMusicList = processedList
+                        adapter.updateMusicList(processedList)
                     }
                 }
             }
+        }
+    }
+
+    private fun applySearchAndSort(
+        originalList: List<MusicEntity>,
+        query: String,
+        sortType: SortType
+    ): List<MusicEntity> {
+        // 1. Filter by query
+        val filteredList = if (query.isBlank()) {
+            originalList
+        } else {
+            val lowerQuery = query.lowercase()
+            originalList.filter {
+                it.title.lowercase().contains(lowerQuery) || it.artist.lowercase().contains(lowerQuery)
+            }
+        }
+
+        // 2. Sort the filtered list
+        return when (sortType) {
+            SortType.BY_NAME -> filteredList.sortedBy { it.title }
+            SortType.BY_DATE_NEW_TO_OLD -> filteredList.sortedByDescending { it.id }
+            SortType.BY_DATE_OLD_TO_NEW -> filteredList.sortedBy { it.id }
+            SortType.BY_ARTIST -> filteredList.sortedBy { it.artist }
+            else -> filteredList.sortedBy { it.title }
         }
     }
 

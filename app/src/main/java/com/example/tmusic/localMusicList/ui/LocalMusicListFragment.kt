@@ -1,6 +1,8 @@
 package com.example.tmusic.localMusicList.ui
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -75,8 +77,24 @@ class LocalMusicListFragment :
         }
 
         binding.btnSearch.setOnClickListener {
-            Toast.makeText(context, "搜索功能开发中...", Toast.LENGTH_SHORT).show()
+            binding.titleContainer.visibility = View.GONE
+            binding.searchContainer.visibility = View.VISIBLE
+            binding.etSearch.requestFocus()
         }
+
+        binding.btnCloseSearch.setOnClickListener {
+            binding.etSearch.text.clear()
+            binding.searchContainer.visibility = View.GONE
+            binding.titleContainer.visibility = View.VISIBLE
+        }
+
+        binding.etSearch.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+                sendIntent(LocalMusicIntent.SearchMusic(s.toString()))
+            }
+        })
 
         binding.btnSort.setOnClickListener { view ->
             val popupMenu = androidx.appcompat.widget.PopupMenu(requireContext(), view)
@@ -189,6 +207,9 @@ class LocalMusicListFragment :
                             currentMusicList = list
                             currentMusicIndex = index
                             val host = activity as MainActivity
+                            // 强制同步更新 host 里的播放列表和索引
+                            host.currentMusicList = list
+                            host.currentIndex = index
                             host.playOrPause(list, index)
                             updateNowPlaying()
                         },

@@ -9,4 +9,6 @@ sealed class LocalMusicIntent {
         object ByDateOldToNew : SortMusic()
         object ByArtist : SortMusic()
     }
+
+    data class SearchMusic(val query: String) : LocalMusicIntent()
 }

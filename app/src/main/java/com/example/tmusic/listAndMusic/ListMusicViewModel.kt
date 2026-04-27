@@ -15,7 +15,17 @@ import kotlinx.coroutines.launch
 class ListMusicViewModel(application: Application) : AndroidViewModel(application) {
     private lateinit var repository: ListMusicRepository
 
-    private val _uiState = MutableStateFlow(ListMusicState())
+    private val _uiState = MutableStateFlow(
+        ListMusicState(
+            sortType = try {
+                com.example.tmusic.localMusicList.mvi.SortType.valueOf(
+                    com.example.tmusic.TApplication.mmkv.decodeString("music_sort_type", "BY_NAME") ?: "BY_NAME"
+                )
+            } catch (e: Exception) {
+                com.example.tmusic.localMusicList.mvi.SortType.BY_NAME
+            }
+        )
+    )
     val uiState: StateFlow<ListMusicState> = _uiState.asStateFlow()
 
     fun initRepository(repo: ListMusicRepository) {
@@ -61,7 +71,12 @@ class ListMusicViewModel(application: Application) : AndroidViewModel(applicatio
             repository.getMusicIdFromList(playlistId)
 
     fun sortPlaylistMusic(sortType: com.example.tmusic.localMusicList.mvi.SortType) {
+        com.example.tmusic.TApplication.mmkv.encode("music_sort_type", sortType.name)
         _uiState.update { it.copy(sortType = sortType) }
+    }
+
+    fun searchPlaylistMusic(query: String) {
+        _uiState.update { it.copy(searchQuery = query) }
     }
 
     suspend fun isMusicInPlaylist(playlistId: Long, musicId: Long): Boolean =

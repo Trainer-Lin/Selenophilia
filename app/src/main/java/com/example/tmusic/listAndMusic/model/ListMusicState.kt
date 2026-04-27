@@ -5,5 +5,6 @@ data class ListMusicState(
     val isDeleting: Boolean = false,
     val successMessage: String? = null,
     val error: String? = null,
-    val sortType: com.example.tmusic.localMusicList.mvi.SortType = com.example.tmusic.localMusicList.mvi.SortType.DEFAULT
+    val sortType: com.example.tmusic.localMusicList.mvi.SortType = com.example.tmusic.localMusicList.mvi.SortType.BY_NAME,
+    val searchQuery: String = ""
 )

@@ -23,7 +23,7 @@ abstract class FullScreenActivity<VB: ViewBinding> : AppCompatActivity() {
     //屏幕适配: 保持UI在不同尺寸设备上显示一致
     //designWidthDp: 设计稿的宽度, 单位为dp , 为412dp(下面调用)
 
-    private fun setCustomDensity(activity: Activity, application: Application, designWidthDp: Int) {
+    fun setCustomDensity(activity: Activity, application: Application, designWidthDp: Int) {
         val appDisplayMetrics =
             application.resources.displayMetrics //displayMetrics: 显示指标, 包含屏幕的宽度、高度、密度、屏幕DPI等信息
 

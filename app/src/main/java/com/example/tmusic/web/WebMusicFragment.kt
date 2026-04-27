@@ -60,6 +60,15 @@ class WebMusicFragment : Fragment() {
         setupDraggableFab()
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        // 修复 WebView 导致全局 Density 丢失的问题
+        val activity = requireActivity()
+        if (activity is com.example.tmusic.base.FullScreenActivity<*>) {
+            activity.setCustomDensity(activity, activity.application, 412)
+        }
+    }
+
     private fun setupDraggableFab() {
         val fab = view?.findViewById<ImageButton>(R.id.fabBack) ?: return
         var initialX = 0

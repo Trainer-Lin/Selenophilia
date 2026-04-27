@@ -182,21 +182,31 @@ class PlayMusicService : Service() {
     fun playOrPauseMusic(musicList: List<MusicEntity>, index: Int) {
         if (musicList.isEmpty()) return
         syncCurrentMusicIndex()
-        val sameList = this.musicList.map { it.uri } == musicList.map { it.uri }
         val safeIndex = index.coerceIn(0, musicList.lastIndex)
-        val sameTrack = sameList && currentMusicIndex == safeIndex
+        
+        // 当列表不同，或者选择的歌曲不同，才需要重新准备播放器
+        val isSameList = this.musicList.map { it.uri } == musicList.map { it.uri }
+        val isSameTrack = isSameList && this.currentMusicIndex == safeIndex
 
-        if (sameTrack && (exoPlayer?.mediaItemCount ?: 0) > 0) {
-            if (exoPlayer?.isPlaying == true) {
-                pauseMusic()
+        if (isSameList && (exoPlayer?.mediaItemCount ?: 0) > 0) {
+            if (isSameTrack) {
+                if (exoPlayer?.isPlaying == true) {
+                    pauseMusic()
+                } else {
+                    playMusic()
+                }
             } else {
+                this.currentMusicIndex = safeIndex
+                exoPlayer?.seekTo(safeIndex, C.TIME_UNSET)
                 playMusic()
             }
             return
-        } // 处理点击同一首歌的逻辑
+        }
 
+        // 走到这里说明是换歌单了，必须先更新 Service 的状态
         this.musicList = musicList
         this.currentMusicIndex = safeIndex
+        
         val mediaItems =
                 musicList.map { music ->
                     MediaItem.Builder()
