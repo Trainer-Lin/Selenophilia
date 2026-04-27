@@ -32,13 +32,23 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         viewModel = ViewModelProvider(this)[PlaylistViewModel::class.java]
         initView()
         observePlaylists()
+
+        // Handle back press to exit app
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            object : androidx.activity.OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    requireActivity().finish()
+                }
+            }
+        )
     }
 
     override fun initView() {
         updateGreeting()
         initNavigation()
         binding.localMusic.setOnClickListener {
-            navController.navigate(R.id.localMusicFragment)
+            navController.navigate(R.id.action_homeFragment_to_localMusicFragment)
         }
 
         binding.playPauseBtn.setOnClickListener {

@@ -96,7 +96,7 @@ class WebMusicFragment : Fragment() {
                     val deltaX = event.rawX - initialTouchX
                     val deltaY = event.rawY - initialTouchY
                     if (abs(deltaX) < 10 && abs(deltaY) < 10) {
-                        (activity as MainActivity).navigateToHome()
+                        (activity as MainActivity).navigateBack()
                     }
                     true
                 }

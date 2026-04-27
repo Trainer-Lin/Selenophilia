@@ -94,11 +94,19 @@ class MainActivity : FullScreenActivity<ActivityMainBinding>() {
 
     fun goToMusicList(id: Long) {
         val bundle = Bundle().apply { putLong("playlistId", id) }
-        navController.navigate(R.id.commonPlaylist, bundle)
+        navController.navigate(R.id.action_homeFragment_to_commonPlaylist, bundle)
     }
 
     fun goToMusicPlay() {
-        navController.navigate(R.id.musicPlayFragment)
+        val currentDestination = navController.currentDestination?.id
+        val actionId = when (currentDestination) {
+            R.id.homeFragment -> R.id.action_homeFragment_to_musicPlayFragment
+            R.id.localMusicFragment -> R.id.action_localMusicFragment_to_musicPlayFragment
+            R.id.commonPlaylist -> R.id.action_commonPlaylist_to_musicPlayFragment
+            R.id.studyFragment -> R.id.action_studyFragment_to_musicPlayFragment
+            else -> R.id.musicPlayFragment
+        }
+        navController.navigate(actionId)
     }
 
     fun navigateBack(){
@@ -126,19 +134,42 @@ class MainActivity : FullScreenActivity<ActivityMainBinding>() {
     }
 
     private fun navigateTo(id: Int){
-        if(navController.currentDestination?.id == id)  return
         navController.navigate(id)
     }
 
     private fun setupDestination(){
         binding.navHome.setOnClickListener {
-            navigateTo(R.id.homeFragment)
+            val currentId = navController.currentDestination?.id
+            if (currentId == R.id.homeFragment) return@setOnClickListener
+            
+            val actionId = when (currentId) {
+                R.id.studyFragment -> R.id.action_studyFragment_to_homeFragment
+                R.id.webMusicFragment -> R.id.action_webMusicFragment_to_homeFragment
+                else -> R.id.homeFragment
+            }
+            navigateTo(actionId)
         }
         binding.navStudy.setOnClickListener {
-            navigateTo(R.id.studyFragment)
+            val currentId = navController.currentDestination?.id
+            if (currentId == R.id.studyFragment) return@setOnClickListener
+            
+            val actionId = when (currentId) {
+                R.id.homeFragment -> R.id.action_homeFragment_to_studyFragment
+                R.id.webMusicFragment -> R.id.action_webMusicFragment_to_studyFragment
+                else -> R.id.studyFragment
+            }
+            navigateTo(actionId)
         }
         binding.navDiary.setOnClickListener {
-            navigateTo(R.id.webMusicFragment)
+            val currentId = navController.currentDestination?.id
+            if (currentId == R.id.webMusicFragment) return@setOnClickListener
+            
+            val actionId = when (currentId) {
+                R.id.homeFragment -> R.id.action_homeFragment_to_webMusicFragment
+                R.id.studyFragment -> R.id.action_studyFragment_to_webMusicFragment
+                else -> R.id.webMusicFragment
+            }
+            navigateTo(actionId)
         }
     }
     private fun updateBottomNavVisibility(id: Int) {

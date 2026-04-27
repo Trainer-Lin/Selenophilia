@@ -6,19 +6,100 @@
 
     <fragment
         android:id="@+id/studyFragment"
-        android:name = "com.example.tmusic.study.ui.StudyFragment"/>
+        android:name = "com.example.tmusic.study.ui.StudyFragment">
+        <action
+            android:id="@+id/action_studyFragment_to_homeFragment"
+            app:destination="@id/homeFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_studyFragment_to_webMusicFragment"
+            app:destination="@id/webMusicFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_studyFragment_to_musicPlayFragment"
+            app:destination="@id/musicPlayFragment"
+            app:enterAnim="@anim/slide_up"
+            app:exitAnim="@anim/stay_still"
+            app:popEnterAnim="@anim/stay_still"
+            app:popExitAnim="@anim/slide_down" />
+    </fragment>
 
     <fragment
         android:id = "@+id/homeFragment"
-        android:name = "com.example.tmusic.home.ui.HomeFragment"/>
+        android:name = "com.example.tmusic.home.ui.HomeFragment">
+        <action
+            android:id="@+id/action_homeFragment_to_localMusicFragment"
+            app:destination="@id/localMusicFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/stay_still"
+            app:popEnterAnim="@anim/stay_still"
+            app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_homeFragment_to_commonPlaylist"
+            app:destination="@id/commonPlaylist"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/stay_still"
+            app:popEnterAnim="@anim/stay_still"
+            app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_homeFragment_to_musicPlayFragment"
+            app:destination="@id/musicPlayFragment"
+            app:enterAnim="@anim/slide_up"
+            app:exitAnim="@anim/stay_still"
+            app:popEnterAnim="@anim/stay_still"
+            app:popExitAnim="@anim/slide_down" />
+        <action
+            android:id="@+id/action_homeFragment_to_studyFragment"
+            app:destination="@id/studyFragment"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/slide_out_right"
+            app:popEnterAnim="@anim/slide_in_right"
+            app:popExitAnim="@anim/slide_out_left" />
+        <action
+            android:id="@+id/action_homeFragment_to_webMusicFragment"
+            app:destination="@id/webMusicFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
 
     <fragment
         android:id="@+id/webMusicFragment"
-        android:name = "com.example.tmusic.web.WebMusicFragment"/>
+        android:name = "com.example.tmusic.web.WebMusicFragment">
+        <action
+            android:id="@+id/action_webMusicFragment_to_homeFragment"
+            app:destination="@id/homeFragment"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/slide_out_right"
+            app:popEnterAnim="@anim/slide_in_right"
+            app:popExitAnim="@anim/slide_out_left" />
+        <action
+            android:id="@+id/action_webMusicFragment_to_studyFragment"
+            app:destination="@id/studyFragment"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/slide_out_right"
+            app:popEnterAnim="@anim/slide_in_right"
+            app:popExitAnim="@anim/slide_out_left" />
+    </fragment>
 
     <fragment
         android:id = "@+id/localMusicFragment"
-        android:name="com.example.tmusic.localMusicList.ui.LocalMusicListFragment"/>
+        android:name="com.example.tmusic.localMusicList.ui.LocalMusicListFragment">
+        <action
+            android:id="@+id/action_localMusicFragment_to_musicPlayFragment"
+            app:destination="@id/musicPlayFragment"
+            app:enterAnim="@anim/slide_up"
+            app:exitAnim="@anim/stay_still"
+            app:popEnterAnim="@anim/stay_still"
+            app:popExitAnim="@anim/slide_down" />
+    </fragment>
 
     <fragment
         android:id = "@+id/commonPlaylist"
@@ -27,6 +108,13 @@
         <argument
           android:name="playlistId"
           app:argType="long"/>
+        <action
+            android:id="@+id/action_commonPlaylist_to_musicPlayFragment"
+            app:destination="@id/musicPlayFragment"
+            app:enterAnim="@anim/slide_up"
+            app:exitAnim="@anim/stay_still"
+            app:popEnterAnim="@anim/stay_still"
+            app:popExitAnim="@anim/slide_down" />
     </fragment>
 
     <fragment
