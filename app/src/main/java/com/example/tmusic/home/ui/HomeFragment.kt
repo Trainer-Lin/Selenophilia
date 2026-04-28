@@ -26,7 +26,19 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
 
     private lateinit var viewModel: PlaylistViewModel
     private lateinit var navController: NavController
-    private val colorList = listOf("#A772BE", "#9C9BEB", "#E1B5D4")
+    private val colorList by lazy {
+        listOf(
+            getThemeColor(requireContext(), com.example.tmusic.R.attr.themeColorPlaylistLoop1),
+            getThemeColor(requireContext(), com.example.tmusic.R.attr.themeColorPlaylistLoop2),
+            getThemeColor(requireContext(), com.example.tmusic.R.attr.themeColorPlaylistLoop3)
+        )
+    }
+
+    private fun getThemeColor(context: android.content.Context, attrResId: Int): Int {
+        val typedValue = android.util.TypedValue()
+        context.theme.resolveAttribute(attrResId, typedValue, true)
+        return typedValue.data
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -49,11 +61,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         updateGreeting()
         initNavigation()
         binding.localMusic.setOnClickListener {
-            navController.navigate(R.id.action_homeFragment_to_localMusicFragment)
+            (activity as? MainActivity)?.goToLocalMusic()
         }
 
         binding.myMusic.setOnClickListener {
-            navController.navigate(R.id.action_homeFragment_to_personalFragment)
+            (activity as? MainActivity)?.goToPersonalMusic()
         }
 
         binding.playPauseBtn.setOnClickListener {
@@ -113,7 +125,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
                     )
             itemBinding.tvPlaylistTitle.text = playlist.name
             itemBinding.root.setCardBackgroundColor(
-                    colorList[playlist.colorIndex % colorList.size].toColorInt()
+                    colorList[playlist.colorIndex % colorList.size]
             )
             val playlistId = playlist.id
 

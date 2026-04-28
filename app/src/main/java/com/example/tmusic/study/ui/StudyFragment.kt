@@ -89,17 +89,20 @@ class StudyFragment : BaseFragment<FragmentStudyBinding>(FragmentStudyBinding::i
         if (cover != null) {
             Glide.with(this).load(cover).into(binding.ivAlbumCover)
         } else {
-            binding.ivAlbumCover.setImageResource(R.drawable.ic_launcher_foreground)
+            binding.ivAlbumCover.setImageResource(R.drawable.bg_heart)
         }
 
         binding.tvSongTitle.text = host.songTitle ?: "暂无歌曲播放哦"
         binding.tvArtistName.text = host.artistName ?: "未知艺术家"
 
+        val iconTint = getThemeColor(requireContext(), com.example.tmusic.R.attr.themeColorStudyIconTint)
+        
         if (host.isPlaying()) {
             binding.btnPlayMusic.setImageResource(R.drawable.icon_pause_new)
         } else {
             binding.btnPlayMusic.setImageResource(R.drawable.ic_study_pause)
         }
+        binding.btnPlayMusic.setColorFilter(iconTint)
         updateDateSelector()
     }
 
@@ -203,11 +206,15 @@ class StudyFragment : BaseFragment<FragmentStudyBinding>(FragmentStudyBinding::i
         } else {
             binding.tvStartPause.text = "开始专注"
         }
+
+      //  val iconTint = getThemeColor(requireContext(), com.example.tmusic.R.attr.themeColorStudyIconTint)
+        
         if (isCountUp) {
             binding.btnRestart.setImageResource(R.drawable.ic_study_stop)
         } else {
             binding.btnRestart.setImageResource(R.drawable.ic_study_refresh)
         }
+        //binding.btnRestart.setColorFilter(iconTint)
     }
 
     private fun formatTime(seconds: Int): String =
@@ -245,5 +252,11 @@ class StudyFragment : BaseFragment<FragmentStudyBinding>(FragmentStudyBinding::i
                 binding.tasksContainer.addView(itemBinding.root)
             }
         }
+    }
+
+    private fun getThemeColor(context: android.content.Context, attrResId: Int): Int {
+        val typedValue = android.util.TypedValue()
+        context.theme.resolveAttribute(attrResId, typedValue, true)
+        return typedValue.data
     }
 }

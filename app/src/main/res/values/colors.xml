@@ -3,4 +3,46 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="purple_500">#FF6200EE</color>
+
+    <!-- 紫色主题 -->
+    <color name="theme_purple_start">#f8d8e1</color>
+    <color name="theme_purple_mid">#d1a8e3</color>
+    <color name="theme_purple_end">#a9b1f1</color>
+    <color name="theme_purple_text_title">#745185</color>
+    <color name="theme_purple_text_primary">#181934</color>
+    
+    <color name="theme_purple_bottom_nav">#D6D3F0</color>
+    <color name="theme_purple_music_card">#efdfed</color>
+    <color name="theme_purple_local_music_card">#FFF0F5</color>
+    <color name="theme_purple_personal_card">#F5F0FF</color>
+    <color name="theme_purple_loop1">#A772BE</color>
+    <color name="theme_purple_loop2">#9C9BEB</color>
+    <color name="theme_purple_loop3">#E1B5D4</color>
+    <color name="theme_purple_fight_text">#7853A8</color>
+    <color name="theme_purple_study_btn">#F0EDF5</color>
+    <color name="theme_purple_study_plan">#D6CCF0</color>
+    <color name="theme_purple_study_icon_tint">#7853A8</color>
+    <color name="theme_purple_study_ring">#7853A8</color>
+    <color name="theme_purple_study_start_btn">#B69CE1</color>
+
+    <!-- 黄色主题 -->
+    <color name="theme_yellow_start">#FCEDAB</color>
+    <color name="theme_yellow_mid">#FFDE75</color>
+    <color name="theme_yellow_end">#FFC232</color>
+    <color name="theme_yellow_text_title">#B9721F</color>
+    <color name="theme_yellow_text_primary">#B9721F</color>
+    
+    <color name="theme_yellow_bottom_nav">#BAB267</color>
+    <color name="theme_yellow_music_card">#F9E67A</color>
+    <color name="theme_yellow_local_music_card">#FFF7AE</color>
+    <color name="theme_yellow_personal_card">#FDCA7C</color>
+    <color name="theme_yellow_loop1">#82430D</color>
+    <color name="theme_yellow_loop2">#F8B751</color>
+    <color name="theme_yellow_loop3">#F9CE43</color>
+    <color name="theme_yellow_fight_text">#B9721F</color>
+    <color name="theme_yellow_study_btn">#F0EDF5</color>
+    <color name="theme_yellow_study_plan">#FFE180</color>
+    <color name="theme_yellow_study_icon_tint">#A9D18F</color>
+    <color name="theme_yellow_study_ring">#B9721F</color>
+    <color name="theme_yellow_study_start_btn">#F9D77C</color>
 </resources>

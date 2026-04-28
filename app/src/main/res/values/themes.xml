@@ -2,7 +2,53 @@
     <style name="Base.Theme.TMusic" parent="Theme.Material3.DayNight.NoActionBar">
     </style>
 
-    <style name="Theme.TMusic" parent="Base.Theme.TMusic" />
+    <style name="Theme.TMusic" parent="Base.Theme.TMusic">
+        <!-- 默认紫色主题配置 -->
+        <item name="themeColorPrimaryStart">@color/theme_purple_start</item>
+        <item name="themeColorPrimaryMid">@color/theme_purple_mid</item>
+        <item name="themeColorPrimaryEnd">@color/theme_purple_end</item>
+        <item name="themeColorTextTitle">@color/theme_purple_text_title</item>
+        <item name="themeColorTextPrimary">@color/theme_purple_text_primary</item>
+        
+        <item name="themeColorBottomNavBg">@color/theme_purple_bottom_nav</item>
+        <item name="themeColorHomeMusicCardBg">@color/theme_purple_music_card</item>
+        <item name="themeColorHomeLocalMusicCardBg">@color/theme_purple_local_music_card</item>
+        <item name="themeColorHomePersonalCardBg">@color/theme_purple_personal_card</item>
+        <item name="themeColorPlaylistLoop1">@color/theme_purple_loop1</item>
+        <item name="themeColorPlaylistLoop2">@color/theme_purple_loop2</item>
+        <item name="themeColorPlaylistLoop3">@color/theme_purple_loop3</item>
+        <item name="themeColorStudyFightText">@color/theme_purple_fight_text</item>
+        <item name="themeColorStudyBtnBg">@color/theme_purple_study_btn</item>
+        <item name="themeColorStudyPlanBg">@color/theme_purple_study_plan</item>
+        <item name="themeColorStudyIconTint">@color/theme_purple_study_icon_tint</item>
+        <item name="themeColorStudyRingBg">@color/theme_purple_study_ring</item>
+        <item name="themeColorStudyStartBtnBg">@color/theme_purple_study_start_btn</item>
+    </style>
+
+    <style name="Theme.TMusic.Purple" parent="Theme.TMusic" />
+
+    <style name="Theme.TMusic.Yellow" parent="Theme.TMusic">
+        <!-- 黄色主题配置 -->
+        <item name="themeColorPrimaryStart">@color/theme_yellow_start</item>
+        <item name="themeColorPrimaryMid">@color/theme_yellow_mid</item>
+        <item name="themeColorPrimaryEnd">@color/theme_yellow_end</item>
+        <item name="themeColorTextTitle">@color/theme_yellow_text_title</item>
+        <item name="themeColorTextPrimary">@color/theme_yellow_text_primary</item>
+        
+        <item name="themeColorBottomNavBg">@color/theme_yellow_bottom_nav</item>
+        <item name="themeColorHomeMusicCardBg">@color/theme_yellow_music_card</item>
+        <item name="themeColorHomeLocalMusicCardBg">@color/theme_yellow_local_music_card</item>
+        <item name="themeColorHomePersonalCardBg">@color/theme_yellow_personal_card</item>
+        <item name="themeColorPlaylistLoop1">@color/theme_yellow_loop1</item>
+        <item name="themeColorPlaylistLoop2">@color/theme_yellow_loop2</item>
+        <item name="themeColorPlaylistLoop3">@color/theme_yellow_loop3</item>
+        <item name="themeColorStudyFightText">@color/theme_yellow_fight_text</item>
+        <item name="themeColorStudyBtnBg">@color/theme_yellow_study_btn</item>
+        <item name="themeColorStudyPlanBg">@color/theme_yellow_study_plan</item>
+        <item name="themeColorStudyIconTint">@color/theme_yellow_study_icon_tint</item>
+        <item name="themeColorStudyRingBg">@color/theme_yellow_study_ring</item>
+        <item name="themeColorStudyStartBtnBg">@color/theme_yellow_study_start_btn</item>
+    </style>
 
     <style name="TransparentAlertDialog" parent="Theme.Material3.DayNight.Dialog">
         <item name="android:windowBackground">@android:color/transparent</item>

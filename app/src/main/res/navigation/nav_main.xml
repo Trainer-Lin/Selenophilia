@@ -14,13 +14,13 @@
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
-        <action
-            android:id="@+id/action_studyFragment_to_webMusicFragment"
-            app:destination="@id/webMusicFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right" />
+<!--        <action-->
+<!--            android:id="@+id/action_studyFragment_to_webMusicFragment"-->
+<!--            app:destination="@id/webMusicFragment"-->
+<!--            app:enterAnim="@anim/slide_in_right"-->
+<!--            app:exitAnim="@anim/slide_out_left"-->
+<!--            app:popEnterAnim="@anim/slide_in_left"-->
+<!--            app:popExitAnim="@anim/slide_out_right" />-->
         <action
             android:id="@+id/action_studyFragment_to_musicPlayFragment"
             app:destination="@id/musicPlayFragment"
@@ -90,6 +90,10 @@
     </fragment>
 
     <fragment
+        android:id="@+id/settingFragment"
+        android:name="com.example.tmusic.setting.ui.SettingFragment" />
+
+    <fragment
         android:id="@+id/webMusicFragment"
         android:name = "com.example.tmusic.web.WebMusicFragment">
         <action
@@ -102,6 +106,13 @@
         <action
             android:id="@+id/action_webMusicFragment_to_studyFragment"
             app:destination="@id/studyFragment"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/slide_out_right"
+            app:popEnterAnim="@anim/slide_in_right"
+            app:popExitAnim="@anim/slide_out_left" />
+        <action
+            android:id="@+id/action_webMusicFragment_to_settingFragment"
+            app:destination="@id/settingFragment"
             app:enterAnim="@anim/slide_in_left"
             app:exitAnim="@anim/slide_out_right"
             app:popEnterAnim="@anim/slide_in_right"

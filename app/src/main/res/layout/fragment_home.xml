@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    android:background="@drawable/bg_main_gradient"
+    android:background="@drawable/bg_gradient_setting"
     tools:context=".home.ui.HomeFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -21,7 +21,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:text="Selenophilia"
-            android:textColor="#1E1B1E"
+            android:textColor="?attr/themeColorTextPrimary"
             android:textSize="24sp"
             android:fontFamily="@font/font_popping_extrabold"
             app:layout_constraintStart_toStartOf="parent"
@@ -98,7 +98,7 @@
             android:layout_marginBottom="60dp"
             android:layout_marginStart="4dp"
             android:layout_marginEnd="4dp"
-            app:cardBackgroundColor="#efdfed"
+            app:cardBackgroundColor="?attr/themeColorHomeMusicCardBg"
             app:cardCornerRadius="28dp"
             app:cardElevation="4dp"
             app:strokeWidth="1dp"
@@ -155,7 +155,7 @@
                             android:layout_height="wrap_content"
                             android:letterSpacing="0.1"
                             android:text="FEATURED TRACK"
-                            android:textColor="#745185"
+                            android:textColor="?attr/themeColorTextTitle"
                             android:textSize="11sp"
                             android:textStyle="bold" />
 
@@ -169,7 +169,7 @@
                             android:includeFontPadding="false"
                             android:maxLines="1"
                             android:text="暂无歌曲播放哦"
-                            android:textColor="#1E1B1E"
+                            android:textColor="?attr/themeColorTextPrimary"
                             android:textSize="18sp" />
 
                         <TextView
@@ -280,7 +280,7 @@
                 android:layout_height="64dp"
                 android:layout_weight="1"
                 android:layout_marginEnd="8dp"
-                app:cardBackgroundColor="#FFF0F5"
+                app:cardBackgroundColor="?attr/themeColorHomeLocalMusicCardBg"
                 app:cardCornerRadius="20dp"
                 app:cardElevation="1dp"
                 app:strokeWidth="1dp"
@@ -319,7 +319,7 @@
                 android:layout_height="64dp"
                 android:layout_weight="1"
                 android:layout_marginStart="8dp"
-                app:cardBackgroundColor="#F5F0FF"
+                app:cardBackgroundColor="?attr/themeColorHomePersonalCardBg"
                 app:cardCornerRadius="20dp"
                 app:cardElevation="1dp"
                 app:strokeWidth="1dp"
@@ -391,7 +391,7 @@
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/font_noto_bold"
                         android:text="我的歌单"
-                        android:textColor="#1E1B1E"
+                        android:textColor="?attr/themeColorTextPrimary"
                         android:textSize="22sp" />
 
                     <View

@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_gradient_setting"
+    android:padding="16dp">
+
+    <!-- Initial Interface Section -->
+    <LinearLayout
+        android:id="@+id/llInitialInterface"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_setting_card"
+        android:elevation="4dp"
+        android:orientation="vertical"
+        android:padding="16dp"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:text="初始界面"
+            android:fontFamily="@font/font_noto_semibold"
+            android:textColor="?attr/themeColorTextTitle"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <RadioGroup
+            android:id="@+id/rgInitialInterface"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <RadioButton
+                android:id="@+id/rbFocusMode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:buttonTint="?attr/themeColorPrimaryMid"
+                android:fontFamily="@font/font_noto_regular"
+                android:layoutDirection="rtl"
+                android:paddingEnd="16dp"
+                android:text="学习界面"
+                android:textColor="?attr/themeColorTextPrimary"
+                android:textSize="16sp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:background="#33CEC3CE" />
+
+            <RadioButton
+                android:id="@+id/rbMainInterface"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:buttonTint="?attr/themeColorPrimaryMid"
+                android:fontFamily="@font/font_noto_regular"
+                android:layoutDirection="rtl"
+                android:paddingEnd="16dp"
+                android:text="主界面"
+                android:textColor="?attr/themeColorTextPrimary"
+                android:textSize="16sp" />
+
+        </RadioGroup>
+    </LinearLayout>
+
+    <!-- Music Library Section -->
+    <LinearLayout
+        android:id="@+id/llMusicLibrary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/bg_setting_card"
+        android:elevation="4dp"
+        android:orientation="vertical"
+        android:padding="16dp"
+        app:layout_constraintTop_toBottomOf="@id/llInitialInterface">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:text="音乐库"
+            android:fontFamily="@font/font_noto_semibold"
+            android:textColor="?attr/themeColorTextTitle"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:id="@+id/btnScanMusic"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="@drawable/bg_setting_btn"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:clickable="true"
+            android:focusable="true">
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_marginEnd="8dp"
+                android:src="@android:drawable/ic_menu_search"
+                app:tint="#FFFFFF" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="扫描音乐"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Theme Color Section -->
+    <LinearLayout
+        android:id="@+id/llThemeColor"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/bg_setting_card"
+        android:elevation="4dp"
+        android:orientation="vertical"
+        android:padding="16dp"
+        app:layout_constraintTop_toBottomOf="@id/llMusicLibrary">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:text="主题颜色"
+            android:fontFamily="@font/font_noto_semibold"
+            android:textColor="?attr/themeColorTextTitle"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="8dp">
+
+            <!-- Selected Color 1 (Purple) -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cvThemePurple"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginEnd="40dp"
+                app:cardBackgroundColor="#d1a8e3"
+                app:cardCornerRadius="24dp"
+                app:cardElevation="2dp"
+                android:clickable="true"
+                android:focusable="true" />
+
+            <!-- Color 2 (Placeholder for future theme) -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cvThemeYellow"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginEnd="40dp"
+                app:cardBackgroundColor="#E8D451"
+                app:cardCornerRadius="24dp"
+                app:cardElevation="0dp"
+                android:clickable="true"
+                android:focusable="true" />
+
+            <!-- Color 3 (Placeholder for future theme) -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cvThemeRed"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                app:cardBackgroundColor="#EF4776"
+                app:cardCornerRadius="24dp"
+                app:cardElevation="0dp"
+                android:clickable="true"
+                android:focusable="true" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Manage Sources -->
+    <LinearLayout
+        android:id="@+id/llManageSources"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/bg_setting_card"
+        android:elevation="4dp"
+        android:orientation="horizontal"
+        android:padding="24dp"
+        android:gravity="center_vertical"
+        android:clickable="true"
+        android:focusable="true"
+        app:layout_constraintTop_toBottomOf="@id/llThemeColor">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="管理网络源"
+            android:fontFamily="@font/font_noto_regular"
+            android:textColor="?attr/themeColorTextPrimary"
+            android:textSize="16sp" />
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_arrow_right"
+            app:tint="?attr/themeColorTextTitle" />
+    </LinearLayout>
+
+    <!-- About Us -->
+    <LinearLayout
+        android:id="@+id/llAboutUs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/bg_setting_card"
+        android:elevation="4dp"
+        android:orientation="horizontal"
+        android:padding="24dp"
+        android:gravity="center_vertical"
+        android:clickable="true"
+        android:focusable="true"
+        app:layout_constraintTop_toBottomOf="@id/llManageSources">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="关于我们"
+            android:fontFamily="@font/font_noto_regular"
+            android:textColor="?attr/themeColorTextPrimary"
+            android:textSize="16sp" />
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_arrow_right"
+            app:tint="?attr/themeColorTextTitle" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

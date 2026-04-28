@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 动态主题属性 -->
+    <attr name="themeColorPrimaryStart" format="color" />
+    <attr name="themeColorPrimaryMid" format="color" />
+    <attr name="themeColorPrimaryEnd" format="color" />
+    <attr name="themeColorTextTitle" format="color" />
+    <attr name="themeColorTextPrimary" format="color" />
+    
+    <attr name="themeColorBottomNavBg" format="color" />
+    <attr name="themeColorHomeMusicCardBg" format="color" />
+    <attr name="themeColorHomeLocalMusicCardBg" format="color" />
+    <attr name="themeColorHomePersonalCardBg" format="color" />
+    <attr name="themeColorPlaylistLoop1" format="color" />
+    <attr name="themeColorPlaylistLoop2" format="color" />
+    <attr name="themeColorPlaylistLoop3" format="color" />
+    <attr name="themeColorStudyFightText" format="color" />
+    <attr name="themeColorStudyBtnBg" format="color" />
+    <attr name="themeColorStudyPlanBg" format="color" />
+    <attr name="themeColorStudyIconTint" format="color" />
+    <attr name="themeColorStudyRingBg" format="color" />
+    <attr name="themeColorStudyStartBtnBg" format="color" />
+</resources>

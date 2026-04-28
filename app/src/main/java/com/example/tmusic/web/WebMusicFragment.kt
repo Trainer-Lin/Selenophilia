@@ -55,9 +55,12 @@ class WebMusicFragment : Fragment() {
 
         webView?.loadUrl("https://www.gequke.com/")
 
-        showTipDialog()
-
         setupDraggableFab()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        showTipDialog()
     }
 
     override fun onDestroyView() {

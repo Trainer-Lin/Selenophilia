@@ -1,6 +1,5 @@
 package com.example.tmusic
 
-import com.example.tmusic.web.WebMusicFragment
 import android.Manifest
 import android.content.ComponentName
 import android.content.Intent
@@ -23,6 +22,8 @@ import androidx.fragment.app.Fragment
 import androidx.media3.common.util.UnstableApi
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import androidx.viewpager2.widget.ViewPager2
+import com.example.tmusic.MainPagerAdapter
 import com.example.tmusic.base.FullScreenActivity
 import com.example.tmusic.common.CommonPlaylistFragment
 import com.example.tmusic.common.MusicPlayFragment
@@ -32,6 +33,7 @@ import com.example.tmusic.localMusicList.data.room.MusicEntity
 import com.example.tmusic.localMusicList.ui.LocalMusicListFragment
 import com.example.tmusic.service.PlayMusicService
 import com.example.tmusic.study.ui.StudyFragment
+import com.example.tmusic.web.WebMusicFragment
 
 @OptIn(UnstableApi::class)
 class MainActivity : FullScreenActivity<ActivityMainBinding>() {
@@ -45,6 +47,8 @@ class MainActivity : FullScreenActivity<ActivityMainBinding>() {
 
     private var musicService: PlayMusicService? = null
     private lateinit var navController: NavController
+    private lateinit var pagerAdapter: MainPagerAdapter
+
     override fun createViewBinding(): ActivityMainBinding {
         return ActivityMainBinding.inflate(layoutInflater)
     }
@@ -75,7 +79,6 @@ class MainActivity : FullScreenActivity<ActivityMainBinding>() {
 
     override fun onResume() {
         super.onResume()
-        // 修复部分包含 WebView 或特殊窗口的 Fragment 返回后导致屏幕适配丢失的问题
         setCustomDensity(this, application, 412)
     }
 
@@ -89,15 +92,63 @@ class MainActivity : FullScreenActivity<ActivityMainBinding>() {
             false
         }
 
+        initViewPager()
         initNavigation()
+        setupBottomNav()
+    }
+
+    private fun initViewPager() {
+        pagerAdapter = MainPagerAdapter(this)
+        binding.viewPager.adapter = pagerAdapter
+        
+        val sharedPrefs = getSharedPreferences("Settings", android.content.Context.MODE_PRIVATE)
+        val isFocusMode = sharedPrefs.getBoolean("isFocusMode", false)
+        val initialItem = if (isFocusMode) 0 else 1
+        
+        binding.viewPager.setCurrentItem(initialItem, false)
+        updateNavIcon(initialItem)
+        binding.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                Log.d("ViewPager","{${binding.viewPager.currentItem}}")
+                updateNavIcon(position)
+            }
+        })
+    }
+
+    private fun setupBottomNav() {
+        binding.navHome.setOnClickListener {
+            if (binding.viewPager.currentItem != 1) {
+                binding.viewPager.currentItem = 1
+            }
+        }
+        binding.navStudy.setOnClickListener {
+            if (binding.viewPager.currentItem != 0) {
+                binding.viewPager.currentItem = 0
+            }
+        }
+        binding.navSettings.setOnClickListener {
+            if (binding.viewPager.currentItem != 2) {
+                binding.viewPager.currentItem = 2
+            }
+        }
+    }
+
+    private fun updateNavIcon(position: Int) {
+        val selectedColor = ContextCompat.getColor(this, R.color.purple_500)
+        val normalColor = ContextCompat.getColor(this, R.color.black)
+        binding.navStudy.setColorFilter(if (position == 0) selectedColor else normalColor)
+        binding.navHome.setColorFilter(if (position == 1) selectedColor else normalColor)
+        binding.navSettings.setColorFilter(if (position == 2) selectedColor else normalColor)
     }
 
     fun goToMusicList(id: Long) {
+        showNavContainer()
         val bundle = Bundle().apply { putLong("playlistId", id) }
         navController.navigate(R.id.action_homeFragment_to_commonPlaylist, bundle)
     }
 
     fun goToMusicPlay() {
+        showNavContainer()
         val currentDestination = navController.currentDestination?.id
         val actionId = when (currentDestination) {
             R.id.homeFragment -> R.id.action_homeFragment_to_musicPlayFragment
@@ -109,12 +160,16 @@ class MainActivity : FullScreenActivity<ActivityMainBinding>() {
         navController.navigate(actionId)
     }
 
-    fun navigateBack(){
+    fun navigateBack() {
         navController.navigateUp()
+        if (navController.currentDestination?.id == R.id.homeFragment) {
+            showViewPager()
+        }
     }
 
     fun navigateToHome() {
-        navController.popBackStack(R.id.homeFragment, false)
+        showViewPager()
+        binding.viewPager.currentItem = 1
     }
 
     fun ensureStatusBarVisible() {
@@ -122,68 +177,55 @@ class MainActivity : FullScreenActivity<ActivityMainBinding>() {
             ?.show(WindowInsetsCompat.Type.statusBars())
     }
 
-    private fun initNavigation(){
+    private fun initNavigation() {
         val navHost = supportFragmentManager.findFragmentById(R.id.fragment_container) as NavHostFragment
         navController = navHost.navController
-        setupDestination()
-        navController.addOnDestinationChangedListener {
-            _, destination, _->
-                updateBottomNavVisibility(destination.id)
-                ensureStatusBarVisible()
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            updateBottomNavVisibility(destination.id)
+            ensureStatusBarVisible()
         }
     }
 
-    private fun navigateTo(id: Int){
+    private fun navigateTo(id: Int) {
         navController.navigate(id)
     }
 
-    private fun setupDestination(){
-        binding.navHome.setOnClickListener {
-            val currentId = navController.currentDestination?.id
-            if (currentId == R.id.homeFragment) return@setOnClickListener
-            
-            val actionId = when (currentId) {
-                R.id.studyFragment -> R.id.action_studyFragment_to_homeFragment
-                R.id.webMusicFragment -> R.id.action_webMusicFragment_to_homeFragment
-                else -> R.id.homeFragment
-            }
-            navigateTo(actionId)
-        }
-        binding.navStudy.setOnClickListener {
-            val currentId = navController.currentDestination?.id
-            if (currentId == R.id.studyFragment) return@setOnClickListener
-            
-            val actionId = when (currentId) {
-                R.id.homeFragment -> R.id.action_homeFragment_to_studyFragment
-                R.id.webMusicFragment -> R.id.action_webMusicFragment_to_studyFragment
-                else -> R.id.studyFragment
-            }
-            navigateTo(actionId)
-        }
-        binding.navDiary.setOnClickListener {
-            val currentId = navController.currentDestination?.id
-            if (currentId == R.id.webMusicFragment) return@setOnClickListener
-            
-            val actionId = when (currentId) {
-                R.id.homeFragment -> R.id.action_homeFragment_to_webMusicFragment
-                R.id.studyFragment -> R.id.action_studyFragment_to_webMusicFragment
-                else -> R.id.webMusicFragment
-            }
-            navigateTo(actionId)
-        }
-    }
     private fun updateBottomNavVisibility(id: Int) {
-        when(id){
-            R.id.localMusicFragment ->binding.bottomNavCard.visibility = android.view.View.GONE
-            R.id.commonPlaylist-> binding.bottomNavCard.visibility = android.view.View.GONE
-            R.id.webMusicFragment-> binding.bottomNavCard.visibility = android.view.View.GONE
+        when (id) {
+            R.id.localMusicFragment -> binding.bottomNavCard.visibility = android.view.View.GONE
+            R.id.commonPlaylist -> binding.bottomNavCard.visibility = android.view.View.GONE
             R.id.musicPlayFragment -> binding.bottomNavCard.visibility = android.view.View.GONE
             R.id.personalFragment -> binding.bottomNavCard.visibility = android.view.View.GONE
+            R.id.webMusicFragment -> binding.bottomNavCard.visibility = android.view.View.GONE
             else -> binding.bottomNavCard.visibility = android.view.View.VISIBLE
         }
     }
 
-    // 获取当前Fragment
+    fun goToWebMusic() {
+        showNavContainer()
+        navController.navigate(R.id.webMusicFragment)
+    }
+
+    fun goToLocalMusic() {
+        showNavContainer()
+        navController.navigate(R.id.action_homeFragment_to_localMusicFragment)
+    }
+
+    fun goToPersonalMusic() {
+        showNavContainer()
+        navController.navigate(R.id.action_homeFragment_to_personalFragment)
+    }
+
+    private fun showNavContainer() {
+        binding.viewPager.visibility = android.view.View.GONE
+        binding.fragmentContainer.visibility = android.view.View.VISIBLE
+    }
+
+    private fun showViewPager() {
+        binding.fragmentContainer.visibility = android.view.View.GONE
+        binding.viewPager.visibility = android.view.View.VISIBLE
+    }
+
     private fun getCurrentFragment(): Fragment? =
             supportFragmentManager.findFragmentById(R.id.fragment_container)
 
@@ -193,9 +235,7 @@ class MainActivity : FullScreenActivity<ActivityMainBinding>() {
             return
         }
         val safeIndex = index.coerceIn(0, musicList.lastIndex)
-        // 在传给 Service 之前，我们必须先在宿主这里强制记录最新的正确状态，防止被 Service 异步刷回老状态
         saveSongInfo(musicList, safeIndex)
-        
         musicService?.playOrPauseMusic(musicList, safeIndex)
     }
 
@@ -216,10 +256,7 @@ class MainActivity : FullScreenActivity<ActivityMainBinding>() {
     fun isPlaying(): Boolean {
         return musicService?.isPlaying == true
     }
-    
-    /**
-     * 获取音乐播放服务实例，供Fragment调用
-     */
+
     fun getMusicService(): PlayMusicService? {
         return musicService
     }
@@ -233,6 +270,7 @@ class MainActivity : FullScreenActivity<ActivityMainBinding>() {
         }
         saveSongInfo(list, service.getCurrentMusicIndex())
     }
+
     private fun saveSongInfo(musicList: List<MusicEntity>, index: Int) {
         if (musicList.isEmpty()) {
             clearSongInfo()
@@ -280,25 +318,15 @@ class MainActivity : FullScreenActivity<ActivityMainBinding>() {
     }
 
     private fun requestAudioPermission() {
-        // 根据安卓版本判断需要申请的权限
         val permission = Manifest.permission.READ_MEDIA_AUDIO
-
-        // 检查权限是否已授予
-        if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED
-        ) {
-            // 未授予，申请权限
+        if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, arrayOf(permission), READ_MUSIC_PERMISSION)
         }
     }
 
     private fun requestNotificationPermission() {
-        // 根据安卓版本判断需要申请的权限
         val permission = Manifest.permission.POST_NOTIFICATIONS
-
-        // 检查权限是否已授予
-        if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED
-        ) {
-            // 未授予，申请权限
+        if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(
                     this,
                     arrayOf(permission),

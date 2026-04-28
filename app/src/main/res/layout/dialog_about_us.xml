@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bg_dialog_add_playlist"
+    android:padding="24dp">
+
+    <TextView
+        android:id="@+id/tvAboutDialogTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="关于我们"
+        android:textSize="20sp"
+        android:textColor="?attr/themeColorTextTitle"
+        android:fontFamily="sans-serif-medium"
+        android:gravity="center"
+        android:layout_marginBottom="20dp" />
+
+    <TextView
+        android:id="@+id/tvAboutContent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="https://github.com/Trainer-Lin/Selenophilia"
+        android:padding="16dp"
+        android:textSize="16sp"
+        android:textColor="?attr/themeColorTextPrimary"
+        android:gravity="center"
+        android:autoLink="web"
+        android:lineSpacingExtra="4dp" />
+
+    <TextView
+        android:id="@+id/tvAboutContent2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="就我一个！你要加入我吗( •̀ ω •́ )✧"
+        android:singleLine="true"
+        android:padding="16dp"
+        android:textSize="16sp"
+        android:textColor="?attr/themeColorTextPrimary"
+        android:gravity="center"
+        android:autoLink="web"
+        android:lineSpacingExtra="4dp" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginTop="20dp">
+
+        <TextView
+            android:id="@+id/btnConfirm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="确定"
+            android:textSize="16sp"
+            android:textColor="?attr/themeColorPrimaryMid"
+            android:fontFamily="sans-serif-medium"
+            android:padding="12dp"
+            android:background="?attr/selectableItemBackground" />
+    </LinearLayout>
+
+</LinearLayout>

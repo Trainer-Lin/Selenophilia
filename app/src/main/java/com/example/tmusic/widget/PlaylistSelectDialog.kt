@@ -32,7 +32,11 @@ class PlaylistSelectDialog(
             setGravity(Gravity.CENTER)
         }
 
-        val colorList = listOf("#A772BE", "#9C9EBB", "#E1B5D4")
+        val colorList = listOf(
+            getThemeColor(context, com.example.tmusic.R.attr.themeColorPlaylistLoop1),
+            getThemeColor(context, com.example.tmusic.R.attr.themeColorPlaylistLoop2),
+            getThemeColor(context, com.example.tmusic.R.attr.themeColorPlaylistLoop3)
+        )
 
         binding.rvPlaylists.layoutManager = LinearLayoutManager(context)
         binding.rvPlaylists.adapter = PlaylistItemAdapter(playlists, colorList) { playlist ->
@@ -42,11 +46,17 @@ class PlaylistSelectDialog(
 
         dialog.show()
     }
+
+    private fun getThemeColor(context: Context, attrResId: Int): Int {
+        val typedValue = android.util.TypedValue()
+        context.theme.resolveAttribute(attrResId, typedValue, true)
+        return typedValue.data
+    }
 }
 
 class PlaylistItemAdapter(
     private val playlists: List<PlaylistEntity>,
-    private val colorList: List<String>,
+    private val colorList: List<Int>,
     private val onItemClick: (PlaylistEntity) -> Unit
 ) : RecyclerView.Adapter<PlaylistItemAdapter.ViewHolder>() {
 
@@ -66,8 +76,8 @@ class PlaylistItemAdapter(
 
         binding.tvPlaylistTitle.text = playlist.name
         binding.root.setCardBackgroundColor(
-            android.graphics.Color.parseColor(colorList[playlist.colorIndex % colorList.size])
-        )
+                    colorList[playlist.colorIndex % colorList.size]
+                )
         binding.root.setOnClickListener {
             onItemClick(playlist)
         }

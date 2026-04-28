@@ -59,6 +59,15 @@ abstract class FullScreenActivity<VB: ViewBinding> : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        val sharedPrefs = getSharedPreferences("ThemeSettings", android.content.Context.MODE_PRIVATE)
+        val themeName = sharedPrefs.getString("current_theme", "purple")
+        when (themeName) {
+            "purple" -> setTheme(com.example.tmusic.R.style.Theme_TMusic_Purple)
+            "yellow" -> setTheme(com.example.tmusic.R.style.Theme_TMusic_Yellow)
+            // "red" -> setTheme(com.example.tmusic.R.style.Theme_TMusic_Red)
+            else -> setTheme(com.example.tmusic.R.style.Theme_TMusic_Purple)
+        }
+
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {

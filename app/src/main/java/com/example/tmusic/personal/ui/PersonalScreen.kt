@@ -50,12 +50,16 @@ fun PersonalContent(
     onBackClick: () -> Unit,
     onPlaySong: (List<MusicEntity>, Int) -> Unit
 ) {
+    val context = androidx.compose.ui.platform.LocalContext.current
+    
+    val colorStart = Color(getThemeColor(context, com.example.tmusic.R.attr.themeColorPrimaryStart))
+    val colorMid = Color(getThemeColor(context, com.example.tmusic.R.attr.themeColorPrimaryMid))
+    val colorEnd = Color(getThemeColor(context, com.example.tmusic.R.attr.themeColorPrimaryEnd))
+    val colorTextTitle = Color(getThemeColor(context, com.example.tmusic.R.attr.themeColorTextTitle))
+    val colorTextPrimary = Color(getThemeColor(context, com.example.tmusic.R.attr.themeColorTextPrimary))
+
     val gradient = Brush.linearGradient(
-        colors = listOf(
-            Color(0xFFF8D8E1),
-            Color(0xFFD1A8E3),
-            Color(0xFFA9B1F1)
-        )
+        colors = listOf(colorStart, colorMid, colorEnd)
     )
 
     Box(
@@ -66,7 +70,7 @@ fun PersonalContent(
         // Background large "PERSONAL" text
         Text(
             text = "PERSONAL",
-            color = Color.White.copy(alpha = 0.15f),
+            color = Color.White.copy(alpha = 0.3f),
             fontSize = 58.sp,
             fontWeight = FontWeight.ExtraBold,
             letterSpacing = (-1).sp,
@@ -117,7 +121,7 @@ fun PersonalContent(
             ) {
                 item {
                     // Most Listened
-                    SectionTitle("❤ 您最爱听")
+                    SectionTitle("❤ 您最爱听", colorTextTitle)
                     Spacer(modifier = Modifier.height(12.dp))
                     GlassmorphicCard {
                         Row(
@@ -155,7 +159,7 @@ fun PersonalContent(
 
                 item {
                     // Total Listening
-                    SectionTitle("🎵 总听歌时长")
+                    SectionTitle("🎵 总听歌时长", colorTextTitle)
                     Spacer(modifier = Modifier.height(12.dp))
                     GlassmorphicCard {
                         Column(
@@ -192,7 +196,7 @@ fun PersonalContent(
 
                 item {
                     // Study Tree Hole
-                    SectionTitle("🦉 学习树洞")
+                    SectionTitle("🦉 学习树洞", colorTextTitle)
                     Spacer(modifier = Modifier.height(12.dp))
                     GlassmorphicCard {
                         Row(
@@ -213,7 +217,7 @@ fun PersonalContent(
                                         painter = painterResource(id = R.drawable.ic_good),
                                         contentDescription = "Count",
                                         modifier = Modifier.size(20.dp),
-                                        tint = Color(0xFF4C444D)
+                                        tint = colorTextPrimary
                                     )
                                 }
                                 Spacer(modifier = Modifier.height(12.dp))
@@ -221,7 +225,7 @@ fun PersonalContent(
                                     text = "您总共专注了",
                                     fontSize = 14.sp,
                                     fontWeight = FontWeight.SemiBold,
-                                    color = Color(0xFF4C444D)
+                                    color = colorTextPrimary
                                 )
                                 Spacer(modifier = Modifier.height(8.dp))
                                 Row(verticalAlignment = Alignment.Bottom) {
@@ -229,12 +233,12 @@ fun PersonalContent(
                                         text = state.focusCount.toString(),
                                         fontSize = 32.sp,
                                         fontWeight = FontWeight.Bold,
-                                        color = Color(0xFF1D182E)
+                                        color = colorTextPrimary
                                     )
                                     Text(
                                         text = "次",
                                         fontSize = 16.sp,
-                                        color = Color(0xFF1D182E),
+                                        color = colorTextPrimary,
                                         modifier = Modifier.padding(bottom = 4.dp, start = 4.dp)
                                     )
                                 }
@@ -252,7 +256,7 @@ fun PersonalContent(
                                         painter = painterResource(id = R.drawable.ic_clock),
                                         contentDescription = "Duration",
                                         modifier = Modifier.size(20.dp),
-                                        tint = Color(0xFF4C444D)
+                                        tint = colorTextPrimary
                                     )
                                 }
                                 Spacer(modifier = Modifier.height(12.dp))
@@ -260,7 +264,7 @@ fun PersonalContent(
                                     text = "累计专注时长",
                                     fontSize = 14.sp,
                                     fontWeight = FontWeight.SemiBold,
-                                    color = Color(0xFF4C444D),
+                                    color = colorTextPrimary,
                                     textAlign = androidx.compose.ui.text.style.TextAlign.End
                                 )
                                 Spacer(modifier = Modifier.height(8.dp))
@@ -269,12 +273,12 @@ fun PersonalContent(
                                         text = state.focusDurationHours.toString(),
                                         fontSize = 32.sp,
                                         fontWeight = FontWeight.Bold,
-                                        color = Color(0xFF1D182E)
+                                        color = colorTextPrimary
                                     )
                                     Text(
                                         text = "小时",
                                         fontSize = 16.sp,
-                                        color = Color(0xFF1D182E),
+                                        color = colorTextPrimary,
                                         modifier = Modifier.padding(bottom = 4.dp, start = 4.dp)
                                     )
                                 }
@@ -284,7 +288,7 @@ fun PersonalContent(
                 }
 
                 item {
-                    SectionTitle("⏰ 历史播放")
+                    SectionTitle("⏰ 历史播放", colorTextTitle)
                     Spacer(modifier = Modifier.height(16.dp))
                 }
 
@@ -375,14 +379,20 @@ fun PersonalScreenPreview() {
 }
 
 @Composable
-fun SectionTitle(title: String) {
+fun SectionTitle(title: String, color: Color) {
     Text(
         text = title,
         fontSize = 16.sp,
         fontWeight = FontWeight.SemiBold,
-        color = Color(0xFF745185),
+        color = color,
         letterSpacing = 0.6.sp
     )
+}
+
+fun getThemeColor(context: android.content.Context, attrResId: Int): Int {
+    val typedValue = android.util.TypedValue()
+    context.theme.resolveAttribute(attrResId, typedValue, true)
+    return typedValue.data
 }
 
 @Composable
