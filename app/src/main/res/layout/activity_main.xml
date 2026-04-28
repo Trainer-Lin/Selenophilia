@@ -49,7 +49,7 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:padding="20dp"
-                android:src="@drawable/icon_study_new" />
+                android:src="@drawable/ic_school" />
 
             <ImageView
                 android:id="@+id/navHome"
@@ -60,7 +60,7 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:padding="20dp"
-                android:src="@drawable/icon_home_new" />
+                android:src="@drawable/ic_house_new" />
 
             <ImageView
                 android:id="@+id/navDiary"
@@ -71,7 +71,7 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:padding="20dp"
-                android:src="@drawable/icon_global_new" />
+                android:src="@drawable/ic_planet_new" />
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 

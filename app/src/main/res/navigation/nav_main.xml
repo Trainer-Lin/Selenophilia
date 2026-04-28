@@ -31,8 +31,27 @@
     </fragment>
 
     <fragment
+        android:id="@+id/personalFragment"
+        android:name="com.example.tmusic.personal.ui.PersonalFragment">
+        <action
+            android:id="@+id/action_personalFragment_to_musicPlayFragment"
+            app:destination="@id/musicPlayFragment"
+            app:enterAnim="@anim/slide_up"
+            app:exitAnim="@anim/stay_still"
+            app:popEnterAnim="@anim/stay_still"
+            app:popExitAnim="@anim/slide_down" />
+    </fragment>
+
+    <fragment
         android:id = "@+id/homeFragment"
         android:name = "com.example.tmusic.home.ui.HomeFragment">
+        <action
+            android:id="@+id/action_homeFragment_to_personalFragment"
+            app:destination="@id/personalFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/stay_still"
+            app:popEnterAnim="@anim/stay_still"
+            app:popExitAnim="@anim/slide_out_right" />
         <action
             android:id="@+id/action_homeFragment_to_localMusicFragment"
             app:destination="@id/localMusicFragment"

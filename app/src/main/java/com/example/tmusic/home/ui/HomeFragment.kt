@@ -18,6 +18,7 @@ import com.example.tmusic.databinding.ItemPlaylistBinding
 import com.example.tmusic.home.data.room.PlaylistEntity
 import com.example.tmusic.home.mvvm.PlaylistViewModel
 import com.example.tmusic.widget.AddPlaylistDialog
+import com.example.tmusic.widget.DeletePlaylistDialog
 import com.google.android.gms.dynamic.SupportFragmentWrapper
 import kotlinx.coroutines.launch
 
@@ -49,6 +50,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         initNavigation()
         binding.localMusic.setOnClickListener {
             navController.navigate(R.id.action_homeFragment_to_localMusicFragment)
+        }
+
+        binding.myMusic.setOnClickListener {
+            navController.navigate(R.id.action_homeFragment_to_personalFragment)
         }
 
         binding.playPauseBtn.setOnClickListener {
@@ -114,7 +119,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
 
             itemBinding.btnEditPlaylist.setOnClickListener { showUpdatePlaylistDialog(playlistId) }
 
-            itemBinding.btnDeletePlaylist.setOnClickListener { viewModel.deletePlaylist(playlist) }
+            itemBinding.btnDeletePlaylist.setOnClickListener { showDeletePlaylistDialog(playlist) }
 
             itemBinding.root.setOnClickListener {
                 (activity as MainActivity).goToMusicList(playlistId)
@@ -130,6 +135,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
     private fun showUpdatePlaylistDialog(id: Long) {
         AddPlaylistDialog(requireContext(), "编辑歌单名称") { name -> viewModel.updatePlaylist(name, id) }
                 .show()
+    }
+
+    private fun showDeletePlaylistDialog(playlist: PlaylistEntity) {
+        DeletePlaylistDialog(requireContext()) {
+            viewModel.deletePlaylist(playlist)
+        }.show()
     }
 
     private fun updateUi() {

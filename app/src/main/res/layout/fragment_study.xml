@@ -63,7 +63,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:letterSpacing="0.1"
-                    android:text="CURRENT FOCUS"
+                    android:text="DEEP FOCUS"
                     android:textColor="#888888"
                     android:textSize="12sp"
                     android:textStyle="bold"
@@ -100,7 +100,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Deep Focus"
+                            android:text="Fight!!!!!"
                             android:textColor="#7853A8"
                             android:textSize="14sp"
                             android:textStyle="bold" />
@@ -138,7 +138,8 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:gravity="center"
-                        android:text="Start\nFocusing"
+                        android:fontFamily="@font/font_noto_bold"
+                        android:text="开始专注"
                         android:textColor="#FFFFFF"
                         android:textSize="14sp"
                         android:textStyle="bold" />
@@ -258,7 +259,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
-                        android:text="Today's Plan"
+                        android:text="今日计划"
+                        android:fontFamily="@font/font_noto_bold"
                         android:textColor="#1A1A1A"
                         android:textSize="18sp"
                         android:textStyle="bold" />

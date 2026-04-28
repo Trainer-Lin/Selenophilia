@@ -37,6 +37,7 @@ class PlayMusicService : Service() {
     private var mediaSession: MediaSession? = null // 新版媒体会话，对接系统媒体控制(锁屏显示音乐控制等)
     private var musicList: List<MusicEntity> = emptyList() // 播放列表
     private var currentMusicIndex: Int = 0
+    private var playStartTimestamp: Long = 0L // 用于计算播放时长
     var isPlaying: Boolean
         get() = exoPlayer?.isPlaying == true || exoPlayer?.playWhenReady == true
         set(value) {
@@ -110,6 +111,26 @@ class PlayMusicService : Service() {
                             Player.STATE_ENDED -> {
                                 playNext()
                             }
+                        }
+                    }
+
+                    override fun onIsPlayingChanged(isPlaying: Boolean) {
+                        if (isPlaying) {
+                            playStartTimestamp = System.currentTimeMillis()
+                        } else {
+                            if (playStartTimestamp > 0) {
+                                val playedSeconds = ((System.currentTimeMillis() - playStartTimestamp) / 1000).toInt()
+                                com.example.tmusic.personal.data.PersonalRepository.addPlayDuration(playedSeconds)
+                                playStartTimestamp = 0
+                            }
+                        }
+                    }
+
+                    override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
+                        super.onMediaItemTransition(mediaItem, reason)
+                        val music = getCurrentMusic()
+                        if (music != null) {
+                            com.example.tmusic.personal.data.PersonalRepository.recordSongPlay(music)
                         }
                     }
                 }

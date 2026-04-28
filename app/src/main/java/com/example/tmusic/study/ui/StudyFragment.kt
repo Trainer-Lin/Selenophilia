@@ -199,9 +199,9 @@ class StudyFragment : BaseFragment<FragmentStudyBinding>(FragmentStudyBinding::i
     private fun renderTimer(remainSeconds: Int, isWorking: Boolean, isCountUp: Boolean) {
         binding.tvTime.text = formatTime(remainSeconds)
         if (isWorking) {
-            binding.tvStartPause.text = "Pause"
+            binding.tvStartPause.text = "暂停"
         } else {
-            binding.tvStartPause.text = "Start\nFocusing"
+            binding.tvStartPause.text = "开始专注"
         }
         if (isCountUp) {
             binding.btnRestart.setImageResource(R.drawable.ic_study_stop)

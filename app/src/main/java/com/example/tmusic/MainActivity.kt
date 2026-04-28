@@ -178,6 +178,7 @@ class MainActivity : FullScreenActivity<ActivityMainBinding>() {
             R.id.commonPlaylist-> binding.bottomNavCard.visibility = android.view.View.GONE
             R.id.webMusicFragment-> binding.bottomNavCard.visibility = android.view.View.GONE
             R.id.musicPlayFragment -> binding.bottomNavCard.visibility = android.view.View.GONE
+            R.id.personalFragment -> binding.bottomNavCard.visibility = android.view.View.GONE
             else -> binding.bottomNavCard.visibility = android.view.View.VISIBLE
         }
     }

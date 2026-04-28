@@ -163,14 +163,14 @@
                             android:id="@+id/songTitle"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="-16dp"
+                            android:layout_marginTop="-4dp"
                             android:ellipsize="end"
                             android:fontFamily="@font/font_noto_bold"
-                            android:includeFontPadding="true"
+                            android:includeFontPadding="false"
                             android:maxLines="1"
                             android:text="暂无歌曲播放哦"
                             android:textColor="#1E1B1E"
-                            android:textSize="24sp" />
+                            android:textSize="18sp" />
 
                         <TextView
                             android:id="@+id/artistName"
@@ -345,7 +345,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="12dp"
                         android:fontFamily="@font/font_noto_semibold"
-                        android:text="个人音乐"
+                        android:text="个人中心"
                         android:textColor="#4C444D"
                         android:textSize="16sp" />
                 </LinearLayout>

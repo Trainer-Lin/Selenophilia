@@ -126,6 +126,14 @@ class StudyViewModel : BaseMviViewModel<StudyState, StudyIntent>() {
                             }
                         }
                         timerJob = null
+                        
+                        // Record focus count and duration when timer finishes naturally
+                        val total = viewState.value.totalSeconds
+                        if (total > 0) {
+                            com.example.tmusic.personal.data.PersonalRepository.addFocusCount()
+                            com.example.tmusic.personal.data.PersonalRepository.addFocusDuration(total)
+                        }
+                        
                         updateState { oldState ->
                             oldState.copy(remainSeconds = 0, isWorking = false)
                         }
@@ -172,6 +180,11 @@ class StudyViewModel : BaseMviViewModel<StudyState, StudyIntent>() {
         timerJob?.cancel()
         timerJob = null
         if (viewState.value.isCountUp) {
+            val focusedSeconds = viewState.value.remainSeconds
+            if (focusedSeconds > 0) {
+                com.example.tmusic.personal.data.PersonalRepository.addFocusCount()
+                com.example.tmusic.personal.data.PersonalRepository.addFocusDuration(focusedSeconds)
+            }
             viewModelScope.launch {
                 updateState { oldState -> oldState.copy(remainSeconds = 0, isWorking = false) }
             }
