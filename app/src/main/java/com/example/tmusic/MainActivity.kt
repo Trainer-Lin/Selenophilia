@@ -119,7 +119,16 @@ class MainActivity : FullScreenActivity<ActivityMainBinding>() {
         
         val sharedPrefs = getSharedPreferences("Settings", android.content.Context.MODE_PRIVATE)
         val isFocusMode = sharedPrefs.getBoolean("isFocusMode", false)
-        val initialItem = if (isFocusMode) 0 else 1
+        
+        // Check if there is a saved page index
+        val savedIndex = sharedPrefs.getInt("last_viewpager_index", -1)
+        val initialItem = if (savedIndex != -1) {
+            savedIndex
+        } else if (isFocusMode) {
+            0 
+        } else {
+            1
+        }
         
         binding.viewPager.setCurrentItem(initialItem, false)
         updateNavIcon(initialItem)
@@ -127,6 +136,7 @@ class MainActivity : FullScreenActivity<ActivityMainBinding>() {
             override fun onPageSelected(position: Int) {
                 Log.d("ViewPager","{${binding.viewPager.currentItem}}")
                 updateNavIcon(position)
+                sharedPrefs.edit().putInt("last_viewpager_index", position).apply()
             }
         })
     }
