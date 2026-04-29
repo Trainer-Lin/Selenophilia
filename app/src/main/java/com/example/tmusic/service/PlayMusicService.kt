@@ -37,6 +37,24 @@ class PlayMusicService : Service() {
     private var mediaSession: MediaSession? = null // 新版媒体会话，对接系统媒体控制(锁屏显示音乐控制等)
     private var musicList: List<MusicEntity> = emptyList() // 播放列表
     private var currentMusicIndex: Int = 0
+    var playMode: Int = 0 // 0: 顺序播放, 1: 随机播放, 2: 单曲循环
+        set(value) {
+            field = value
+            when (value) {
+                0 -> { // 列表循环
+                    exoPlayer?.repeatMode = Player.REPEAT_MODE_ALL
+                    exoPlayer?.shuffleModeEnabled = false
+                }
+                1 -> { // 随机播放
+                    exoPlayer?.repeatMode = Player.REPEAT_MODE_ALL
+                    exoPlayer?.shuffleModeEnabled = true
+                }
+                2 -> { // 单曲循环
+                    exoPlayer?.repeatMode = Player.REPEAT_MODE_ONE
+                    exoPlayer?.shuffleModeEnabled = false
+                }
+            }
+        }
     private var playStartTimestamp: Long = 0L // 用于计算播放时长
     var isPlaying: Boolean
         get() = exoPlayer?.isPlaying == true || exoPlayer?.playWhenReady == true
@@ -103,13 +121,15 @@ class PlayMusicService : Service() {
                         .build()
 
         exoPlayer = ExoPlayer.Builder(this).setAudioAttributes(audioAttributes, true).build()
+        // 应用默认播放模式
+        playMode = playMode
 
         exoPlayer?.addListener(
                 object : Player.Listener {
                     override fun onPlaybackStateChanged(playbackState: Int) {
                         when (playbackState) {
                             Player.STATE_ENDED -> {
-                                playNext()
+                                playNext(isAuto = true)
                             }
                         }
                     }
@@ -128,6 +148,7 @@ class PlayMusicService : Service() {
 
                     override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
                         super.onMediaItemTransition(mediaItem, reason)
+                        syncCurrentMusicIndex()
                         val music = getCurrentMusic()
                         if (music != null) {
                             com.example.tmusic.personal.data.PersonalRepository.recordSongPlay(music)
@@ -179,26 +200,24 @@ class PlayMusicService : Service() {
     fun playPrevious() {
         syncCurrentMusicIndex()
         if (musicList.isEmpty()) return
-        val prevIndex =
-                if (currentMusicIndex > 0) {
-                    currentMusicIndex - 1
-                } else {
-                    musicList.size - 1
-                }
-        exoPlayer?.seekTo(prevIndex, 0)
-        currentMusicIndex = prevIndex
+        if (playMode == 2) {
+            val prevIndex = if (currentMusicIndex > 0) currentMusicIndex - 1 else musicList.size - 1
+            exoPlayer?.seekTo(prevIndex, 0)
+        } else {
+            exoPlayer?.seekToPrevious()
+        }
+        syncCurrentMusicIndex()
     }
-    fun playNext() {
+    fun playNext(isAuto: Boolean = false) {
         syncCurrentMusicIndex()
         if (musicList.isEmpty()) return
-        val nextIndex =
-                if (currentMusicIndex < musicList.size - 1) {
-                    currentMusicIndex + 1
-                } else {
-                    0
-                }
-        exoPlayer?.seekTo(nextIndex, 0)
-        currentMusicIndex = nextIndex
+        if (playMode == 2 && !isAuto) {
+            val nextIndex = if (currentMusicIndex < musicList.size - 1) currentMusicIndex + 1 else 0
+            exoPlayer?.seekTo(nextIndex, 0)
+        } else {
+            exoPlayer?.seekToNext()
+        }
+        syncCurrentMusicIndex()
     }
     fun playOrPauseMusic(musicList: List<MusicEntity>, index: Int) {
         if (musicList.isEmpty()) return

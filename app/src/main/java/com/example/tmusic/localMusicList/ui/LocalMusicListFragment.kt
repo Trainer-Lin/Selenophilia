@@ -31,6 +31,7 @@ import com.example.tmusic.localMusicList.mvi.LocalMusicIntent
 import com.example.tmusic.localMusicList.mvi.LocalMusicState
 import com.example.tmusic.localMusicList.mvi.LocalMusicViewModel
 import com.example.tmusic.widget.PlaylistSelectDialog
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class LocalMusicListFragment :
@@ -237,7 +238,32 @@ class LocalMusicListFragment :
     }
 
     private fun addMusicToPlaylist(music: MusicEntity, playlist: PlaylistEntity) {
-        listMusicViewModel.addMusicToPlaylist(playlist.id, music.id)
+        listMusicViewModel.addMusicToPlaylist(playlist.id, music.id) {
+            updatePlaylistCoverAfterMusicChange(playlist.id)
+        }
+    }
+
+    private fun updatePlaylistCoverAfterMusicChange(targetPlaylistId: Long) {
+        lifecycleScope.launch {
+            try {
+                val playlistMusicDao = PlaylistDatabase.getInstance(application).playlistMusicDao()
+                val latestId = playlistMusicDao.getLatestMusicIdFromList(targetPlaylistId)
+                if (latestId != null) {
+                    val musics = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+                        musicDao.getMusicByIds(listOf(latestId))
+                    }
+                    if (musics.isNotEmpty() && musics.first().albumArt != null) {
+                        playlistViewModel.updatePlaylistCover(targetPlaylistId, musics.first().albumArt)
+                    } else {
+                        playlistViewModel.updatePlaylistCover(targetPlaylistId, null)
+                    }
+                } else {
+                    playlistViewModel.updatePlaylistCover(targetPlaylistId, null)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
     }
 
     fun getCurrentMusicList(): List<MusicEntity> {

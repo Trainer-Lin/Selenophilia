@@ -22,4 +22,6 @@ class PlaylistRepository(private val playlistDao: PlaylistDao) {
 
     suspend fun deletePlaylistById(id: Long) = playlistDao.deletePlaylistById(id)
 
+    suspend fun updatePlaylistCover(playlistId: Long, coverPath: String?) = playlistDao.updatePlaylistCover(playlistId, coverPath)
+
 }

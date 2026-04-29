@@ -1,12 +1,10 @@
-package com.example.tmusic.common
+package com.example.tmusic.musicPlay
 
 import android.animation.ValueAnimator
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.animation.LinearInterpolator
 import android.widget.SeekBar
-import androidx.activity.OnBackPressedCallback
 import androidx.annotation.OptIn
 import androidx.lifecycle.lifecycleScope
 import androidx.media3.common.util.UnstableApi
@@ -15,10 +13,11 @@ import com.example.tmusic.MainActivity
 import com.example.tmusic.R
 import com.example.tmusic.base.BaseFragment
 import com.example.tmusic.databinding.FragmentMusicPlayBinding
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import kotlin.math.abs
 
 class MusicPlayFragment :
         BaseFragment<FragmentMusicPlayBinding>(FragmentMusicPlayBinding::inflate) {
@@ -33,37 +32,56 @@ class MusicPlayFragment :
         initView()
     }
 
+    @OptIn(UnstableApi::class)
     override fun initView() {
         startProgressListener()
+        
+        val host = activity as? MainActivity
+        val service = host?.getMusicService()
+        if (service != null) {
+            updateOrderIcon(service.playMode)
+        }
+
         binding.btnBack.setOnClickListener {
             (activity as? MainActivity)?.navigateBack()
         }
 
         binding.btnPlayPause.setOnClickListener {
-            val host = activity as? MainActivity ?: return@setOnClickListener
-            host.playOrPause(host.currentMusicList, host.currentIndex)
+            val hostActivity = activity as? MainActivity ?: return@setOnClickListener
+            hostActivity.playOrPause(hostActivity.currentMusicList, hostActivity.currentIndex)
             updateUi()
         }
 
         binding.btnNext.setOnClickListener {
-            val host = activity as? MainActivity ?: return@setOnClickListener
-            host.playNext()
+            val hostActivity = activity as? MainActivity ?: return@setOnClickListener
+            hostActivity.playNext()
             updateUi()
         }
 
         binding.btnPrevious.setOnClickListener {
-            val host = activity as? MainActivity ?: return@setOnClickListener
-            host.playPrevious()
+            val hostActivity = activity as? MainActivity ?: return@setOnClickListener
+            hostActivity.playPrevious()
             updateUi()
+        }
+
+        binding.btnPlayOrder.setOnClickListener {
+            val hostActivity = activity as? MainActivity ?: return@setOnClickListener
+            val s = hostActivity.getMusicService() ?: return@setOnClickListener
+            s.playMode = when(s.playMode){
+                0 -> 1
+                1 -> 2
+                else -> 0
+            }
+            updateOrderIcon(s.playMode)
         }
 
         binding.progressBar.setOnSeekBarChangeListener(
                 object : SeekBar.OnSeekBarChangeListener {
                     @UnstableApi
                     override fun onProgressChanged(
-                            seekBar: SeekBar?,
-                            progress: Int, // 进度百分比
-                            fromUser: Boolean
+                        seekBar: SeekBar?,
+                        progress: Int, // 进度百分比
+                        fromUser: Boolean
                     ) {
                         if (fromUser) {
                             val service = (activity as MainActivity).getMusicService()
@@ -71,13 +89,13 @@ class MusicPlayFragment :
                                 val duration = service.getCurrentDuration()
                                 val newPosition = progress.toLong() * duration / 1000
                                 binding.currentTime.text = formatTime(newPosition) // 拖动改变显示时间
-                                if (!isUserSeeking) service.seekTo(newPosition) // 单击事件跳转
                             }
                         }
                     }
 
                     override fun onStartTrackingTouch(seekBar: SeekBar?) {
                         isUserSeeking = true
+                        progressAnimator?.cancel() // 停止当前正在播放的动画，防止覆盖用户的单击进度
                     }
 
                     @OptIn(UnstableApi::class)
@@ -93,6 +111,14 @@ class MusicPlayFragment :
                     }
                 }
         )
+    }
+
+    private fun updateOrderIcon(playMode: Int){
+        when(playMode){
+            0 -> binding.btnPlayOrder.setImageResource(R.drawable.icon_repeat_list)
+            1 -> binding.btnPlayOrder.setImageResource(R.drawable.icon_shuffle)
+            2 -> binding.btnPlayOrder.setImageResource(R.drawable.icon_repeat_one)
+        }
     }
 
     private fun formatTime(ms: Long): String {
@@ -128,6 +154,13 @@ class MusicPlayFragment :
     private fun updateProgress(){
         val host = activity as? MainActivity ?: return
         val service = host.getMusicService() ?: return
+        
+        // 自动切歌时更新UI
+        if (host.currentIndex != service.getCurrentMusicIndex()) {
+            host.updateSongInfo()
+            updateUi()
+        }
+
         val duration = service.getCurrentDuration()
         if (duration <= 0L) return
         val position = service.getCurrentPosition()
@@ -146,7 +179,7 @@ class MusicPlayFragment :
     private fun updateProgressAnimate(currentProgress: Int, targetProgress: Int){
         progressAnimator?.cancel()
         progressAnimator = null
-        if(kotlin.math.abs(currentProgress - targetProgress ) <=5){
+        if(abs(currentProgress - targetProgress ) <=5){
             binding.progressBar. progress = targetProgress
         }else{
             val animator = ValueAnimator.ofInt(currentProgress, targetProgress) //创建动画 ，从当前进度到目标进度
@@ -176,6 +209,7 @@ class MusicPlayFragment :
 
     override fun onResume() {
         super.onResume()
+        (activity as? MainActivity)?.updateSongInfo()
         startProgressListener()
         updateUi()
     }

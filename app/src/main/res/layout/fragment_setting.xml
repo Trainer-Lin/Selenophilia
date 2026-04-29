@@ -34,25 +34,6 @@
             android:orientation="vertical">
 
             <RadioButton
-                android:id="@+id/rbFocusMode"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:buttonTint="?attr/themeColorPrimaryMid"
-                android:fontFamily="@font/font_noto_regular"
-                android:layoutDirection="rtl"
-                android:paddingEnd="16dp"
-                android:text="学习界面"
-                android:textColor="?attr/themeColorTextPrimary"
-                android:textSize="16sp" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
-                android:background="#33CEC3CE" />
-
-            <RadioButton
                 android:id="@+id/rbMainInterface"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -61,6 +42,24 @@
                 android:layoutDirection="rtl"
                 android:paddingEnd="16dp"
                 android:text="主界面"
+                android:textColor="?attr/themeColorTextPrimary"
+                android:textSize="16sp" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:background="#33CEC3CE" />
+
+            <RadioButton
+                android:id="@+id/rbFocusMode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:buttonTint="?attr/themeColorPrimaryMid"
+                android:fontFamily="@font/font_noto_regular"
+                android:layoutDirection="rtl"
+                android:paddingEnd="16dp"
+                android:text="学习界面"
                 android:textColor="?attr/themeColorTextPrimary"
                 android:textSize="16sp" />
 
@@ -201,7 +200,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="管理网络源"
+            android:text="可选下载源"
             android:fontFamily="@font/font_noto_regular"
             android:textColor="?attr/themeColorTextPrimary"
             android:textSize="16sp" />

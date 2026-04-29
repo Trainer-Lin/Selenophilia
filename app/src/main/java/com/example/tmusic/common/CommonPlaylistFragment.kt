@@ -6,7 +6,6 @@ import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.widget.Toast
-import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
@@ -27,6 +26,7 @@ import com.example.tmusic.localMusicList.mvi.SortType
 import com.example.tmusic.widget.PlaylistSelectDialog
 import kotlin.getValue
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class CommonPlaylistFragment :
@@ -109,13 +109,25 @@ class CommonPlaylistFragment :
             binding.titleContainer.visibility = View.VISIBLE
         }
 
-        binding.etSearch.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-            override fun afterTextChanged(s: Editable?) {
-                listMusicViewModel.searchPlaylistMusic(s.toString())
-            }
-        })
+        binding.etSearch.addTextChangedListener(
+                object : TextWatcher {
+                    override fun beforeTextChanged(
+                            s: CharSequence?,
+                            start: Int,
+                            count: Int,
+                            after: Int
+                    ) {}
+                    override fun onTextChanged(
+                            s: CharSequence?,
+                            start: Int,
+                            before: Int,
+                            count: Int
+                    ) {}
+                    override fun afterTextChanged(s: Editable?) {
+                        listMusicViewModel.searchPlaylistMusic(s.toString())
+                    }
+                }
+        )
 
         binding.btnSort.setOnClickListener { view ->
             val popupMenu = PopupMenu(requireContext(), view)
@@ -124,13 +136,14 @@ class CommonPlaylistFragment :
             popupMenu.menu.add(0, 3, 0, "按从旧到新排序")
             popupMenu.menu.add(0, 4, 0, "按歌手名称排序")
             popupMenu.setOnMenuItemClickListener { item ->
-                val sortType = when (item.itemId) {
-                    1 -> SortType.BY_NAME
-                    2 -> SortType.BY_DATE_NEW_TO_OLD
-                    3 -> SortType.BY_DATE_OLD_TO_NEW
-                    4 -> SortType.BY_ARTIST
-                    else -> SortType.BY_NAME
-                }
+                val sortType =
+                        when (item.itemId) {
+                            1 -> SortType.BY_NAME
+                            2 -> SortType.BY_DATE_NEW_TO_OLD
+                            3 -> SortType.BY_DATE_OLD_TO_NEW
+                            4 -> SortType.BY_ARTIST
+                            else -> SortType.BY_NAME
+                        }
                 listMusicViewModel.sortPlaylistMusic(sortType)
                 true
             }
@@ -190,7 +203,12 @@ class CommonPlaylistFragment :
                     viewLifecycleOwner.lifecycleScope.launch {
                         val musicList = getMusicByIds(musicIds)
                         originalMusicList = musicList
-                        currentMusicList = applySearchAndSort(musicList, listMusicViewModel.uiState.value.searchQuery, listMusicViewModel.uiState.value.sortType)
+                        currentMusicList =
+                                applySearchAndSort(
+                                        musicList,
+                                        listMusicViewModel.uiState.value.searchQuery,
+                                        listMusicViewModel.uiState.value.sortType
+                                )
                         adapter.updateMusicList(currentMusicList)
                     }
                 }
@@ -216,8 +234,12 @@ class CommonPlaylistFragment :
                     listMusicViewModel.consumeError()
                 }
                 if (originalMusicList.isNotEmpty()) {
-                    val processedList = applySearchAndSort(originalMusicList, state.searchQuery, state.sortType)
-                    if (processedList != currentMusicList || state.sortType != SortType.BY_NAME || state.searchQuery.isNotEmpty()) {
+                    val processedList =
+                            applySearchAndSort(originalMusicList, state.searchQuery, state.sortType)
+                    if (processedList != currentMusicList ||
+                                    state.sortType != SortType.BY_NAME ||
+                                    state.searchQuery.isNotEmpty()
+                    ) {
                         currentMusicList = processedList
                         adapter.updateMusicList(processedList)
                     }
@@ -227,19 +249,21 @@ class CommonPlaylistFragment :
     }
 
     private fun applySearchAndSort(
-        originalList: List<MusicEntity>,
-        query: String,
-        sortType: SortType
+            originalList: List<MusicEntity>,
+            query: String,
+            sortType: SortType
     ): List<MusicEntity> {
         // 1. Filter by query
-        val filteredList = if (query.isBlank()) {
-            originalList
-        } else {
-            val lowerQuery = query.lowercase()
-            originalList.filter {
-                it.title.lowercase().contains(lowerQuery) || it.artist.lowercase().contains(lowerQuery)
-            }
-        }
+        val filteredList =
+                if (query.isBlank()) {
+                    originalList
+                } else {
+                    val lowerQuery = query.lowercase()
+                    originalList.filter {
+                        it.title.lowercase().contains(lowerQuery) ||
+                                it.artist.lowercase().contains(lowerQuery)
+                    }
+                }
 
         // 2. Sort the filtered list
         return when (sortType) {
@@ -257,7 +281,7 @@ class CommonPlaylistFragment :
             Log.d("CommonPlaylistFragment", "${state.playlists.size}")
             if (state.playlists.isNotEmpty()) {
                 PlaylistSelectDialog(requireContext(), state.playlists) { playlist ->
-                            listMusicViewModel.addMusicToPlaylist(playlist.id, music.id)
+                            addMusicToPlaylist(playlist.id, music)
                         }
                         .show()
             } else {
@@ -267,7 +291,76 @@ class CommonPlaylistFragment :
     }
 
     private fun deleteMusicFromPlaylist(music: MusicEntity) {
-        listMusicViewModel.deleteMusicFromPlaylist(playlistId, music.id)
+        listMusicViewModel.deleteMusicFromPlaylist(playlistId, music.id) {
+            updatePlaylistCoverAfterMusicChange()
+        }
+    }
+
+    private fun addMusicToPlaylist(playlistIdTo: Long, music: MusicEntity) {
+        listMusicViewModel.addMusicToPlaylist(playlistIdTo, music.id) {
+            lifecycleScope.launch { updatePlaylistCoverAfterMusicChangeForPlaylist(playlistIdTo) }
+        }
+    }
+
+    private fun updatePlaylistCoverAfterMusicChange() {
+        lifecycleScope.launch {
+            try {
+                val application = requireActivity().application
+                val musicDao = MusicDatabase.getInstance(application).musicDao()
+                val playlistMusicDao = PlaylistDatabase.getInstance(application).playlistMusicDao()
+
+                val latestId = playlistMusicDao.getLatestMusicIdFromList(playlistId)
+                if (latestId != null) {
+                    val musics =
+                            kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+                                musicDao.getMusicByIds(listOf(latestId))
+                            }
+                    if (musics.isNotEmpty() && musics.first().albumArt != null) {
+                        playlistViewModel.updatePlaylistCover(playlistId, musics.first().albumArt)
+                    } else {
+                        playlistViewModel.updatePlaylistCover(playlistId, null)
+                    }
+                } else {
+                    playlistViewModel.updatePlaylistCover(playlistId, null)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    private fun updatePlaylistCoverAfterMusicChangeForPlaylist(targetPlaylistId: Long) {
+        try {
+            val application = requireActivity().application
+            val musicDao = MusicDatabase.getInstance(application).musicDao()
+            val playlistMusicDao = PlaylistDatabase.getInstance(application).playlistMusicDao()
+
+            lifecycleScope.launch {
+                try {
+                    val latestId = playlistMusicDao.getLatestMusicIdFromList(targetPlaylistId)
+                    if (latestId != null) {
+                        val musics =
+                                kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+                                    musicDao.getMusicByIds(listOf(latestId))
+                                }
+                        if (musics.isNotEmpty() && musics.first().albumArt != null) {
+                            playlistViewModel.updatePlaylistCover(
+                                    targetPlaylistId,
+                                    musics.first().albumArt
+                            )
+                        } else {
+                            playlistViewModel.updatePlaylistCover(targetPlaylistId, null)
+                        }
+                    } else {
+                        playlistViewModel.updatePlaylistCover(targetPlaylistId, null)
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     fun getCurrentMusicList(): List<MusicEntity> = currentMusicList

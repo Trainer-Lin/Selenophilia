@@ -26,7 +26,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.example.tmusic.MainPagerAdapter
 import com.example.tmusic.base.FullScreenActivity
 import com.example.tmusic.common.CommonPlaylistFragment
-import com.example.tmusic.common.MusicPlayFragment
+import com.example.tmusic.musicPlay.MusicPlayFragment
 import com.example.tmusic.databinding.ActivityMainBinding
 import com.example.tmusic.home.ui.HomeFragment
 import com.example.tmusic.localMusicList.data.room.MusicEntity
@@ -43,6 +43,7 @@ class MainActivity : FullScreenActivity<ActivityMainBinding>() {
         const val UPDATE_MUSIC_REQUEST = 1001
         const val READ_MUSIC_PERMISSION = 1002
         const val POST_NOTIFICATION_PERMISSION = 1003
+        private const val NAV_EXIT_ANIM_DURATION = 300L
     }
 
     private var musicService: PlayMusicService? = null
@@ -95,6 +96,21 @@ class MainActivity : FullScreenActivity<ActivityMainBinding>() {
         initViewPager()
         initNavigation()
         setupBottomNav()
+        setupBackPressed()
+    }
+
+    private fun setupBackPressed() {
+        onBackPressedDispatcher.addCallback(this, object : androidx.activity.OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (binding.fragmentContainer.visibility == android.view.View.VISIBLE) {
+                    navigateBack()
+                } else if (binding.viewPager.currentItem != 1) {
+                    binding.viewPager.setCurrentItem(1, true)
+                } else {
+                    finish()
+                }
+            }
+        })
     }
 
     private fun initViewPager() {
@@ -161,15 +177,28 @@ class MainActivity : FullScreenActivity<ActivityMainBinding>() {
     }
 
     fun navigateBack() {
-        navController.navigateUp()
+        val isNavigated = navController.navigateUp()
+
+        if (!isNavigated) {
+            navigateToHome()
+            return
+        }
+
         if (navController.currentDestination?.id == R.id.homeFragment) {
-            showViewPager()
+            binding.fragmentContainer.postDelayed(
+                {
+                    if (navController.currentDestination?.id == R.id.homeFragment) {
+                        showViewPager()
+                    }
+                },
+                NAV_EXIT_ANIM_DURATION
+            )
         }
     }
 
     fun navigateToHome() {
         showViewPager()
-        binding.viewPager.currentItem = 1
+        binding.viewPager.setCurrentItem(1, false)
     }
 
     fun ensureStatusBarVisible() {

@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import androidx.core.graphics.toColorInt
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
@@ -19,7 +18,6 @@ import com.example.tmusic.home.data.room.PlaylistEntity
 import com.example.tmusic.home.mvvm.PlaylistViewModel
 import com.example.tmusic.widget.AddPlaylistDialog
 import com.example.tmusic.widget.DeletePlaylistDialog
-import com.google.android.gms.dynamic.SupportFragmentWrapper
 import kotlinx.coroutines.launch
 
 class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::inflate) {
@@ -28,9 +26,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
     private lateinit var navController: NavController
     private val colorList by lazy {
         listOf(
-            getThemeColor(requireContext(), com.example.tmusic.R.attr.themeColorPlaylistLoop1),
-            getThemeColor(requireContext(), com.example.tmusic.R.attr.themeColorPlaylistLoop2),
-            getThemeColor(requireContext(), com.example.tmusic.R.attr.themeColorPlaylistLoop3)
+                getThemeColor(requireContext(), com.example.tmusic.R.attr.themeColorPlaylistLoop1),
+                getThemeColor(requireContext(), com.example.tmusic.R.attr.themeColorPlaylistLoop2),
+                getThemeColor(requireContext(), com.example.tmusic.R.attr.themeColorPlaylistLoop3)
         )
     }
 
@@ -45,28 +43,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         viewModel = ViewModelProvider(this)[PlaylistViewModel::class.java]
         initView()
         observePlaylists()
-
-        // Handle back press to exit app
-        requireActivity().onBackPressedDispatcher.addCallback(
-            viewLifecycleOwner,
-            object : androidx.activity.OnBackPressedCallback(true) {
-                override fun handleOnBackPressed() {
-                    requireActivity().finish()
-                }
-            }
-        )
     }
 
     override fun initView() {
         updateGreeting()
         initNavigation()
-        binding.localMusic.setOnClickListener {
-            (activity as? MainActivity)?.goToLocalMusic()
-        }
+        binding.localMusic.setOnClickListener { (activity as? MainActivity)?.goToLocalMusic() }
 
-        binding.myMusic.setOnClickListener {
-            (activity as? MainActivity)?.goToPersonalMusic()
-        }
+        binding.myMusic.setOnClickListener { (activity as? MainActivity)?.goToPersonalMusic() }
 
         binding.playPauseBtn.setOnClickListener {
             val host = activity as MainActivity
@@ -86,12 +70,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
 
         binding.btnAddPlaylist.setOnClickListener { showAddPlaylistDialog() }
 
-        binding.musicCard.setOnClickListener {
-            (activity as MainActivity).goToMusicPlay()
-        }
+        binding.musicCard.setOnClickListener { (activity as MainActivity).goToMusicPlay() }
     }
 
-    private fun initNavigation(){
+    private fun initNavigation() {
         navController = findNavController()
     }
 
@@ -114,8 +96,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         }
     }
 
+    private val coverJobs = mutableListOf<kotlinx.coroutines.Job>()
+
     private fun renderPlaylists(playlists: List<PlaylistEntity>) {
+        coverJobs.forEach { it.cancel() }
+        coverJobs.clear()
         binding.playlistItemsContainer.removeAllViews()
+
         playlists.forEach { playlist ->
             val itemBinding =
                     ItemPlaylistBinding.inflate(
@@ -124,10 +111,16 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
                             false
                     )
             itemBinding.tvPlaylistTitle.text = playlist.name
-            itemBinding.root.setCardBackgroundColor(
-                    colorList[playlist.colorIndex % colorList.size]
-            )
+            itemBinding.root.setCardBackgroundColor(colorList[playlist.colorIndex % colorList.size])
             val playlistId = playlist.id
+
+            if (!playlist.coverPath.isNullOrEmpty()) {
+                Glide.with(this@HomeFragment)
+                        .load(playlist.coverPath)
+                        .into(itemBinding.ivPlaylistCover)
+            } else {
+                itemBinding.ivPlaylistCover.setImageResource(R.drawable.bg_cat)
+            }
 
             itemBinding.btnEditPlaylist.setOnClickListener { showUpdatePlaylistDialog(playlistId) }
 
@@ -137,6 +130,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
                 (activity as MainActivity).goToMusicList(playlistId)
             }
             binding.playlistItemsContainer.addView(itemBinding.root)
+        }
+    }
+
+    private fun refreshPlaylists() {
+        val playlists = viewModel.uiState.value.playlists
+        if (playlists.isNotEmpty()) {
+            renderPlaylists(playlists)
         }
     }
 
@@ -150,9 +150,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
     }
 
     private fun showDeletePlaylistDialog(playlist: PlaylistEntity) {
-        DeletePlaylistDialog(requireContext()) {
-            viewModel.deletePlaylist(playlist)
-        }.show()
+        DeletePlaylistDialog(requireContext()) { viewModel.deletePlaylist(playlist) }.show()
     }
 
     private fun updateUi() {
@@ -182,11 +180,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         super.onHiddenChanged(hidden)
         if (!hidden) {
             updateUi()
+            refreshPlaylists()
         }
     }
 
     override fun onResume() {
         super.onResume()
         updateUi()
+        refreshPlaylists()
     }
 }

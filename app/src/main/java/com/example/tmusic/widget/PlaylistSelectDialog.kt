@@ -10,6 +10,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.tmusic.databinding.DialogSelectPlaylistBinding
 import com.example.tmusic.home.data.room.PlaylistEntity
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 
 class PlaylistSelectDialog(
     private val context: Context,
@@ -78,6 +82,15 @@ class PlaylistItemAdapter(
         binding.root.setCardBackgroundColor(
                     colorList[playlist.colorIndex % colorList.size]
                 )
+        
+        if (!playlist.coverPath.isNullOrEmpty()) {
+            com.bumptech.glide.Glide.with(holder.itemView.context)
+                .load(playlist.coverPath)
+                .into(binding.ivPlaylistCover)
+        } else {
+            binding.ivPlaylistCover.setImageResource(com.example.tmusic.R.drawable.bg_cat)
+        }
+
         binding.root.setOnClickListener {
             onItemClick(playlist)
         }

@@ -126,19 +126,21 @@
 
                 <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="6dp"
-                    android:background="@drawable/bg_progress_bar_background">
+                    android:layout_height="wrap_content">
 
                     <SeekBar
                         android:id="@+id/progressBar"
                         style="?android:attr/progressBarStyleHorizontal"
                         android:layout_width="match_parent"
-                        android:layout_height="6dp"
+                        android:layout_height="wrap_content"
+                        android:minHeight="6dp"
+                        android:maxHeight="6dp"
                         android:progressDrawable="@drawable/bg_progress_bar_foreground"
                         android:max="1000"
-                        android:thumb="@null"
-                        android:paddingStart="0dp"
-                        android:paddingEnd="0dp" />
+                        android:thumb="@drawable/bg_progress_bar_thumb"
+                        android:splitTrack="false"
+                        android:paddingStart="7dp"
+                        android:paddingEnd="7dp" />
                 </FrameLayout>
 
                 <LinearLayout

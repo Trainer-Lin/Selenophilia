@@ -18,6 +18,9 @@ interface PlaylistMusicDao {
     @Query("SELECT musicId FROM playlist_cross_ref WHERE playlistId = :playlistId")
     fun getMusicIdFromList(playlistId: Long): Flow<List<Long>>
 
+    @Query("SELECT musicId FROM playlist_cross_ref WHERE playlistId = :playlistId ORDER BY addedTime DESC LIMIT 1")
+    suspend fun getLatestMusicIdFromList(playlistId: Long): Long?
+
     @Query("SELECT EXISTS(SELECT 1 FROM playlist_cross_ref WHERE playlistId = :playlistId AND musicId = :musicId)")
     suspend fun isMusicInPlaylist(playlistId: Long, musicId: Long): Boolean
 }

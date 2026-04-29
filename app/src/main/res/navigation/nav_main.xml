@@ -149,6 +149,6 @@
 
     <fragment
         android:id="@+id/musicPlayFragment"
-        android:name = "com.example.tmusic.common.MusicPlayFragment"/>
+        android:name = "com.example.tmusic.musicPlay.MusicPlayFragment"/>
 
 </navigation>

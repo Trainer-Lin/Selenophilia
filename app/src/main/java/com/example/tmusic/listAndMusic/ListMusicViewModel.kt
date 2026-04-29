@@ -32,7 +32,7 @@ class ListMusicViewModel(application: Application) : AndroidViewModel(applicatio
         repository = repo
     }
 
-    fun addMusicToPlaylist(playlistId: Long, musicId: Long) {
+    fun addMusicToPlaylist(playlistId: Long, musicId: Long, onComplete: (() -> Unit)? = null) {
         viewModelScope.launch {
             _uiState.update { it.copy(isAdding = true, successMessage = null, error = null) }
             try {
@@ -42,18 +42,20 @@ class ListMusicViewModel(application: Application) : AndroidViewModel(applicatio
                 }
                 repository.addMusicToPlaylist(PlaylistCrossRef(playlistId, musicId))
                 _uiState.update { it.copy(isAdding = false, successMessage = "已添加到歌单") }
+                onComplete?.invoke()
             } catch (e: Exception) {
                 _uiState.update { it.copy(isAdding = false, error = "添加失败: ${e.message}") }
             }
         }
     }
 
-    fun deleteMusicFromPlaylist(playlistId: Long, musicId: Long) {
+    fun deleteMusicFromPlaylist(playlistId: Long, musicId: Long, onComplete: (() -> Unit)? = null) {
         viewModelScope.launch {
             _uiState.update { it.copy(isDeleting = true, successMessage = null, error = null) }
             try {
                 repository.deleteMusicFromPlaylist(PlaylistCrossRef(playlistId, musicId))
                 _uiState.update { it.copy(isDeleting = false, successMessage = "已从歌单移除") }
+                onComplete?.invoke()
             } catch (e: Exception) {
                 _uiState.update { it.copy(isDeleting = false, error = "移除失败: ${e.message}") }
             }
