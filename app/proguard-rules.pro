@@ -19,3 +19,40 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# Please add these rules to your existing proguard-rules.pro
+-keep @androidx.room.Entity class * { *; }
+-keep class com.example.tmusic.localMusicList.data.room.MusicEntity { *; }
+-keep class com.example.tmusic.home.data.room.PlaylistEntity { *; }
+-keep class com.example.tmusic.study.data.PlanEntity { *; }
+-keep class com.example.tmusic.listAndMusic.room.PlaylistCrossRef { *; }
+
+-keep class com.example.tmusic.personal.data.MostPlayedSong { *; }
+-keep class com.example.tmusic.personal.mvi.PersonalState { *; }
+-keep class com.example.tmusic.listAndMusic.model.ListMusicState { *; }
+-keep class com.example.tmusic.localMusicList.mvi.LocalMusicState { *; }
+-keep class com.example.tmusic.study.mvi.StudyState { *; }
+-keep class com.example.tmusic.home.mvvm.model.PlaylistState { *; }
+
+-keepnames class * implements android.os.Parcelable
+-keepclassmembers class * implements android.os.Parcelable {
+    public static final android.os.Parcelable$Creator *;
+}
+
+# Glide
+-keep public class * extends com.bumptech.glide.module.AppGlideModule { *; }
+-keep public class * extends com.bumptech.glide.module.LibraryGlideModule { *; }
+-keep class com.bumptech.glide.GeneratedAppGlideModuleImpl { *; }
+
+# SmartRefreshLayout
+-keep class com.scwang.smart.refresh.layout.** { *; }
+-dontwarn com.scwang.smart.refresh.layout.**
+
+# WebView
+-keepattributes AnnotationDefault,SourceFile,LineNumberTable,JavaScriptInterface
+-keepclassmembers class * {
+    @android.webkit.JavascriptInterface <methods>;
+}
+
+# MMKV
+-keep class com.tencent.mmkv.** { *; }

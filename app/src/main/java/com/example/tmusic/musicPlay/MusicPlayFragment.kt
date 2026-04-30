@@ -6,6 +6,7 @@ import android.view.View
 import android.view.animation.LinearInterpolator
 import android.widget.SeekBar
 import androidx.annotation.OptIn
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.media3.common.util.UnstableApi
 import com.bumptech.glide.Glide
@@ -13,8 +14,16 @@ import com.example.tmusic.MainActivity
 import com.example.tmusic.R
 import com.example.tmusic.base.BaseFragment
 import com.example.tmusic.databinding.FragmentMusicPlayBinding
+import com.example.tmusic.lyric.data.LyricDataSource
+import com.example.tmusic.lyric.data.LyricRepository
+import com.example.tmusic.lyric.data.Lyric
+import com.example.tmusic.lyric.mvi.LyricIntent
+import com.example.tmusic.lyric.mvi.LyricState
+import com.example.tmusic.lyric.mvi.LyricViewModel
+import com.example.tmusic.lyric.mvi.LyricViewModelFactory
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlin.math.abs
@@ -27,9 +36,19 @@ class MusicPlayFragment :
     private var progressAnimator: ValueAnimator? = null
     private var progressInitialized = false
 
+    private lateinit var lyricViewModel: LyricViewModel
+    private var currentLyricsStr: String? = null
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        
+        val dataSource = LyricDataSource()
+        val repository = LyricRepository(dataSource)
+        val factory = LyricViewModelFactory(repository)
+        lyricViewModel = ViewModelProvider(this, factory)[LyricViewModel::class.java]
+
         initView()
+        observeLyricState()
     }
 
     @OptIn(UnstableApi::class)
@@ -83,12 +102,17 @@ class MusicPlayFragment :
             toggleLyrics()
         }
 
-        binding.lyricsScrollView.setOnClickListener {
+        binding.lyricView.setOnClickListener {
             toggleLyrics()
         }
-        
-        binding.lyricsTextView.setOnClickListener {
-            toggleLyrics()
+
+        binding.lyricView.onSeekListener = { timeMs ->
+            val hostActivity = activity as? MainActivity
+            val s = hostActivity?.getMusicService()
+            if (s != null) {
+                s.seekTo(timeMs)
+                updateProgress()
+            }
         }
 
         binding.progressBar.setOnSeekBarChangeListener(
@@ -100,9 +124,9 @@ class MusicPlayFragment :
                         fromUser: Boolean
                     ) {
                         if (fromUser) {
-                            val service = (activity as MainActivity).getMusicService()
-                            if (service != null) {
-                                val duration = service.getCurrentDuration()
+                            val s = (activity as MainActivity).getMusicService()
+                            if (s != null) {
+                                val duration = s.getCurrentDuration()
                                 val newPosition = progress.toLong() * duration / 1000
                                 binding.currentTime.text = formatTime(newPosition) // 拖动改变显示时间
                             }
@@ -117,16 +141,30 @@ class MusicPlayFragment :
                     @OptIn(UnstableApi::class)
                     override fun onStopTrackingTouch(seekBar: SeekBar?) {
                         isUserSeeking = false
-                        val service = (activity as MainActivity).getMusicService()
-                        if (service != null) {
+                        val s = (activity as MainActivity).getMusicService()
+                        if (s != null) {
                             val progress = seekBar?.progress ?: 0
-                            val duration = service.getCurrentDuration()
+                            val duration = s.getCurrentDuration()
                             val newPosition = progress * duration / 1000
-                            service.seekTo(newPosition)
+                            s.seekTo(newPosition)
                         }
                     }
                 }
         )
+    }
+
+    private fun observeLyricState() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            lyricViewModel.viewState.collectLatest { state ->
+                if (state.isLoading) {
+                    // Do nothing for loading
+                } else if (state.error != null) {
+                    binding.lyricView.setLyric(Lyric.EMPTY)
+                } else {
+                    binding.lyricView.setLyric(state.lyric)
+                }
+            }
+        }
     }
 
     private fun updateOrderIcon(playMode: Int){
@@ -158,10 +196,9 @@ class MusicPlayFragment :
         binding.artistName.text = host.artistName ?: "未知艺术家"
         
         val lyrics = host.lyrics
-        if (!lyrics.isNullOrEmpty()) {
-            binding.lyricsTextView.text = lyrics
-        } else {
-            binding.lyricsTextView.text = "暂无歌词"
+        if (lyrics != currentLyricsStr) {
+            currentLyricsStr = lyrics
+            lyricViewModel.handleIntent(LyricIntent.LoadLyric(lyrics))
         }
 
         if (host.isPlaying()) {
@@ -172,17 +209,22 @@ class MusicPlayFragment :
     }
 
     private fun toggleLyrics() {
-        if (binding.lyricsScrollView.visibility == View.VISIBLE) {
-            binding.lyricsScrollView.visibility = View.GONE
+        if (binding.lyricView.visibility == View.VISIBLE) {
+            binding.lyricView.visibility = View.GONE
             binding.coverInfoGroup.visibility = View.VISIBLE
         } else {
             binding.coverInfoGroup.visibility = View.INVISIBLE
-            binding.lyricsScrollView.visibility = View.VISIBLE
+            binding.lyricView.visibility = View.VISIBLE
+        }
+    }
+
+    fun refreshUi() {
+        if (view != null) {
+            updateUi()
         }
     }
 
     /** 更新进度条和时间显示（带平滑动画） */
-
     @OptIn(UnstableApi::class)
     private fun updateProgress(){
         val host = activity as? MainActivity ?: return
@@ -197,6 +239,10 @@ class MusicPlayFragment :
         val duration = service.getCurrentDuration()
         if (duration <= 0L) return
         val position = service.getCurrentPosition()
+        
+        // 同步歌词
+        binding.lyricView.updateTime(position)
+        
         val actualProgress =(position.toFloat() / duration * 1000).toInt()
         if (!progressInitialized) {
             binding.progressBar.progress = actualProgress
@@ -217,7 +263,7 @@ class MusicPlayFragment :
         }else{
             val animator = ValueAnimator.ofInt(currentProgress, targetProgress) //创建动画 ，从当前进度到目标进度
             val progressBar = binding.progressBar
-            animator.duration = 1000
+            animator.duration = 100
             animator.interpolator = LinearInterpolator()
             animator.addUpdateListener {animation ->
                 progressBar.progress = animation.animatedValue as Int //动画每更新一次， 更新一次Progress
@@ -235,7 +281,7 @@ class MusicPlayFragment :
                 if (!isUserSeeking) {
                     updateProgress()
                 }
-                delay(1000)
+                delay(100) // 100ms 刷新率，保证歌词同步精度
             }
         }
     }

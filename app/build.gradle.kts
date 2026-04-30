@@ -22,7 +22,8 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -96,7 +97,6 @@ dependencies {
     implementation("io.github.scwang90:refresh-layout-kernel:2.1.0")
     implementation("io.github.scwang90:refresh-header-classics:2.1.0")
     implementation("io.github.scwang90:refresh-footer-classics:2.1.0")
-
     implementation("androidx.fragment:fragment-ktx:1.6.0")
     implementation("androidx.viewpager2:viewpager2:1.1.0")
     // Navigation (XML NavGraph)
@@ -111,4 +111,7 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
+    // jaudiotagger for embedded lyrics
+    implementation(libs.jaudiotagger)
 }
