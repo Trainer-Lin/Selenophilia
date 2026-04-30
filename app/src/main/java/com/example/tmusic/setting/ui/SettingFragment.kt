@@ -63,8 +63,8 @@ class SettingFragment : Fragment() {
             changeTheme("yellow")
         }
         
-        binding.cvThemeRed.setOnClickListener {
-            (activity as? MainActivity)?.showMessage("敬请期待！")
+        binding.cvThemePink.setOnClickListener {
+            changeTheme("pink")
         }
     }
 

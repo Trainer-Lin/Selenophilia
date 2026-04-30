@@ -45,4 +45,25 @@
     <color name="theme_yellow_study_icon_tint">#A9D18F</color>
     <color name="theme_yellow_study_ring">#B9721F</color>
     <color name="theme_yellow_study_start_btn">#F9D77C</color>
+
+    <!-- 粉色主题 -->
+    <color name="theme_pink_start">#FBE3E9</color>
+    <color name="theme_pink_mid">#F3B3C4</color>
+    <color name="theme_pink_end">#E35779</color>
+    <color name="theme_pink_text_title">#C84C5F</color>
+    <color name="theme_pink_text_primary">#C84C5F</color>
+    
+    <color name="theme_pink_bottom_nav">#FECBD1</color>
+    <color name="theme_pink_music_card">#FFBBC0</color>
+    <color name="theme_pink_local_music_card">#FFD8D8</color>
+    <color name="theme_pink_personal_card">#FBE3E9</color>
+    <color name="theme_pink_loop1">#E34F5C</color>
+    <color name="theme_pink_loop2">#FA6585</color>
+    <color name="theme_pink_loop3">#F3B3C4</color>
+    <color name="theme_pink_fight_text">#C84C5F</color>
+    <color name="theme_pink_study_btn">#FBE3E9</color>
+    <color name="theme_pink_study_plan">#FECBD1</color>
+    <color name="theme_pink_study_icon_tint">#C84C5F</color>
+    <color name="theme_pink_study_ring">#C84C5F</color>
+    <color name="theme_pink_study_start_btn">#FA6585</color>
 </resources>

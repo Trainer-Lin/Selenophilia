@@ -168,12 +168,12 @@
                 android:clickable="true"
                 android:focusable="true" />
 
-            <!-- Color 3 (Placeholder for future theme) -->
+            <!-- Color 3 (Pink Theme) -->
             <androidx.cardview.widget.CardView
-                android:id="@+id/cvThemeRed"
+                android:id="@+id/cvThemePink"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                app:cardBackgroundColor="#EF4776"
+                app:cardBackgroundColor="#F3B3C4"
                 app:cardCornerRadius="24dp"
                 app:cardElevation="0dp"
                 android:clickable="true"

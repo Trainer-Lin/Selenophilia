@@ -50,6 +50,29 @@
         <item name="themeColorStudyStartBtnBg">@color/theme_yellow_study_start_btn</item>
     </style>
 
+    <style name="Theme.TMusic.Pink" parent="Theme.TMusic">
+        <!-- 粉色主题配置 -->
+        <item name="themeColorPrimaryStart">@color/theme_pink_start</item>
+        <item name="themeColorPrimaryMid">@color/theme_pink_mid</item>
+        <item name="themeColorPrimaryEnd">@color/theme_pink_end</item>
+        <item name="themeColorTextTitle">@color/theme_pink_text_title</item>
+        <item name="themeColorTextPrimary">@color/theme_pink_text_primary</item>
+        
+        <item name="themeColorBottomNavBg">@color/theme_pink_bottom_nav</item>
+        <item name="themeColorHomeMusicCardBg">@color/theme_pink_music_card</item>
+        <item name="themeColorHomeLocalMusicCardBg">@color/theme_pink_local_music_card</item>
+        <item name="themeColorHomePersonalCardBg">@color/theme_pink_personal_card</item>
+        <item name="themeColorPlaylistLoop1">@color/theme_pink_loop1</item>
+        <item name="themeColorPlaylistLoop2">@color/theme_pink_loop2</item>
+        <item name="themeColorPlaylistLoop3">@color/theme_pink_loop3</item>
+        <item name="themeColorStudyFightText">@color/theme_pink_fight_text</item>
+        <item name="themeColorStudyBtnBg">@color/theme_pink_study_btn</item>
+        <item name="themeColorStudyPlanBg">@color/theme_pink_study_plan</item>
+        <item name="themeColorStudyIconTint">@color/theme_pink_study_icon_tint</item>
+        <item name="themeColorStudyRingBg">@color/theme_pink_study_ring</item>
+        <item name="themeColorStudyStartBtnBg">@color/theme_pink_study_start_btn</item>
+    </style>
+
     <style name="TransparentAlertDialog" parent="Theme.Material3.DayNight.Dialog">
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowIsFloating">true</item>

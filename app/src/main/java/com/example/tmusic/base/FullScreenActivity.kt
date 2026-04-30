@@ -64,7 +64,7 @@ abstract class FullScreenActivity<VB: ViewBinding> : AppCompatActivity() {
         when (themeName) {
             "purple" -> setTheme(com.example.tmusic.R.style.Theme_TMusic_Purple)
             "yellow" -> setTheme(com.example.tmusic.R.style.Theme_TMusic_Yellow)
-            // "red" -> setTheme(com.example.tmusic.R.style.Theme_TMusic_Red)
+            "pink" -> setTheme(com.example.tmusic.R.style.Theme_TMusic_Pink)
             else -> setTheme(com.example.tmusic.R.style.Theme_TMusic_Purple)
         }
 
