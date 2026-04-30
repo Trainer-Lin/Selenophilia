@@ -81,8 +81,8 @@ class StudyFragment : BaseFragment<FragmentStudyBinding>(FragmentStudyBinding::i
     private fun updatePlansCount() {
         binding.plansCount.text = "${viewModel.viewState.value.plans.size} TASKS"
     }
-    private fun updateUi() {
-        val host = activity as MainActivity
+    fun updateUi() {
+        val host = activity as? MainActivity ?: return
         host.updateSongInfo()
 
         val cover = host.albumCover

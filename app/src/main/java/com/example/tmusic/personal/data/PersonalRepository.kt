@@ -76,6 +76,7 @@ object PersonalRepository {
                 put("uri", music.uri)
                 put("duration", music.duration)
                 put("albumArt", music.albumArt ?: "")
+                music.lyrics?.let { put("lyrics", it) }
             }
             newArray.put(musicObj)
             
@@ -118,7 +119,8 @@ object PersonalRepository {
                     artist = obj.getString("artist"),
                     uri = obj.getString("uri"),
                     duration = obj.getLong("duration"),
-                    albumArt = obj.optString("albumArt").takeIf { it.isNotEmpty() }
+                    albumArt = obj.optString("albumArt").takeIf { it.isNotEmpty() },
+                    lyrics = obj.optString("lyrics").takeIf { it.isNotEmpty() }
                 )
                 result.add(music)
             }

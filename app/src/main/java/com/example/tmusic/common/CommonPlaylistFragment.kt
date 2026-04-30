@@ -370,7 +370,7 @@ class CommonPlaylistFragment :
         return currentMusicIndex.coerceIn(0, currentMusicList.lastIndex)
     }
 
-    private fun updateNowPlaying() {
+    fun updateNowPlaying() {
         val host = activity as? MainActivity ?: return
         host.updateSongInfo()
 

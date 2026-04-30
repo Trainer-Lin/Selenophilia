@@ -75,6 +75,22 @@ class MusicPlayFragment :
             updateOrderIcon(s.playMode)
         }
 
+        binding.btnSubtitles.setOnClickListener {
+            toggleLyrics()
+        }
+
+        binding.albumCover.setOnClickListener {
+            toggleLyrics()
+        }
+
+        binding.lyricsScrollView.setOnClickListener {
+            toggleLyrics()
+        }
+        
+        binding.lyricsTextView.setOnClickListener {
+            toggleLyrics()
+        }
+
         binding.progressBar.setOnSeekBarChangeListener(
                 object : SeekBar.OnSeekBarChangeListener {
                     @UnstableApi
@@ -140,11 +156,28 @@ class MusicPlayFragment :
 
         binding.songTitle.text = host.songTitle ?: "暂无歌曲播放哦"
         binding.artistName.text = host.artistName ?: "未知艺术家"
+        
+        val lyrics = host.lyrics
+        if (!lyrics.isNullOrEmpty()) {
+            binding.lyricsTextView.text = lyrics
+        } else {
+            binding.lyricsTextView.text = "暂无歌词"
+        }
 
         if (host.isPlaying()) {
             binding.btnPlayPause.setImageResource(R.drawable.icon_pause_new)
         } else {
             binding.btnPlayPause.setImageResource(R.drawable.icon_play_new)
+        }
+    }
+
+    private fun toggleLyrics() {
+        if (binding.lyricsScrollView.visibility == View.VISIBLE) {
+            binding.lyricsScrollView.visibility = View.GONE
+            binding.coverInfoGroup.visibility = View.VISIBLE
+        } else {
+            binding.coverInfoGroup.visibility = View.INVISIBLE
+            binding.lyricsScrollView.visibility = View.VISIBLE
         }
     }
 

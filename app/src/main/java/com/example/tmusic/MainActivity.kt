@@ -60,6 +60,7 @@ class MainActivity : FullScreenActivity<ActivityMainBinding>() {
     var albumCover: String? = null
     var songTitle: String? = null
     var artistName: String? = null
+    var lyrics: String? = null
 
     private val serviceConnection =
             object : ServiceConnection {
@@ -271,25 +272,48 @@ class MainActivity : FullScreenActivity<ActivityMainBinding>() {
     fun playOrPause(musicList: List<MusicEntity>, index: Int) {
         if (musicList.isEmpty()) {
             clearSongInfo()
+            notifyFragments()
             return
         }
         val safeIndex = index.coerceIn(0, musicList.lastIndex)
         saveSongInfo(musicList, safeIndex)
         musicService?.playOrPauseMusic(musicList, safeIndex)
+        notifyFragments()
     }
 
     fun playNext() {
         musicService?.playNext()
         syncSongInfoFromService()
+        notifyFragments()
     }
 
     fun playPrevious() {
         musicService?.playPrevious()
         syncSongInfoFromService()
+        notifyFragments()
     }
 
     fun updateSongInfo() {
         syncSongInfoFromService()
+    }
+
+    private fun notifyFragments() {
+        // Notify ViewPager fragments
+        for (i in 0 until pagerAdapter.itemCount) {
+            val fragment = supportFragmentManager.findFragmentByTag("f$i")
+            when (fragment) {
+                is HomeFragment -> fragment.updateUi()
+                is StudyFragment -> fragment.updateUi()
+            }
+        }
+        
+        // Notify current navigation fragment if any
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragment_container) as? NavHostFragment
+        val currentNavFragment = navHostFragment?.childFragmentManager?.primaryNavigationFragment
+        when (currentNavFragment) {
+            is LocalMusicListFragment -> currentNavFragment.updateNowPlaying()
+            is CommonPlaylistFragment -> currentNavFragment.updateNowPlaying()
+        }
     }
 
     fun isPlaying(): Boolean {
@@ -321,6 +345,7 @@ class MainActivity : FullScreenActivity<ActivityMainBinding>() {
         albumCover = music.albumArt
         songTitle = music.title
         artistName = music.artist
+        lyrics = music.lyrics
     }
 
     private fun clearSongInfo() {
@@ -329,6 +354,7 @@ class MainActivity : FullScreenActivity<ActivityMainBinding>() {
         albumCover = null
         songTitle = null
         artistName = null
+        lyrics = null
     }
 
     fun showMessage(message: String) {

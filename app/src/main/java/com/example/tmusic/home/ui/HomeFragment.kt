@@ -153,8 +153,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         DeletePlaylistDialog(requireContext()) { viewModel.deletePlaylist(playlist) }.show()
     }
 
-    private fun updateUi() {
-        val host = activity as MainActivity
+    fun updateUi() {
+        val host = activity as? MainActivity ?: return
         host.updateSongInfo()
 
         val cover = host.albumCover

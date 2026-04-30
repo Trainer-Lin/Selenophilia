@@ -62,7 +62,8 @@ class Repository(private val context: Context , private val musicDao: MusicDao){
                         if (fileSize > 30000) { // 大于
                             val uri = ContentUris.withAppendedId(musicUri, id)
                             val albumArt = getAlbumArt(uri)
-                            val music = MusicEntity(id, uri.toString(), title, artist, duration, albumArt)
+                            val lyrics = getLyrics(filePath)
+                            val music = MusicEntity(id, uri.toString(), title, artist, duration, albumArt, lyrics)
                             musicList.add(music)
                         }
                     } catch (e: Exception) {
@@ -98,6 +99,21 @@ class Repository(private val context: Context , private val musicDao: MusicDao){
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos)//压缩图片
         fos.close()
         return desFile.absolutePath
+    }
+
+    private fun getLyrics(audioFilePath: String?): String? {
+        if (audioFilePath.isNullOrEmpty()) return null
+        try {
+            val audioFile = File(audioFilePath)
+            if (!audioFile.exists()) return null
+            val lrcFile = File(audioFile.parent, audioFile.nameWithoutExtension + ".lrc")
+            if (lrcFile.exists() && lrcFile.canRead()) {
+                return lrcFile.readText()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return null
     }
 
     suspend fun getAllMusic(): List<MusicEntity> {

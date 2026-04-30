@@ -58,65 +58,99 @@
         android:paddingBottom="16dp">
 
             <FrameLayout
-                android:layout_width="288dp"
-                android:layout_height="288dp">
-
-                <androidx.cardview.widget.CardView
-                    android:layout_width="288dp"
-                    android:layout_height="288dp"
-                    app:cardCornerRadius="48dp"
-                    app:cardElevation="0dp">
-
-                    <ImageView
-                        android:id="@+id/albumCover"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/bg_heart" />
-                </androidx.cardview.widget.CardView>
-
-                <View
-                    android:layout_width="240dp"
-                    android:layout_height="240dp"
-                    android:layout_gravity="center"
-                    android:alpha="0.05"
-                    android:background="@drawable/bg_album_shadow" />
-            </FrameLayout>
-
-            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginTop="2dp">
+                android:layout_height="wrap_content">
 
-                <TextView
-                    android:id="@+id/songTitle"
+                <LinearLayout
+                    android:id="@+id/coverInfoGroup"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="1dp"
-                    android:text="暂无歌曲播放哦"
-                    android:fontFamily="@font/font_noto_semibold"
-                    android:textSize="36sp"
-                    android:textColor="#2F342E"
-                    android:gravity="center"
-                    android:textStyle="bold"
-                    android:letterSpacing="-0.05"
-                    android:maxLines="2"
-                    android:ellipsize="end" />
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal"
+                    android:layout_gravity="center_horizontal|top">
 
-                <TextView
-                    android:id="@+id/artistName"
+                    <FrameLayout
+                        android:layout_width="288dp"
+                        android:layout_height="288dp">
+
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="288dp"
+                            android:layout_height="288dp"
+                            app:cardCornerRadius="48dp"
+                            app:cardElevation="0dp">
+
+                            <ImageView
+                                android:id="@+id/albumCover"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:scaleType="centerCrop"
+                                android:src="@drawable/bg_heart" />
+                        </androidx.cardview.widget.CardView>
+
+                        <View
+                            android:layout_width="240dp"
+                            android:layout_height="240dp"
+                            android:layout_gravity="center"
+                            android:alpha="0.05"
+                            android:background="@drawable/bg_album_shadow" />
+                    </FrameLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginTop="2dp">
+
+                        <TextView
+                            android:id="@+id/songTitle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="1dp"
+                            android:text="暂无歌曲播放哦"
+                            android:fontFamily="@font/font_noto_semibold"
+                            android:textSize="36sp"
+                            android:textColor="#2F342E"
+                            android:gravity="center"
+                            android:textStyle="bold"
+                            android:letterSpacing="-0.05"
+                            android:maxLines="2"
+                            android:ellipsize="end" />
+
+                        <TextView
+                            android:id="@+id/artistName"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="1dp"
+                            android:text="未知艺术家"
+                            android:fontFamily="@font/font_noto_regular"
+                            android:textSize="20sp"
+                            android:textColor="#5C605A"
+                            android:gravity="center"
+                            android:maxLines="1"
+                            android:ellipsize="end" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <ScrollView
+                    android:id="@+id/lyricsScrollView"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="1dp"
-                    android:text="未知艺术家"
-                    android:fontFamily="@font/font_noto_regular"
-                    android:textSize="20sp"
-                    android:textColor="#5C605A"
-                    android:gravity="center"
-                    android:maxLines="1"
-                    android:ellipsize="end" />
-            </LinearLayout>
+                    android:layout_height="match_parent"
+                    android:visibility="gone"
+                    android:scrollbars="none"
+                    android:fadeScrollbars="true">
+                    
+                    <TextView
+                        android:id="@+id/lyricsTextView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:textSize="16sp"
+                        android:textColor="#5C605A"
+                        android:lineSpacingExtra="8dp"
+                        android:paddingVertical="32dp"
+                        android:text="暂无歌词" />
+                </ScrollView>
+            </FrameLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -221,7 +255,7 @@
                     android:padding="16dp" />
 
                 <ImageButton
-                    android:id="@+id/btnPlaylist"
+                    android:id="@+id/btnSubtitles"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:src="@drawable/icon_playlist"

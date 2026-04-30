@@ -22,5 +22,6 @@ data class MusicEntity (
     var title: String,
     var artist: String,
     var duration: Long,
-    var albumArt: String? = null // 封面图片的路径或URL
+    var albumArt: String? = null, // 封面图片的路径或URL
+    var lyrics: String? = null // 歌词内容
 ): Parcelable
