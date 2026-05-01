@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg_gradient_setting"
-    android:padding="16dp">
+    android:fillViewport="true">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:paddingBottom="80dp">
 
     <!-- Initial Interface Section -->
     <LinearLayout
@@ -130,7 +136,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="4dp"
             android:text="主题颜色"
             android:fontFamily="@font/font_noto_semibold"
             android:textColor="?attr/themeColorTextTitle"
@@ -140,44 +146,116 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginTop="8dp">
+            android:orientation="vertical"
+            android:layout_marginTop="0dp">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#1A000000"
+                android:layout_marginVertical="8dp"/>
 
             <!-- Selected Color 1 (Purple) -->
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cvThemePurple"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_marginEnd="40dp"
-                app:cardBackgroundColor="#d1a8e3"
-                app:cardCornerRadius="24dp"
-                app:cardElevation="2dp"
-                android:clickable="true"
-                android:focusable="true" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="8dp">
+                
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cvThemePurple"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    app:cardBackgroundColor="#d1a8e3"
+                    app:cardCornerRadius="18dp"
+                    app:cardElevation="2dp"
+                    android:clickable="true"
+                    android:focusable="true" />
+                    
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="16dp"
+                    android:text="芋泥千层"
+                    android:fontFamily="@font/font_noto_semibold"
+                    android:gravity="end|center_vertical"
+                    android:textColor="#757575"
+                    android:textSize="16sp" />
+            </LinearLayout>
 
-            <!-- Color 2 (Placeholder for future theme) -->
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cvThemeYellow"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_marginEnd="40dp"
-                app:cardBackgroundColor="#E8D451"
-                app:cardCornerRadius="24dp"
-                app:cardElevation="0dp"
-                android:clickable="true"
-                android:focusable="true" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#1A000000"
+                android:layout_marginVertical="8dp"/>
+
+            <!-- Color 2 (Yellow Theme) -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="8dp">
+                
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cvThemeYellow"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    app:cardBackgroundColor="#E8D451"
+                    app:cardCornerRadius="18dp"
+                    app:cardElevation="0dp"
+                    android:clickable="true"
+                    android:focusable="true" />
+                    
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="16dp"
+                    android:text="戚风蛋糕"
+                    android:fontFamily="@font/font_noto_semibold"
+                    android:gravity="end|center_vertical"
+                    android:textColor="#757575"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#1A000000"
+                android:layout_marginVertical="8dp"/>
 
             <!-- Color 3 (Pink Theme) -->
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cvThemePink"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                app:cardBackgroundColor="#F3B3C4"
-                app:cardCornerRadius="24dp"
-                app:cardElevation="0dp"
-                android:clickable="true"
-                android:focusable="true" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="8dp">
+                
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cvThemePink"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    app:cardBackgroundColor="#F3B3C4"
+                    app:cardCornerRadius="18dp"
+                    app:cardElevation="0dp"
+                    android:clickable="true"
+                    android:focusable="true" />
+                    
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="16dp"
+                    android:text="樱花气泡"
+                    android:fontFamily="@font/font_noto_semibold"
+                    android:gravity="end|center_vertical"
+                    android:textColor="#757575"
+                    android:textSize="16sp" />
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 
@@ -243,4 +321,5 @@
             app:tint="?attr/themeColorTextTitle" />
     </LinearLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

@@ -177,7 +177,9 @@ class MainActivity : FullScreenActivity<ActivityMainBinding>() {
     }
 
     private fun updateNavIcon(position: Int) {
-        val selectedColor = ContextCompat.getColor(this, R.color.purple_500)
+        val typedValue = android.util.TypedValue()
+        theme.resolveAttribute(R.attr.themeColorTextTitle, typedValue, true)
+        val selectedColor = typedValue.data
         val normalColor = ContextCompat.getColor(this, R.color.black)
         binding.navStudy.setColorFilter(if (position == 0) selectedColor else normalColor)
         binding.navHome.setColorFilter(if (position == 1) selectedColor else normalColor)

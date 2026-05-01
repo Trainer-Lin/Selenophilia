@@ -58,12 +58,21 @@ class SettingFragment : Fragment() {
         binding.cvThemePurple.setOnClickListener {
             changeTheme("purple")
         }
+        (binding.cvThemePurple.parent as View).setOnClickListener {
+            changeTheme("purple")
+        }
         
         binding.cvThemeYellow.setOnClickListener {
             changeTheme("yellow")
         }
+        (binding.cvThemeYellow.parent as View).setOnClickListener {
+            changeTheme("yellow")
+        }
         
         binding.cvThemePink.setOnClickListener {
+            changeTheme("pink")
+        }
+        (binding.cvThemePink.parent as View).setOnClickListener {
             changeTheme("pink")
         }
     }

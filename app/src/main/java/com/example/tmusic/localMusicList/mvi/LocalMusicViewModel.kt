@@ -119,11 +119,11 @@ class LocalMusicViewModel(private val repository: Repository): BaseMviViewModel<
 
         // 2. Sort the filtered list
         return when (sortType) {
-            SortType.BY_NAME -> filteredList.sortedBy { it.title }
+            SortType.BY_NAME -> filteredList.sortedWith(com.example.tmusic.utils.MusicSortUtils.musicNameComparator)
             SortType.BY_DATE_NEW_TO_OLD -> filteredList.sortedByDescending { it.id }
             SortType.BY_DATE_OLD_TO_NEW -> filteredList.sortedBy { it.id }
             SortType.BY_ARTIST -> filteredList.sortedBy { it.artist }
-            else -> filteredList.sortedBy { it.title }
+            else -> filteredList.sortedWith(com.example.tmusic.utils.MusicSortUtils.musicNameComparator)
         }
     }
 }
