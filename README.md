@@ -1,7 +1,7 @@
 # Selenophilia (TMusic) 🌙🎵
 
-| ![Preview 1](app/src/main/res/drawable/readme_image1.jpg) | ![Preview 2](app/src/main/res/drawable/readme_image2.jpg) |
-| :---: | :---: |
+| ![Preview 1](app/src/main/res/drawable/readme_image1.jpg) | ![Preview 2](app/src/main/res/drawable/readme_image2.jpg) | ![Preview 3](app/src/main/res/drawable/readme_image3.jpg) |
+| :---: | :---: | :---: |
 
 **Selenophilia** 是一款将“本地音乐播放”与“专注效率”巧妙结合的现代 Android 应用。我们致力于为您提供一个纯粹、无打扰的听歌环境，同时帮助您在音乐的陪伴下更好地进入学习和工作的心流状态。
 
