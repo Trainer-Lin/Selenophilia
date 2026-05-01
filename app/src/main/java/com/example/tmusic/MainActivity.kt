@@ -2,6 +2,7 @@ package com.example.tmusic
 
 import android.Manifest
 import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.content.pm.PackageManager
@@ -13,6 +14,14 @@ import android.os.IBinder
 import android.os.Looper
 import android.provider.MediaStore
 import android.provider.Settings
+import androidx.transition.AutoTransition
+import androidx.transition.TransitionManager
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator
+import androidx.constraintlayout.widget.ConstraintSet
+import android.view.MotionEvent
+import android.view.ViewConfiguration
+import android.view.View
+import android.util.TypedValue
 import android.util.Log
 import android.view.Gravity
 import android.widget.TextView
@@ -60,6 +69,15 @@ class MainActivity : FullScreenActivity<ActivityMainBinding>() {
     private var musicService: PlayMusicService? = null
     private lateinit var navController: NavController
     private lateinit var pagerAdapter: MainPagerAdapter
+    
+    private var isNavCollapsed = false
+    private val constraintSetExpanded = ConstraintSet()
+    private val constraintSetCollapsed = ConstraintSet()
+    
+    private var lastTouchY = 0f
+    private var lastTouchX = 0f
+    private var isDragging = false
+    private var touchSlop = 0
 
     override fun createViewBinding(): ActivityMainBinding {
         return ActivityMainBinding.inflate(layoutInflater)
@@ -88,7 +106,7 @@ class MainActivity : FullScreenActivity<ActivityMainBinding>() {
 
     private fun initService() {
         val intent = Intent(this, PlayMusicService::class.java)
-        bindService(intent, serviceConnection, BIND_AUTO_CREATE)
+        bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
     }
 
     override fun onResume() {
@@ -102,6 +120,8 @@ class MainActivity : FullScreenActivity<ActivityMainBinding>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        
+        touchSlop = ViewConfiguration.get(this).scaledTouchSlop
 
         initService()
         requestStartupPermissions()
@@ -114,6 +134,84 @@ class MainActivity : FullScreenActivity<ActivityMainBinding>() {
         initNavigation()
         setupBottomNav()
         setupBackPressed()
+        initNavAnimationConstraints()
+    }
+
+    private fun dpToPx(dp: Int): Int {
+        return (dp * resources.displayMetrics.density).toInt()
+    }
+
+    private fun initNavAnimationConstraints() {
+        constraintSetExpanded.clone(binding.root)
+        constraintSetCollapsed.clone(binding.root)
+        constraintSetCollapsed.clear(R.id.bottomNavCard, ConstraintSet.START)
+        constraintSetCollapsed.constrainWidth(R.id.bottomNavCard, dpToPx(64))
+        constraintSetCollapsed.setMargin(R.id.bottomNavCard, ConstraintSet.END, dpToPx(24))
+    }
+
+    private fun collapseBottomNav() {
+        if (isNavCollapsed || binding.bottomNavCard.visibility == View.GONE) return
+        isNavCollapsed = true
+
+        TransitionManager.beginDelayedTransition(binding.root, AutoTransition().apply {
+            duration = 300
+            interpolator = FastOutSlowInInterpolator()
+        })
+        constraintSetCollapsed.applyTo(binding.root)
+
+        binding.navItemsContainer.animate().alpha(0f).setDuration(150).withEndAction {
+            binding.navItemsContainer.visibility = View.GONE
+            binding.navCollapsedIcon.visibility = View.VISIBLE
+            binding.navCollapsedIcon.alpha = 0f
+            binding.navCollapsedIcon.animate().alpha(1f).setDuration(150).start()
+        }.start()
+    }
+
+    private fun expandBottomNav() {
+        if (!isNavCollapsed || binding.bottomNavCard.visibility == View.GONE) return
+        isNavCollapsed = false
+
+        TransitionManager.beginDelayedTransition(binding.root, AutoTransition().apply {
+            duration = 300
+            interpolator = FastOutSlowInInterpolator()
+        })
+        constraintSetExpanded.applyTo(binding.root)
+
+        binding.navCollapsedIcon.animate().alpha(0f).setDuration(150).withEndAction {
+            binding.navCollapsedIcon.visibility = View.GONE
+            binding.navItemsContainer.visibility = View.VISIBLE
+            binding.navItemsContainer.alpha = 0f
+            binding.navItemsContainer.animate().alpha(1f).setDuration(150).start()
+        }.start()
+    }
+
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        when (ev.action) {
+            MotionEvent.ACTION_DOWN -> {
+                lastTouchY = ev.rawY
+                lastTouchX = ev.rawX
+                isDragging = false
+            }
+            MotionEvent.ACTION_MOVE -> {
+                val dy = lastTouchY - ev.rawY
+                val dx = lastTouchX - ev.rawX
+
+                if (!isDragging && Math.abs(dy) > touchSlop && Math.abs(dy) > Math.abs(dx)) {
+                    isDragging = true
+                }
+
+                if (isDragging) {
+                    if (dy > 15) {
+                        collapseBottomNav()
+                        lastTouchY = ev.rawY
+                    } else if (dy < -15) {
+                        expandBottomNav()
+                        lastTouchY = ev.rawY
+                    }
+                }
+            }
+        }
+        return super.dispatchTouchEvent(ev)
     }
 
     private fun setupBackPressed() {
@@ -173,6 +271,9 @@ class MainActivity : FullScreenActivity<ActivityMainBinding>() {
             if (binding.viewPager.currentItem != 2) {
                 binding.viewPager.currentItem = 2
             }
+        }
+        binding.navCollapsedIcon.setOnClickListener {
+            expandBottomNav()
         }
     }
 
